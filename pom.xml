@@ -118,5 +118,7 @@
 
     <modules>
     	<module>huge-nebula-passport</module>
+    	<module>huge-nebula-datasource</module>
+    	
     </modules>
 </project>
