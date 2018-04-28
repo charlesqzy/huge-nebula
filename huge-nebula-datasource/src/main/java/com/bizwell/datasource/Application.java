@@ -2,13 +2,14 @@ package com.bizwell.datasource;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 /**
- * @author zhangjianjun
+ * @author liujian
  * @date 2018年2月6日
  *
  */
-@SpringBootApplication
+@SpringBootApplication(exclude=DataSourceAutoConfiguration.class)
 public class Application {
 	
 	public static void main(String[] args) {

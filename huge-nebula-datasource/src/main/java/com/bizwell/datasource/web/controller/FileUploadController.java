@@ -1,17 +1,15 @@
-package com.bizwell.controller;
+package com.bizwell.datasource.web.controller;
 
-import ch.qos.logback.core.util.FileUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.*;
-import java.util.List;
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * 文件上传的Controller
@@ -31,8 +29,8 @@ public class FileUploadController {
      * @param file
      * @return
      */
-    @RequestMapping(value="/testuploadimg", method = RequestMethod.POST)
-    public @ResponseBody String uploadImg(@RequestParam("file") MultipartFile file,
+    @RequestMapping(value="/uploadExcel", method = RequestMethod.POST)
+    public @ResponseBody String uploadExcel(@RequestParam("file") MultipartFile file,
                                           HttpServletRequest request) {
         String contentType = file.getContentType();
         String fileName = file.getOriginalFilename();
