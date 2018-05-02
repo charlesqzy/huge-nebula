@@ -6,11 +6,28 @@
   <name>huge-nebula-datasource</name>
   <description>数据源模块</description>
   
-  <parent>
-    <groupId>com.bizwell</groupId>
-    <artifactId>huge-nebula</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
+  <!--<parent>-->
+    <!--<groupId>com.bizwell</groupId>-->
+    <!--<artifactId>huge-nebula</artifactId>-->
+    <!--<version>0.0.1-SNAPSHOT</version>-->
+  <!--</parent>-->
+
+    <parent>
+        <groupId>com.bizwell</groupId>
+        <artifactId>huge-nebula</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.8</version>
+        </dependency>
+
+
+
+    </dependencies>
   
   <build>
         <plugins>
@@ -20,5 +37,6 @@
             </plugin>
         </plugins>
     </build>
-  
+
+
 </project>

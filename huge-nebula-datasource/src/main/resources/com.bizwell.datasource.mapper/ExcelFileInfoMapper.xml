@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.bizwell.mapper.ExcelFileInfoMapper">
+<mapper namespace="com.bizwell.datasource.mapper.ExcelFileInfoMapper">
 
 
     
-    <insert id="insert" parameterType="com.bizwell.entity.ExcelFileInfo">
+    <insert id="save" parameterType="com.bizwell.datasource.bean.ExcelFileInfo">
         INSERT INTO `ds_excel_file_info`
             (
              `file_code`,

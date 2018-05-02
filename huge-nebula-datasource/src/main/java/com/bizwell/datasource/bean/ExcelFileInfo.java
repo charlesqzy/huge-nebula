@@ -1,4 +1,4 @@
-package com.bizwell.entity;
+package com.bizwell.datasource.bean;
 
 /**
  * Created by liujian on 2017/9/25.

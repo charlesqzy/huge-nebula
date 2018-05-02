@@ -1,4 +1,4 @@
-package com.bizwell.web.controller;
+package com.bizwell.datasource.web.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,9 +30,8 @@ public class FileUploadController {
      * @return
      */
     @RequestMapping(value="/uploadExcel", method = RequestMethod.POST)
-    public @ResponseBody
-    String uploadExcel(@RequestParam("file") MultipartFile file,
-                       HttpServletRequest request) {
+    public @ResponseBody String uploadExcel(@RequestParam("file") MultipartFile file,
+                                          HttpServletRequest request) {
         String contentType = file.getContentType();
         String fileName = file.getOriginalFilename();
 
