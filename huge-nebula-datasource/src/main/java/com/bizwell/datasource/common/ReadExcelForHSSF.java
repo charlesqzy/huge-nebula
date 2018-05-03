@@ -34,7 +34,7 @@ public class ReadExcelForHSSF {
 
 	private static String excelHader[] = { "A", "B", "C", "D", "E", "F", "G" };
 
-	public static String readExcel(String filePath,String fileName) throws IOException {
+	public static Map readExcel(String filePath,String fileName) throws IOException {
 
 		FileInputStream fileInputStream = new FileInputStream(filePath+fileName);
 		BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
@@ -42,7 +42,10 @@ public class ReadExcelForHSSF {
 		HSSFWorkbook workbook = new HSSFWorkbook(fileSystem);
 
 		int numberOfSheets = workbook.getNumberOfSheets();
-		logger.info("numberOfSheets=" + numberOfSheets);	
+		logger.info("numberOfSheets=" + numberOfSheets);
+
+		int fileRows = 0;
+		int fileColumns = 0;
 		
 		SheetInfo[] sheets = new SheetInfo[numberOfSheets];
 		
@@ -53,6 +56,7 @@ public class ReadExcelForHSSF {
 			//HSSFSheet sheet = workbook.getSheet("Sheet1");
 			int lastRowIndex = sheet.getLastRowNum();
 			logger.info("lastRowIndex=" + lastRowIndex);
+			fileRows += lastRowIndex;
 			
 			List<XLSHaderType> typeList = new ArrayList<XLSHaderType>();
 			Map<String,String> rowCellValues;
@@ -69,12 +73,13 @@ public class ReadExcelForHSSF {
 				short lastCellNum = row.getLastCellNum();
 				rowCellValues = new HashMap<String,String>();
 				//rowCellValues = new String[lastCellNum];
+				fileColumns += lastCellNum;
 
 				for (int j = 0; j < lastCellNum; j++) {
 
 					if (i == 1) {// 取第二行数据类型
 						String type = getCellValueByCell(row.getCell(j));
-						logger.info(" type=" + type);
+						//logger.info(" type=" + type);
 						//cellType.put(excelHader[j], type);
 						typeList.add(new XLSHaderType(excelHader[j],type));
 					}
@@ -101,11 +106,12 @@ public class ReadExcelForHSSF {
 		Map xslContent = new HashMap();		
 		xslContent.put("fileName", fileName);
 		xslContent.put("sheets", sheets);
+		xslContent.put("fileRows", fileRows);
+		xslContent.put("fileColumns", fileColumns);
 
 		//generateCreateTable(typeList,contentList,filePath+fileName);
 		
-
-		return JsonUtils.toJson(xslContent);
+		return xslContent;
 	}
 
 	// 获取单元格各类型值，返回字符串类型
@@ -151,32 +157,58 @@ public class ReadExcelForHSSF {
 	}
 
 	// 动态创建表
-	private static String generateCreateTable(List<XLSHaderType> typeList,List<Map<String, String>> contentList, String filePath) {
+	public static String generateCreateTable(List<XLSHaderType> typeList,List<Map<String, String>> contentList, String filePath) {
 		//获取文件hash值
 		String md5Hashcode = FileMD5Util.getFileMD5(new File(filePath));
 		logger.info("filePath = "+filePath + "  md5Hashcode="+md5Hashcode);		
 		String tableName = "xls_"+md5Hashcode;
 		
-		StringBuffer sql = new StringBuffer();
-		sql.append("create table ").append(tableName).append("(");		
+		StringBuffer createSql = new StringBuffer();
+		createSql.append("create table ").append(tableName).append("(");		
 		for(XLSHaderType type : typeList){			
-			sql.append(type.getProp());
-			if("string".equals(type.getType())){
-				sql.append(" varchar(100) ,");
-			}else if("numeric".equals(type.getType())){
-				sql.append(" double ,");
-			}	
+			createSql.append(type.getProp());
+			createSql.append(" varchar(200) ,");
+//			if("string".equals(type.getType())){
+//				createSql.append(" varchar(100) ,");
+//			}else if("numeric".equals(type.getType())){
+//				createSql.append(" double ,");
+//			}	
 		}
-		//删除最后一个都好
-		sql.delete(sql.lastIndexOf(","), sql.lastIndexOf(",")+1);
-		sql.append(")");
+		//删除最后一个逗号
+		createSql.delete(createSql.lastIndexOf(","), createSql.lastIndexOf(",")+1);
+		createSql.append(")");		
+		logger.info("createSql ==== "+ createSql);
 		
-		logger.info("create table sql ==== "+ sql);
+		
+		StringBuffer insertSql = new StringBuffer();
+		insertSql.append(" insert into ").append(tableName);
+		insertSql.append(" values  ");
+		for(Map<String,String> map : contentList){
+			insertSql.append("(");
+			for(int i = 0;i< map.size();i++){
+				insertSql.append("'").append(map.get(excelHader[i])).append("',");
+			}
+			insertSql.delete(insertSql.lastIndexOf(","), insertSql.lastIndexOf(",")+1);
+			insertSql.append("),");
+		}		
+		insertSql.delete(insertSql.lastIndexOf(","), insertSql.lastIndexOf(",")+1);
+		logger.info("insertSql ==== "+ insertSql);
+		
+		
+		
 		return "";
 	}
 
 	public static void main(String[] args) throws IOException {
-		String result = new ReadExcelForHSSF().readExcel("D:\\","test.xls");
-		System.out.println(result);
+		String filePath = "D:\\";
+		String fileName = "test.xls";
+		
+		Map xlsContent = new ReadExcelForHSSF().readExcel(filePath,fileName);
+		
+		//动态创建mysql表，插入数据		
+		ReadExcelForHSSF.generateCreateTable(((SheetInfo[]) xlsContent.get("sheets"))[0].getTypeList(),
+				((SheetInfo[]) xlsContent.get("sheets"))[0].getContentList(), filePath + fileName);
+		
+		System.out.println(JsonUtils.toJson(xlsContent));
 	}
 }
