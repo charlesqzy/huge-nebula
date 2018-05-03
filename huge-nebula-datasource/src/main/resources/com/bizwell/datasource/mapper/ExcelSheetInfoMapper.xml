@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bizwell.datasource.mapper.ExcelSheetInfoMapper">
+
+	<resultMap id="BaseResultMap" type="com.bizwell.datasource.bean.ExcelSheetInfo">
+		<id column="id" property="id" />
+		<result column="excel_file_id" property="excelFileId" />
+		<result column="sheet_name" property="sheetName" jdbcType="VARCHAR" />
+		<result column="folder_id" property="folderId" jdbcType="VARCHAR" />
+		<result column="category_flag" property="categoryFlag"
+			jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="table_name" property="tableName" jdbcType="VARCHAR" />
+		<result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+		<result column="user_id" property="userId" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+
+	<insert id="save" parameterType="com.bizwell.datasource.bean.ExcelSheetInfo">
+		INSERT INTO
+		`nebula`.`ds_excel_sheet_info`
+		(
+		`excel_file_id`,
+		`sheet_name`,
+		`folder_id`,
+		`category_flag`,
+		`remark`,
+		`table_name`,
+		`update_time`,
+		`user_id`)
+		VALUES (
+		#{excelFileId},
+		#{sheetName},
+		#{folderId},
+		#{categoryFlag},
+		#{remark},
+		#{tableName},
+		#{updateTime},
+		#{userId});
+	</insert>
+
+
+
+	<select id="select" parameterType="com.bizwell.datasource.bean.ExcelSheetInfo"
+		resultMap="BaseResultMap">
+		SELECT
+		`id`,
+		`excel_file_id`,
+		`sheet_name`,
+		`folder_id`,
+		`category_flag`,
+		`remark`,
+		`table_name`,
+		DATE_FORMAT(update_time,'%Y-%m-%d') AS update_time,
+		`user_id`
+		FROM
+		`ds_excel_sheet_info`
+		<where>
+			<if test="null != id">
+				and id = #{id}
+			</if>
+			<if test="null != sheetName">
+				and sheet_name like concat(concat('%', #{sheetName}),
+				'%')
+			</if>
+		</where>
+	</select>
+
+
+</mapper>
