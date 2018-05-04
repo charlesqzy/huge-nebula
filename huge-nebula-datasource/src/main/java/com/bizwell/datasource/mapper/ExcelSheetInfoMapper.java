@@ -10,7 +10,7 @@ import com.bizwell.datasource.bean.ExcelSheetInfo;
  */
 public interface ExcelSheetInfoMapper {
 
-    void save(ExcelSheetInfo entity);
+	Integer save(ExcelSheetInfo entity);
     
     List<ExcelSheetInfo> select(ExcelSheetInfo entity);
     

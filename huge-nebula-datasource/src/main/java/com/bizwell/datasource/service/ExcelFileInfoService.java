@@ -1,5 +1,7 @@
 package com.bizwell.datasource.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,5 +17,10 @@ public class ExcelFileInfoService {
 	
 	public void save(ExcelFileInfo entity){
 		excelFileInfoMapper.save(entity);
+	}
+	
+	
+	public List<ExcelFileInfo> select(ExcelFileInfo entity){
+		return excelFileInfoMapper.select(entity);
 	}
 }

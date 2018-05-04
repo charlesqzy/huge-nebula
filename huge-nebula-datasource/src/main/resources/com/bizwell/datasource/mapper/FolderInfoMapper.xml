@@ -12,7 +12,12 @@
 	</resultMap>
 
 
-	<insert id="save" parameterType="com.bizwell.datasource.bean.FolderInfo">
+	<insert id="save" parameterType="com.bizwell.datasource.bean.FolderInfo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="java.lang.Long">
+			select
+			LAST_INSERT_ID()
+		</selectKey>
 		INSERT INTO `gb_folder_info`
 		(
 		`user_id`,
@@ -29,7 +34,8 @@
 	</insert>
 
 
-	<select id="select" parameterType="com.bizwell.datasource.bean.FolderInfo" resultMap="BaseResultMap">
+	<select id="select" parameterType="com.bizwell.datasource.bean.FolderInfo"
+		resultMap="BaseResultMap">
 		SELECT
 		`id`,
 		`user_id`,
@@ -43,10 +49,11 @@
 				and id = #{id}
 			</if>
 			<if test="null != folderName">
-				and folder_name like concat(concat('%', #{folderName}), '%')
+				and folder_name like concat(concat('%', #{folderName}),
+				'%')
 			</if>
 		</where>
 	</select>
-	
-	
+
+
 </mapper>

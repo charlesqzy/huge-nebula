@@ -11,7 +11,7 @@ import com.bizwell.datasource.bean.FolderInfo;
  */
 public interface FolderInfoMapper {
 
-	void save(FolderInfo entity);
+	Integer save(FolderInfo entity);
     
     List<FolderInfo> select(FolderInfo entity);
     

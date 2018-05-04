@@ -17,7 +17,12 @@
 
 
 
-	<insert id="save" parameterType="com.bizwell.datasource.bean.ExcelSheetInfo">
+	<insert id="save" parameterType="com.bizwell.datasource.bean.ExcelSheetInfo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="java.lang.Long">
+			select
+			LAST_INSERT_ID()
+		</selectKey>
 		INSERT INTO
 		`nebula`.`ds_excel_sheet_info`
 		(
@@ -52,7 +57,8 @@
 		`category_flag`,
 		`remark`,
 		`table_name`,
-		DATE_FORMAT(update_time,'%Y-%m-%d') AS update_time,
+		DATE_FORMAT(update_time,'%Y-%m-%d') AS
+		update_time,
 		`user_id`
 		FROM
 		`ds_excel_sheet_info`

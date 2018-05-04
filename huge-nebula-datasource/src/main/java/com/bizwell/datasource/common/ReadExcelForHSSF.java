@@ -55,7 +55,7 @@ public class ReadExcelForHSSF {
 			String sheetName = sheet.getSheetName();
 			//HSSFSheet sheet = workbook.getSheet("Sheet1");
 			int lastRowIndex = sheet.getLastRowNum();
-			logger.info("lastRowIndex=" + lastRowIndex);
+			logger.info("sheetName== "+sheetName+"   lastRowIndex=" + lastRowIndex);
 			fileRows += lastRowIndex;
 			
 			List<XLSHaderType> typeList = new ArrayList<XLSHaderType>();
