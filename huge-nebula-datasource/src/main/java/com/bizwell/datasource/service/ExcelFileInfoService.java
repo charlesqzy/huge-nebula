@@ -15,8 +15,8 @@ public class ExcelFileInfoService {
 	private ExcelFileInfoMapper excelFileInfoMapper;
 	
 	
-	public void save(ExcelFileInfo entity){
-		excelFileInfoMapper.save(entity);
+	public Integer save(ExcelFileInfo entity){
+		return excelFileInfoMapper.save(entity);
 	}
 	
 	

@@ -15,8 +15,8 @@ public class FolderInfoService {
 	private FolderInfoMapper folderInfoMapper;
 	
 	
-	public void save(FolderInfo entity){
-		folderInfoMapper.save(entity);
+	public Integer save(FolderInfo entity){
+		return folderInfoMapper.save(entity);
 	}
 	
 	

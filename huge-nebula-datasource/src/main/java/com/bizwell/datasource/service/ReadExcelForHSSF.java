@@ -1,4 +1,4 @@
-package com.bizwell.datasource.common;
+package com.bizwell.datasource.service;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -6,11 +6,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.filechooser.FileSystemView;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -21,9 +18,12 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bizwell.datasource.bean.SheetInfo;
 import com.bizwell.datasource.bean.XLSHaderType;
+import com.bizwell.datasource.bean.XlsContent;
+import com.bizwell.datasource.common.JsonUtils;
 
 /**
  * excel解析
@@ -31,10 +31,15 @@ import com.bizwell.datasource.bean.XLSHaderType;
  */
 public class ReadExcelForHSSF {
 	private static Logger logger = LoggerFactory.getLogger(ReadExcelForHSSF.class);
-
+	
 	private static String excelHader[] = { "A", "B", "C", "D", "E", "F", "G" };
+	
+	
+	@Autowired
+	private JDBCService jdbcService;
+	
 
-	public static Map readExcel(String filePath,String fileName) throws IOException {
+	public XlsContent readExcel(String filePath,String fileName) throws IOException {
 
 		FileInputStream fileInputStream = new FileInputStream(filePath+fileName);
 		BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
@@ -103,13 +108,16 @@ public class ReadExcelForHSSF {
 		bufferedInputStream.close();
 
 		
-		Map xslContent = new HashMap();		
-		xslContent.put("fileName", fileName);
-		xslContent.put("sheets", sheets);
-		xslContent.put("fileRows", fileRows);
-		xslContent.put("fileColumns", fileColumns);
-
-		//generateCreateTable(typeList,contentList,filePath+fileName);
+//		Map xslContent = new HashMap();		
+//		xslContent.put("fileName", fileName);
+//		xslContent.put("sheets", sheets);
+//		xslContent.put("fileRows", fileRows);
+//		xslContent.put("fileColumns", fileColumns);
+		XlsContent xslContent = new XlsContent();
+		xslContent.setFileName(fileName);
+		xslContent.setSheets(sheets);
+		xslContent.setFileRows(fileRows);
+		xslContent.setFileColumns(fileColumns);
 		
 		return xslContent;
 	}
@@ -157,22 +165,22 @@ public class ReadExcelForHSSF {
 	}
 
 	// 动态创建表
-	public static String generateCreateTable(List<XLSHaderType> typeList,List<Map<String, String>> contentList, String filePath) {
+	public String generateCreateTable(List<XLSHaderType> typeList,List<Map<String, String>> contentList, String md5Hashcode) {
 		//获取文件hash值
-		String md5Hashcode = FileMD5Util.getFileMD5(new File(filePath));
-		logger.info("filePath = "+filePath + "  md5Hashcode="+md5Hashcode);		
+		//String md5Hashcode = FileMD5Util.getFileMD5(new File(filePath));
+//		logger.info("filePath = "+filePath + "  md5Hashcode="+md5Hashcode);		
 		String tableName = "xls_"+md5Hashcode;
 		
 		StringBuffer createSql = new StringBuffer();
 		createSql.append("create table ").append(tableName).append("(");		
 		for(XLSHaderType type : typeList){			
 			createSql.append(type.getProp());
-			createSql.append(" varchar(200) ,");
-//			if("string".equals(type.getType())){
-//				createSql.append(" varchar(100) ,");
-//			}else if("numeric".equals(type.getType())){
-//				createSql.append(" double ,");
-//			}	
+//			createSql.append(" varchar(200) ,");
+			if("string".equals(type.getType())){
+				createSql.append(" varchar(100) ,");
+			}else if("numeric".equals(type.getType())){
+				createSql.append(" double ,");
+			}	
 		}
 		//删除最后一个逗号
 		createSql.delete(createSql.lastIndexOf(","), createSql.lastIndexOf(",")+1);
@@ -183,7 +191,8 @@ public class ReadExcelForHSSF {
 		StringBuffer insertSql = new StringBuffer();
 		insertSql.append(" insert into ").append(tableName);
 		insertSql.append(" values  ");
-		for(Map<String,String> map : contentList){
+		for (int k = 1; k < contentList.size(); k++) {
+			Map<String,String> map = contentList.get(k);
 			insertSql.append("(");
 			for(int i = 0;i< map.size();i++){
 				insertSql.append("'").append(map.get(excelHader[i])).append("',");
@@ -195,20 +204,22 @@ public class ReadExcelForHSSF {
 		logger.info("insertSql ==== "+ insertSql);
 		
 		
+		jdbcService.executeSql(createSql.toString());
+		jdbcService.executeSql(insertSql.toString());
 		
 		return "";
 	}
-
+/*
 	public static void main(String[] args) throws IOException {
 		String filePath = "D:\\";
 		String fileName = "test.xls";
 		
-		Map xlsContent = new ReadExcelForHSSF().readExcel(filePath,fileName);
+		XlsContent xlsContent = new ReadExcelForHSSF().readExcel(filePath,fileName);
 		
 		//动态创建mysql表，插入数据		
-		ReadExcelForHSSF.generateCreateTable(((SheetInfo[]) xlsContent.get("sheets"))[0].getTypeList(),
-				((SheetInfo[]) xlsContent.get("sheets"))[0].getContentList(), filePath + fileName);
+		ReadExcelForHSSF.generateCreateTable(xlsContent.getSheets()[0].getTypeList(),
+				xlsContent.getSheets()[0].getContentList(), filePath + fileName);
 		
 		System.out.println(JsonUtils.toJson(xlsContent));
-	}
+	}*/
 }

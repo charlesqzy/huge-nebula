@@ -3,8 +3,6 @@ package com.bizwell.datasource.web.controller;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,21 +17,26 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bizwell.datasource.bean.ExcelFileInfo;
-import com.bizwell.datasource.bean.XLSHaderType;
+import com.bizwell.datasource.bean.XlsContent;
+import com.bizwell.datasource.common.FileMD5Util;
 import com.bizwell.datasource.common.JsonUtils;
-import com.bizwell.datasource.common.ReadExcelForHSSF;
 import com.bizwell.datasource.service.ExcelFileInfoService;
+import com.bizwell.datasource.service.JDBCService;
+import com.bizwell.datasource.service.ReadExcelForHSSF;
+import com.bizwell.datasource.web.BaseController;
 
 /**
  * 文件上传的Controller Created by liujian on 2018/4/27.
  */
 @Controller
-public class FileUploadController {
+public class ExcelFileUploadController extends BaseController {
 
-	private static Logger logger = LoggerFactory.getLogger(FileUploadController.class);
+	private static Logger logger = LoggerFactory.getLogger(ExcelFileUploadController.class);
 
 	@Autowired
 	private ExcelFileInfoService excelFileInfoService;
+	
+
 
 	/**
 	 * 文件上传具体实现方法（单文件上传）
@@ -55,31 +58,39 @@ public class FileUploadController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		//获取文件hash值
+		String md5Hashcode = FileMD5Util.getFileMD5(new File(filePath+fileName));
+		
+		ReadExcelForHSSF readExcelForHSSF = new ReadExcelForHSSF();
 
-		Map xlsContent = null;
+		XlsContent xlsContent = null;
 		try {
-			xlsContent = ReadExcelForHSSF.readExcel(filePath, fileName);
+			xlsContent = readExcelForHSSF.readExcel(filePath, fileName);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		ExcelFileInfo entity = new ExcelFileInfo();
-		// entity.setFileCode(fileCode);
+		entity.setFileCode(md5Hashcode);
 		entity.setFileName(fileName);
 		entity.setFilePath(filePath);
 		// entity.setFileSize(fileSize);
-		entity.setFileRows((Integer) xlsContent.get("fileRows"));
-		entity.setFileColumns((Integer) xlsContent.get("fileColumns"));
+		entity.setFileRows((Integer) xlsContent.getFileRows());
+		entity.setFileColumns((Integer) xlsContent.getFileColumns());		
 		// entity.setUserId(userId);
 		excelFileInfoService.save(entity);
-
-		
-		
+		xlsContent.setExcelFileId(entity.getId());
+		xlsContent.setFileCode(md5Hashcode);
 
 		logger.info("content=" + JsonUtils.toJson(xlsContent));
+
+
 		// 返回json
 		return JsonUtils.toJson(xlsContent);
 	}
+	
+	
 
 	public static void uploadFile(byte[] file, String filePath, String fileName) throws Exception {
 		File targetFile = new File(filePath);

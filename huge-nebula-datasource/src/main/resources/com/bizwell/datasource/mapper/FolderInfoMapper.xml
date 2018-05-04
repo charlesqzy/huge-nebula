@@ -13,8 +13,8 @@
 
 
 	<insert id="save" parameterType="com.bizwell.datasource.bean.FolderInfo"
-		useGeneratedKeys="true" keyProperty="id">
-		<selectKey keyProperty="id" resultType="java.lang.Long">
+		useGeneratedKeys="true" keyProperty="id" >
+		<selectKey keyProperty="id" resultType="java.lang.Integer">
 			select
 			LAST_INSERT_ID()
 		</selectKey>

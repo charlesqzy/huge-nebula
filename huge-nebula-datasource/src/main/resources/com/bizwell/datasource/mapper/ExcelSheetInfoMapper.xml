@@ -19,12 +19,12 @@
 
 	<insert id="save" parameterType="com.bizwell.datasource.bean.ExcelSheetInfo"
 		useGeneratedKeys="true" keyProperty="id">
-		<selectKey keyProperty="id" resultType="java.lang.Long">
+		<selectKey keyProperty="id" resultType="java.lang.Integer">
 			select
 			LAST_INSERT_ID()
 		</selectKey>
 		INSERT INTO
-		`nebula`.`ds_excel_sheet_info`
+		`ds_excel_sheet_info`
 		(
 		`excel_file_id`,
 		`sheet_name`,
