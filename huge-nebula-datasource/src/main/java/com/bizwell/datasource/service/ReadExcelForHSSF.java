@@ -214,15 +214,15 @@ public class ReadExcelForHSSF {
 	public String generateMetadataSQL(List<XLSHaderType> typeList, List<Map<String, String>> contentList,
 			Integer sheetId) {
 
-		String fieldType=" varchar(200) ";
+		int fieldType=2;
 		for (XLSHaderType type : typeList) {
 			
 			if ("string".equals(type.getType())) {
-				fieldType =" varchar(100) ";
+				fieldType =2;
 			} else if ("date".equals(type.getType())) {
-				fieldType =" timestamp ";
+				fieldType =2;
 			} else if ("numeric".equals(type.getType())) {
-				fieldType = " double ";
+				fieldType = 1;
 			}
 		}
 		

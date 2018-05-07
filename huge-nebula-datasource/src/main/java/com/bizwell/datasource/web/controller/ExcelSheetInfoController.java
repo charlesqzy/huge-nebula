@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.bizwell.datasource.bean.ExcelSheetInfo;
 import com.bizwell.datasource.bean.FolderInfo;
 import com.bizwell.datasource.bean.SheetInfo;
+import com.bizwell.datasource.bean.SheetLog;
 import com.bizwell.datasource.bean.XlsContent;
 import com.bizwell.datasource.common.JsonUtils;
 import com.bizwell.datasource.json.ResponseJson;
@@ -26,6 +27,7 @@ import com.bizwell.datasource.service.ExcelSheetInfoService;
 import com.bizwell.datasource.service.FolderInfoService;
 import com.bizwell.datasource.service.JDBCService;
 import com.bizwell.datasource.service.ReadExcelForHSSF;
+import com.bizwell.datasource.service.SheetLogService;
 import com.bizwell.datasource.web.BaseController;
 
 /**
@@ -45,6 +47,9 @@ public class ExcelSheetInfoController extends BaseController {
 		
 	@Autowired
 	private ReadExcelForHSSF readExcelForHSSF;
+	
+	@Autowired
+	private SheetLogService sheetLogService;
 
 	@Autowired
 	private JDBCService jdbcService;
@@ -60,14 +65,12 @@ public class ExcelSheetInfoController extends BaseController {
     	String filePath = request.getSession().getServletContext().getRealPath("excelfile/");
 		logger.info("filePath=" + filePath);
 
-    	ExcelSheetInfo excelSheetInfo = null;    	
+    	ExcelSheetInfo excelSheetInfo = null;
+    	SheetLog sheetLog= null;
     	
+    	String dateStr = new SimpleDateFormat("yyMMddHHmmss").format(new Date());    	
+    	int i = 1;    	
     	SheetInfo[] sheets = xlsContent.getSheets();
-    	
-    	
-    	String dateStr = new SimpleDateFormat("yyMMddHHmmss").format(new Date());
-    	
-    	int i = 1;
     	
     	for(SheetInfo sheet : sheets){    		
         	String tableName = "xls_"+ dateStr+"_sheet"+ i++ +"_"+xlsContent.getFileCode();
@@ -94,7 +97,17 @@ public class ExcelSheetInfoController extends BaseController {
         	jdbcService.executeSql(createSql);
         	jdbcService.executeSql(metadataSQL);
         	jdbcService.executeSql(insertSQL);
+        	
+        	
+        	sheetLog = new SheetLog();
+        	sheetLog.setSheetId(excelSheetInfo.getId());
+        	sheetLog.setUpdateTime(new Date());
+        	sheetLog.setUpdateLog("new sheet ");
+        	sheetLogService.save(sheetLog);
     	}
+    	
+    	
+
     	
     	Map result = new HashMap();
     	result.put("excelSheetInfo", excelSheetInfo);
@@ -105,20 +118,11 @@ public class ExcelSheetInfoController extends BaseController {
     
     @RequestMapping(value = "/datasource/getSheet")
     @ResponseBody
-    public ResponseJson getSheet(String sheetName) {
-    	
+    public ResponseJson getSheet(String sheetName) {    	
     	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo();    	
-    	
-//    	excelSheetInfo.setExcelFileId(excelFileId);
     	excelSheetInfo.setSheetName(sheetName);
-//    	excelSheetInfo.setFolderId(folderId);
-//    	excelSheetInfo.setCategoryFlag(categoryFlag);
-//    	excelSheetInfo.setRemark(remark);
-//    	excelSheetInfo.setTableName(tableName);
     	excelSheetInfo.setUpdateTime(new Date());
-//    	excelSheetInfo.setUserId(userId);    	
-    	List<ExcelSheetInfo> list = excelSheetInfoService.select(excelSheetInfo);
-    	
+    	List<ExcelSheetInfo> list = excelSheetInfoService.select(excelSheetInfo);    	
     	return new ResponseJson(200l,"success",list);
     }
     
@@ -127,16 +131,8 @@ public class ExcelSheetInfoController extends BaseController {
     @ResponseBody
     public ResponseJson getSheetByFolderId(Integer folderId) {
     	
-    	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo();    	
-    	
-//    	excelSheetInfo.setExcelFileId(excelFileId);
-//    	excelSheetInfo.setSheetName(sheetName);
+    	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo(); 
     	excelSheetInfo.setFolderId(folderId);
-//    	excelSheetInfo.setCategoryFlag(categoryFlag);
-//    	excelSheetInfo.setRemark(remark);
-//    	excelSheetInfo.setTableName(tableName);
-    	excelSheetInfo.setUpdateTime(new Date());
-//    	excelSheetInfo.setUserId(userId);    	
     	List<ExcelSheetInfo> list = excelSheetInfoService.select(excelSheetInfo);
     	
     	return new ResponseJson(200l,"success",list);
@@ -163,7 +159,7 @@ public class ExcelSheetInfoController extends BaseController {
     @ResponseBody
     public ResponseJson createFolder(String folderName) {
 
-    	FolderInfo folderInfo = new FolderInfo();    	
+    	FolderInfo folderInfo = new FolderInfo();
     	folderInfo.setUserId(1);
     	folderInfo.setFolderName(folderName);
     	folderInfo.setFolderType(2);
