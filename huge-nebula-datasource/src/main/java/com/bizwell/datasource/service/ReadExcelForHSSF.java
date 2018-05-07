@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -19,6 +21,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.bizwell.datasource.bean.SheetInfo;
 import com.bizwell.datasource.bean.XLSHaderType;
@@ -29,14 +32,13 @@ import com.bizwell.datasource.common.JsonUtils;
  * excel解析
  * Created by liujian on 2018/4/28.
  */
+@Service
 public class ReadExcelForHSSF {
 	private static Logger logger = LoggerFactory.getLogger(ReadExcelForHSSF.class);
 	
 	private static String excelHader[] = { "A", "B", "C", "D", "E", "F", "G" };
 	
-	
-	@Autowired
-	private JDBCService jdbcService;
+
 	
 
 	public XlsContent readExcel(String filePath,String fileName) throws IOException {
@@ -165,17 +167,13 @@ public class ReadExcelForHSSF {
 	}
 
 	// 动态创建表
-	public String generateCreateTable(List<XLSHaderType> typeList,List<Map<String, String>> contentList, String md5Hashcode) {
-		//获取文件hash值
-		//String md5Hashcode = FileMD5Util.getFileMD5(new File(filePath));
-//		logger.info("filePath = "+filePath + "  md5Hashcode="+md5Hashcode);		
-		String tableName = "xls_"+md5Hashcode;
+	public String generateCreateTableSQL(List<XLSHaderType> typeList,List<Map<String, String>> contentList, String tableName) {
+
 		
 		StringBuffer createSql = new StringBuffer();
 		createSql.append("create table ").append(tableName).append("(");		
 		for(XLSHaderType type : typeList){			
 			createSql.append(type.getProp());
-//			createSql.append(" varchar(200) ,");
 			if("string".equals(type.getType())){
 				createSql.append(" varchar(100) ,");
 			}else if("numeric".equals(type.getType())){
@@ -187,7 +185,29 @@ public class ReadExcelForHSSF {
 		createSql.append(")");		
 		logger.info("createSql ==== "+ createSql);
 		
+		return createSql.toString();
+	}
+	
+	
+	// 动态插入元数据
+	public String generateMetadataSQL(List<XLSHaderType> typeList,List<Map<String, String>> contentList, Integer sheetId) {
 		
+		StringBuffer metadataSQL = new StringBuffer();
+		Map<String,String> headerMap = contentList.get(0);
+		metadataSQL.append("insert into ds_sheet_metadata(sheet_id,field_name_old,field_name_new,field_type,field_comment,is_visible) values ");
+		for(int i = 0;i< headerMap.size();i++){
+			metadataSQL.append("('"+sheetId+"','"+headerMap.get(excelHader[i])+"','field_name_new','1','field_comment','1'),");
+		}		
+		metadataSQL.delete(metadataSQL.lastIndexOf(","), metadataSQL.lastIndexOf(",")+1);
+		logger.info("metadataSQL ==== "+ metadataSQL);
+		
+		return metadataSQL.toString();
+	}
+	
+	
+	
+	// 动态插入数据
+	public String generateInsertTableSQL(List<Map<String, String>> contentList, String tableName) {		
 		StringBuffer insertSql = new StringBuffer();
 		insertSql.append(" insert into ").append(tableName);
 		insertSql.append(" values  ");
@@ -203,12 +223,13 @@ public class ReadExcelForHSSF {
 		insertSql.delete(insertSql.lastIndexOf(","), insertSql.lastIndexOf(",")+1);
 		logger.info("insertSql ==== "+ insertSql);
 		
-		
-		jdbcService.executeSql(createSql.toString());
-		jdbcService.executeSql(insertSql.toString());
-		
-		return "";
+		return insertSql.toString();
 	}
+	
+	
+	
+	
+	
 /*
 	public static void main(String[] args) throws IOException {
 		String filePath = "D:\\";

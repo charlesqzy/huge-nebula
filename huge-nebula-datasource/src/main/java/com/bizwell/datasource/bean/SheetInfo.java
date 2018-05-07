@@ -7,7 +7,18 @@ public class SheetInfo {
 	private String sheetName;
 	private List<XLSHaderType> typeList;
 	List<Map<String, String>> contentList;
+	private Integer folderId;
 	
+	
+	
+
+	public Integer getFolderId() {
+		return folderId;
+	}
+
+	public void setFolderId(Integer folderId) {
+		this.folderId = folderId;
+	}
 
 	public SheetInfo() {
 		super();

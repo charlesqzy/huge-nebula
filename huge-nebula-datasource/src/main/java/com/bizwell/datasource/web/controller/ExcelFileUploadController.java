@@ -37,6 +37,8 @@ public class ExcelFileUploadController extends BaseController {
 	private ExcelFileInfoService excelFileInfoService;
 	
 
+	@Autowired
+	private ReadExcelForHSSF readExcelForHSSF;
 
 	/**
 	 * 文件上传具体实现方法（单文件上传）
@@ -62,7 +64,7 @@ public class ExcelFileUploadController extends BaseController {
 		//获取文件hash值
 		String md5Hashcode = FileMD5Util.getFileMD5(new File(filePath+fileName));
 		
-		ReadExcelForHSSF readExcelForHSSF = new ReadExcelForHSSF();
+	
 
 		XlsContent xlsContent = null;
 		try {

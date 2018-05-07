@@ -1,7 +1,7 @@
 package com.bizwell.datasource.bean;
 
 public class XlsContent {
-	private Integer folderId;
+
 	private String fileName;
 	private String fileCode;
 	private SheetInfo[] sheets;
@@ -18,12 +18,7 @@ public class XlsContent {
 	public void setFileCode(String fileCode) {
 		this.fileCode = fileCode;
 	}
-	public Integer getFolderId() {
-		return folderId;
-	}
-	public void setFolderId(Integer folderId) {
-		this.folderId = folderId;
-	}
+
 	public Integer getExcelFileId() {
 		return excelFileId;
 	}

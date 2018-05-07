@@ -1,6 +1,6 @@
 package com.bizwell.datasource.web.controller;
 
-import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -20,10 +20,10 @@ import com.bizwell.datasource.bean.ExcelSheetInfo;
 import com.bizwell.datasource.bean.FolderInfo;
 import com.bizwell.datasource.bean.SheetInfo;
 import com.bizwell.datasource.bean.XlsContent;
-import com.bizwell.datasource.common.FileMD5Util;
 import com.bizwell.datasource.json.ResponseJson;
 import com.bizwell.datasource.service.ExcelSheetInfoService;
 import com.bizwell.datasource.service.FolderInfoService;
+import com.bizwell.datasource.service.JDBCService;
 import com.bizwell.datasource.service.ReadExcelForHSSF;
 import com.bizwell.datasource.web.BaseController;
 
@@ -41,7 +41,12 @@ public class ExcelSheetInfoController extends BaseController {
 	
 	@Autowired
 	private FolderInfoService folderInfoService;
-	
+		
+	@Autowired
+	private ReadExcelForHSSF readExcelForHSSF;
+
+	@Autowired
+	private JDBCService jdbcService;
 	
 	/**
 	 * 创建sheet
@@ -58,26 +63,37 @@ public class ExcelSheetInfoController extends BaseController {
     	
     	SheetInfo[] sheets = xlsContent.getSheets();
     	
-    	for(SheetInfo sheet : sheets){
+    	
+    	String dateStr = new SimpleDateFormat("yyMMddHHmmss").format(new Date());
+    	
+    	int i = 1;
+    	
+    	for(SheetInfo sheet : sheets){    		
+        	String tableName = "xls_"+ dateStr+"_sheet"+ i++ +"_"+xlsContent.getFileCode();
+    		//动态创建mysql，插入数据    	        	
+    		
     		excelSheetInfo = new ExcelSheetInfo();
         	excelSheetInfo.setExcelFileId(xlsContent.getExcelFileId());    		
         	excelSheetInfo.setSheetName(sheet.getSheetName());
-        	excelSheetInfo.setFolderId(xlsContent.getFolderId());
+        	excelSheetInfo.setFolderId(sheet.getFolderId());
 //        	excelSheetInfo.setCategoryFlag(categoryFlag);
 //        	excelSheetInfo.setRemark(remark);
-//        	excelSheetInfo.setTableName(tableName);
+        	excelSheetInfo.setTableName(tableName);
         	excelSheetInfo.setUpdateTime(new Date());
 //        	excelSheetInfo.setUserId(userId);
         	excelSheetInfoService.save(excelSheetInfo);
+
+        	String createSql=readExcelForHSSF.generateCreateTableSQL(sheet.getTypeList(),
+        			sheet.getContentList(),tableName);
+        	String metadataSQL=readExcelForHSSF.generateMetadataSQL(sheet.getTypeList(),
+        			sheet.getContentList(),excelSheetInfo.getId());    
+        	String insertSQL=readExcelForHSSF.generateInsertTableSQL(
+        			sheet.getContentList(),tableName);
+        	
+        	jdbcService.executeSql(createSql);
+        	jdbcService.executeSql(metadataSQL);
+        	jdbcService.executeSql(insertSQL);
     	}
-    	
-
-    	
-		//动态创建mysql表，插入数据
-    	ReadExcelForHSSF readExcelForHSSF = new ReadExcelForHSSF();
-    	readExcelForHSSF.generateCreateTable(xlsContent.getSheets()[0].getTypeList(),
-				xlsContent.getSheets()[0].getContentList(), "testaaaa");
-
     	
     	Map result = new HashMap();
     	result.put("excelSheetInfo", excelSheetInfo);
