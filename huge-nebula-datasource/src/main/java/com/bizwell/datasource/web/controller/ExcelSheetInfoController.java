@@ -20,6 +20,7 @@ import com.bizwell.datasource.bean.ExcelSheetInfo;
 import com.bizwell.datasource.bean.FolderInfo;
 import com.bizwell.datasource.bean.SheetInfo;
 import com.bizwell.datasource.bean.XlsContent;
+import com.bizwell.datasource.common.JsonUtils;
 import com.bizwell.datasource.json.ResponseJson;
 import com.bizwell.datasource.service.ExcelSheetInfoService;
 import com.bizwell.datasource.service.FolderInfoService;
@@ -121,6 +122,35 @@ public class ExcelSheetInfoController extends BaseController {
     	return new ResponseJson(200l,"success",list);
     }
     
+    
+    @RequestMapping(value = "/datasource/getSheetByFolderId")
+    @ResponseBody
+    public ResponseJson getSheetByFolderId(Integer folderId) {
+    	
+    	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo();    	
+    	
+//    	excelSheetInfo.setExcelFileId(excelFileId);
+//    	excelSheetInfo.setSheetName(sheetName);
+    	excelSheetInfo.setFolderId(folderId);
+//    	excelSheetInfo.setCategoryFlag(categoryFlag);
+//    	excelSheetInfo.setRemark(remark);
+//    	excelSheetInfo.setTableName(tableName);
+    	excelSheetInfo.setUpdateTime(new Date());
+//    	excelSheetInfo.setUserId(userId);    	
+    	List<ExcelSheetInfo> list = excelSheetInfoService.select(excelSheetInfo);
+    	
+    	return new ResponseJson(200l,"success",list);
+    }
+    
+    
+    @RequestMapping(value = "/datasource/getSheetDataByTableName")
+    @ResponseBody
+    public ResponseJson getSheetDataByTableName(String tableName) {
+    	logger.info("getSheetDataByTableName.tableName=   "  +tableName);
+    	List<Map> list = excelSheetInfoService.getSheetDataByTableName(tableName);    	
+    	logger.info("JsonUtils.toJson(list) =   "  + JsonUtils.toJson(list));
+    	return new ResponseJson(200l,"success",list);
+    }
     
     
     

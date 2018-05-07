@@ -1,6 +1,9 @@
 package com.bizwell.datasource.mapper;
 
 import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
 
 import com.bizwell.datasource.bean.ExcelSheetInfo;
 
@@ -15,4 +18,5 @@ public interface ExcelSheetInfoMapper {
     List<ExcelSheetInfo> select(ExcelSheetInfo entity);
     
     
+    List<Map> getSheetDataByTableName(@Param("tableName") String tableName);
 }
