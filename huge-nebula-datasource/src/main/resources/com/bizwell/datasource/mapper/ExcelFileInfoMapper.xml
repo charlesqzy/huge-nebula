@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bizwell.datasource.mapper.ExcelFileInfoMapper">
-	<resultMap id="BaseResultMap" type="com.bizwell.datasource.bean.FolderInfo">
+	<resultMap id="BaseResultMap" type="com.bizwell.datasource.bean.ExcelFileInfo">
 		<id column="id" property="id" />
 		<result column="file_code" property="fileCode" />
 		<result column="file_name" property="fileName" jdbcType="VARCHAR" />
@@ -14,9 +14,10 @@
 
 
 	<insert id="save" parameterType="com.bizwell.datasource.bean.ExcelFileInfo"
-		useGeneratedKeys="true" keyProperty="id" >
+		useGeneratedKeys="true" keyProperty="id">
 		<selectKey keyProperty="id" resultType="java.lang.Integer">
-			select LAST_INSERT_ID()
+			select
+			LAST_INSERT_ID()
 		</selectKey>
 		INSERT INTO `ds_excel_file_info`
 		(
@@ -52,5 +53,17 @@
 		`user_id`
 		FROM
 		`ds_excel_file_info`
+		<where>
+			<if test="null != id">
+				and id = #{id}
+			</if>
+			<if test="null != fileCode">
+				and file_code = #{fileCode}
+			</if>
+			<if test="null != fileName">
+				and file_name like concat(concat('%', #{sheetName}),
+				'%')
+			</if>
+		</where>
 	</select>
 </mapper>

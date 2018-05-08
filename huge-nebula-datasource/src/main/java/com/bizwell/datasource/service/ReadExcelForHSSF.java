@@ -159,9 +159,6 @@ public class ReadExcelForHSSF {
 				break;
 			} else {
 				value = "numeric";
-				// System.out.println("aaa="+
-				// new DecimalFormat("0").format(cell.getNumericCellValue())
-				// );
 			}
 			break;
 		case HSSFCell.CELL_TYPE_STRING: // 字符串
@@ -185,6 +182,18 @@ public class ReadExcelForHSSF {
 		}
 		return value;
 	}
+	
+	
+	
+	// 动态创建表
+	public String generateDropTableSQL(String tableName) {
+
+		StringBuffer dropSql = new StringBuffer();
+		dropSql.append("DROP TABLE IF EXISTS ").append(tableName);
+		logger.info("dropSql ==== " + dropSql);
+
+		return dropSql.toString();
+	}
 
 	// 动态创建表
 	public String generateCreateTableSQL(List<XLSHaderType> typeList, List<Map<String, String>> contentList,
@@ -195,7 +204,7 @@ public class ReadExcelForHSSF {
 		for (XLSHaderType type : typeList) {
 			createSql.append(type.getProp());
 			if ("string".equals(type.getType())) {
-				createSql.append(" varchar(100) ,");
+				createSql.append(" varchar(200) ,");
 			} else if ("date".equals(type.getType())) {
 				createSql.append(" timestamp ,");
 			} else if ("numeric".equals(type.getType())) {
@@ -220,20 +229,18 @@ public class ReadExcelForHSSF {
 			if ("string".equals(type.getType())) {
 				fieldType =2;
 			} else if ("date".equals(type.getType())) {
-				fieldType =2;
+				fieldType =3;
 			} else if ("numeric".equals(type.getType())) {
 				fieldType = 1;
 			}
 		}
-		
 		
 		StringBuffer metadataSQL = new StringBuffer();
 		Map<String, String> headerMap = contentList.get(0);
 		metadataSQL.append(
 				"insert into ds_sheet_metadata(sheet_id,field_name_old,field_name_new,field_type,field_comment,is_visible) values ");
 		for (int i = 0; i < headerMap.size(); i++) {
-			metadataSQL.append("('" + sheetId + "','" + headerMap.get(excelHader[i])
-					+ "','field_name_new',"+fieldType+",'field_comment','1'),");
+			metadataSQL.append("('" + sheetId + "','" + headerMap.get(excelHader[i]) + "','',"+fieldType+",'','1'),");
 		}
 		metadataSQL.delete(metadataSQL.lastIndexOf(","), metadataSQL.lastIndexOf(",") + 1);
 		logger.info("metadataSQL ==== " + metadataSQL);

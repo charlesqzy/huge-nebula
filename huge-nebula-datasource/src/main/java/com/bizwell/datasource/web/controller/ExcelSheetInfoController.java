@@ -68,25 +68,30 @@ public class ExcelSheetInfoController extends BaseController {
     	ExcelSheetInfo excelSheetInfo = null;
     	SheetLog sheetLog= null;
     	
-    	String dateStr = new SimpleDateFormat("yyMMddHHmmss").format(new Date());    	
+    	//String dateStr = new SimpleDateFormat("yyMMddHHmmss").format(new Date());    	
     	int i = 1;    	
     	SheetInfo[] sheets = xlsContent.getSheets();
     	
     	for(SheetInfo sheet : sheets){    		
-        	String tableName = "xls_"+ dateStr+"_sheet"+ i++ +"_"+xlsContent.getFileCode();
+        	String tableName = "xls_sheet"+ i++ +"_"+xlsContent.getFileCode();
     		//动态创建mysql，插入数据    	        	
     		
     		excelSheetInfo = new ExcelSheetInfo();
+    		excelSheetInfo.setTableName(tableName);    		
+    		excelSheetInfoService.delete(excelSheetInfo);//覆盖原sheet，先删除
+    		
+    		
         	excelSheetInfo.setExcelFileId(xlsContent.getExcelFileId());    		
         	excelSheetInfo.setSheetName(sheet.getSheetName());
         	excelSheetInfo.setFolderId(sheet.getFolderId());
 //        	excelSheetInfo.setCategoryFlag(categoryFlag);
 //        	excelSheetInfo.setRemark(remark);
-        	excelSheetInfo.setTableName(tableName);
+        	
         	excelSheetInfo.setUpdateTime(new Date());
 //        	excelSheetInfo.setUserId(userId);
         	excelSheetInfoService.save(excelSheetInfo);
 
+        	String dropSql = readExcelForHSSF.generateDropTableSQL(tableName);
         	String createSql=readExcelForHSSF.generateCreateTableSQL(sheet.getTypeList(),
         			sheet.getContentList(),tableName);
         	String metadataSQL=readExcelForHSSF.generateMetadataSQL(sheet.getTypeList(),
@@ -94,10 +99,12 @@ public class ExcelSheetInfoController extends BaseController {
         	String insertSQL=readExcelForHSSF.generateInsertTableSQL(
         			sheet.getContentList(),tableName);
         	
+        	
+        	
+        	jdbcService.executeSql(dropSql);
         	jdbcService.executeSql(createSql);
         	jdbcService.executeSql(metadataSQL);
-        	jdbcService.executeSql(insertSQL);
-        	
+        	jdbcService.executeSql(insertSQL);        	
         	
         	sheetLog = new SheetLog();
         	sheetLog.setSheetId(excelSheetInfo.getId());
@@ -106,8 +113,6 @@ public class ExcelSheetInfoController extends BaseController {
         	sheetLogService.save(sheetLog);
     	}
     	
-    	
-
     	
     	Map result = new HashMap();
     	result.put("excelSheetInfo", excelSheetInfo);

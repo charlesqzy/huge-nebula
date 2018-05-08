@@ -19,4 +19,6 @@ public interface ExcelSheetInfoMapper {
     
     
     List<Map> getSheetDataByTableName(@Param("tableName") String tableName);
+    
+    void delete(ExcelSheetInfo entity);
 }

@@ -20,7 +20,9 @@ import com.bizwell.datasource.bean.ExcelFileInfo;
 import com.bizwell.datasource.bean.XlsContent;
 import com.bizwell.datasource.common.FileMD5Util;
 import com.bizwell.datasource.common.JsonUtils;
+import com.bizwell.datasource.json.ResponseJson;
 import com.bizwell.datasource.service.ExcelFileInfoService;
+import com.bizwell.datasource.service.ExcelSheetInfoService;
 import com.bizwell.datasource.service.JDBCService;
 import com.bizwell.datasource.service.ReadExcelForHSSF;
 import com.bizwell.datasource.web.BaseController;
@@ -46,10 +48,10 @@ public class ExcelFileUploadController extends BaseController {
 	 * @param file
 	 * @return
 	 */
-	@RequestMapping(value = "/datasource/uploadExcel", method = RequestMethod.POST)
-	public @ResponseBody String uploadExcel(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+	@RequestMapping(value = "/datasource/uploadExcel", method = RequestMethod.POST)	
+	public @ResponseBody ResponseJson uploadExcel(@RequestParam("file") MultipartFile file,Integer userId, HttpServletRequest request) {
 
-		String contentType = file.getContentType();
+		//String contentType = file.getContentType();
 		String fileName = file.getOriginalFilename();
 
 		String filePath = request.getSession().getServletContext().getRealPath("excelfile/");
@@ -60,37 +62,48 @@ public class ExcelFileUploadController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		//获取文件hash值
-		String md5Hashcode = FileMD5Util.getFileMD5(new File(filePath+fileName));
-		
-	
 
 		XlsContent xlsContent = null;
+
+		
+		Long code = 200L;
+		String message = "success";
+		
+		// 获取文件hash值
+		String md5Hashcode = FileMD5Util.getFileMD5(new File(filePath + fileName));
+		ExcelFileInfo entity = new ExcelFileInfo();
+		entity.setFileCode(md5Hashcode);
+		if (null != excelFileInfoService.select(entity)) {
+			//return new ResponseJson(201l,"文件已存在",null);
+			code = 201L;
+			message = "文件已存在,将会覆盖原文件";
+		}
+		
 		try {
 			xlsContent = readExcelForHSSF.readExcel(filePath, fileName);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		ExcelFileInfo entity = new ExcelFileInfo();
 		entity.setFileCode(md5Hashcode);
 		entity.setFileName(fileName);
 		entity.setFilePath(filePath);
 		// entity.setFileSize(fileSize);
 		entity.setFileRows((Integer) xlsContent.getFileRows());
-		entity.setFileColumns((Integer) xlsContent.getFileColumns());		
-		// entity.setUserId(userId);
+		entity.setFileColumns((Integer) xlsContent.getFileColumns());
+		entity.setUserId(userId);
 		excelFileInfoService.save(entity);
 		xlsContent.setExcelFileId(entity.getId());
 		xlsContent.setFileCode(md5Hashcode);
-
 		logger.info("content=" + JsonUtils.toJson(xlsContent));
-
-
 		// 返回json
-		return JsonUtils.toJson(xlsContent);
+		//return JsonUtils.toJson(xlsContent);
+		return new ResponseJson(code,message,xlsContent);
+
+
 	}
+	
+	
+	
 	
 	
 

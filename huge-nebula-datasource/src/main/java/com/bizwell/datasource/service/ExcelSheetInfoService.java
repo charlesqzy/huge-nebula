@@ -29,4 +29,11 @@ public class ExcelSheetInfoService {
 	public List<Map> getSheetDataByTableName(String tableName){
 		return excelSheetMapper.getSheetDataByTableName(tableName);
 	}
+	
+	public void delete(ExcelSheetInfo entity){
+		excelSheetMapper.delete(entity);
+	}
 }
+
+
+

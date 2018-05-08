@@ -8,10 +8,18 @@ public class XlsContent {
 	private Integer fileRows;
 	private Integer fileColumns;
 	private Integer excelFileId;
+	private Integer userId;
 	
 	
 	
 	
+	
+	public Integer getUserId() {
+		return userId;
+	}
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
 	public String getFileCode() {
 		return fileCode;
 	}
