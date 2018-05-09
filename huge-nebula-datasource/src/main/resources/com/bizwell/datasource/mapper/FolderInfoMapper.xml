@@ -45,6 +45,7 @@
 		`level`
 		FROM `gb_folder_info`
 		<where>
+		folder_type = 2
 			<if test="null != id">
 				and id = #{id}
 			</if>

@@ -29,9 +29,9 @@ public class TestController {
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public String upload() {
         System.out.println("111");
-        ExcelFileInfo excelFileInfo = new ExcelFileInfo();
-        excelFileInfo.setFileName("testName");
-        excelFileInfoMapper.save(excelFileInfo);
+//        ExcelFileInfo excelFileInfo = new ExcelFileInfo();
+//        excelFileInfo.setFileName("testName");
+//        excelFileInfoMapper.save(excelFileInfo);
         
         return "ss";
     }

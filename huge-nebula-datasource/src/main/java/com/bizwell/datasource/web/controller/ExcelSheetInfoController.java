@@ -1,6 +1,6 @@
 package com.bizwell.datasource.web.controller;
 
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,12 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bizwell.datasource.bean.ExcelSheetInfo;
 import com.bizwell.datasource.bean.FolderInfo;
 import com.bizwell.datasource.bean.SheetInfo;
 import com.bizwell.datasource.bean.SheetLog;
+import com.bizwell.datasource.bean.SheetMetadata;
+import com.bizwell.datasource.bean.XLSHaderType;
 import com.bizwell.datasource.bean.XlsContent;
 import com.bizwell.datasource.common.JsonUtils;
 import com.bizwell.datasource.json.ResponseJson;
@@ -28,6 +31,7 @@ import com.bizwell.datasource.service.FolderInfoService;
 import com.bizwell.datasource.service.JDBCService;
 import com.bizwell.datasource.service.ReadExcelForHSSF;
 import com.bizwell.datasource.service.SheetLogService;
+import com.bizwell.datasource.service.SheetMetadataService;
 import com.bizwell.datasource.web.BaseController;
 
 /**
@@ -44,6 +48,9 @@ public class ExcelSheetInfoController extends BaseController {
 	
 	@Autowired
 	private FolderInfoService folderInfoService;
+	
+	@Autowired
+	private SheetMetadataService sheetMetadataService;
 		
 	@Autowired
 	private ReadExcelForHSSF readExcelForHSSF;
@@ -73,7 +80,7 @@ public class ExcelSheetInfoController extends BaseController {
     	SheetInfo[] sheets = xlsContent.getSheets();
     	
     	for(SheetInfo sheet : sheets){    		
-        	String tableName = "xls_sheet"+ i++ +"_"+xlsContent.getFileCode();
+        	String tableName = "xls_"+xlsContent.getFileCode()+"_sheet_"+ i++ ;
     		//动态创建mysql，插入数据    	        	
     		
     		excelSheetInfo = new ExcelSheetInfo();
@@ -86,7 +93,8 @@ public class ExcelSheetInfoController extends BaseController {
         	excelSheetInfo.setFolderId(sheet.getFolderId());
 //        	excelSheetInfo.setCategoryFlag(categoryFlag);
 //        	excelSheetInfo.setRemark(remark);
-        	
+        	excelSheetInfo.setTableClumns(sheet.getTypeList().size());
+        	excelSheetInfo.setTableRows(sheet.getTypeList().size());
         	excelSheetInfo.setUpdateTime(new Date());
 //        	excelSheetInfo.setUserId(userId);
         	excelSheetInfoService.save(excelSheetInfo);
@@ -97,8 +105,7 @@ public class ExcelSheetInfoController extends BaseController {
         	String metadataSQL=readExcelForHSSF.generateMetadataSQL(sheet.getTypeList(),
         			sheet.getContentList(),excelSheetInfo.getId());    
         	String insertSQL=readExcelForHSSF.generateInsertTableSQL(
-        			sheet.getContentList(),tableName);
-        	
+        			sheet.getContentList(),tableName);        	
         	
         	
         	jdbcService.executeSql(dropSql);
@@ -146,11 +153,35 @@ public class ExcelSheetInfoController extends BaseController {
     
     @RequestMapping(value = "/datasource/getSheetDataByTableName")
     @ResponseBody
-    public ResponseJson getSheetDataByTableName(String tableName) {
-    	logger.info("getSheetDataByTableName.tableName=   "  +tableName);
-    	List<Map> list = excelSheetInfoService.getSheetDataByTableName(tableName);    	
-    	logger.info("JsonUtils.toJson(list) =   "  + JsonUtils.toJson(list));
-    	return new ResponseJson(200l,"success",list);
+    public ResponseJson getSheetDataByTableName(
+    		@RequestParam String tableName,
+    		@RequestParam Integer sheetId,
+    		@RequestParam(defaultValue = "1") Integer pageNum) {
+    	
+    	logger.info("getSheetDataByTableName.tableName=   "  +tableName + "  sheetId = " + sheetId );
+    	List<Map> sheetList = excelSheetInfoService.getSheetDataByTableName(tableName);    	
+    	Integer totalRows = excelSheetInfoService.getCountByTableName(tableName);
+    	
+    	SheetMetadata entity = new SheetMetadata();
+    	entity.setSheetId(sheetId);
+    	List<SheetMetadata> metadataList = sheetMetadataService.select(entity);
+    	XLSHaderType headerType = null;
+    	List<XLSHaderType> haderList = new ArrayList();
+    	for(SheetMetadata data : metadataList){
+    		headerType = new XLSHaderType();
+    		headerType.setProp(data.getFieldColumn());
+    		headerType.setLabel(data.getFieldNameNew());
+    		haderList.add(headerType);
+    	}
+    	
+    	Map result = new HashMap<>();
+    	result.put("sheet", sheetList);
+    	result.put("header", haderList);
+    	result.put("totalRows", totalRows);
+    	result.put("pageNum", pageNum);
+    	
+    	logger.info("result =   "  + JsonUtils.toJson(result));
+    	return new ResponseJson(200l,"success",result);
     }
     
     

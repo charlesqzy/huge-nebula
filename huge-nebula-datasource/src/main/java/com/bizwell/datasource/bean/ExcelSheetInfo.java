@@ -10,7 +10,27 @@ public class ExcelSheetInfo {
 	private Integer categoryFlag;
 	private String remark;
 	private String tableName;
+	private Integer tableClumns;
+	private Integer tableRows;
 	private Date updateTime;
+	
+	
+	public Integer getTableClumns() {
+		return tableClumns;
+	}
+
+	public void setTableClumns(Integer tableClumns) {
+		this.tableClumns = tableClumns;
+	}
+
+	public Integer getTableRows() {
+		return tableRows;
+	}
+
+	public void setTableRows(Integer tableRows) {
+		this.tableRows = tableRows;
+	}
+
 	private Integer userId;
 
 	public Integer getId() {

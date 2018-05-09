@@ -4,6 +4,7 @@ public class SheetMetadata {
 	private Integer id;
 	private Integer sheetId;
 	private String databaseName;
+	private String fieldColumn;
 	private String fieldNameOld;
 	private String fieldNameNew;
 	private Integer fieldType;
@@ -72,6 +73,14 @@ public class SheetMetadata {
 
 	public void setIsVisible(Integer isVisible) {
 		this.isVisible = isVisible;
+	}
+
+	public String getFieldColumn() {
+		return fieldColumn;
+	}
+
+	public void setFieldColumn(String fieldColumn) {
+		this.fieldColumn = fieldColumn;
 	}
 
 }

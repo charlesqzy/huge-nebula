@@ -238,9 +238,9 @@ public class ReadExcelForHSSF {
 		StringBuffer metadataSQL = new StringBuffer();
 		Map<String, String> headerMap = contentList.get(0);
 		metadataSQL.append(
-				"insert into ds_sheet_metadata(sheet_id,field_name_old,field_name_new,field_type,field_comment,is_visible) values ");
+				"insert into ds_sheet_metadata(sheet_id,field_column,field_name_old,field_name_new,field_type,field_comment,is_visible) values ");
 		for (int i = 0; i < headerMap.size(); i++) {
-			metadataSQL.append("('" + sheetId + "','" + headerMap.get(excelHader[i]) + "','',"+fieldType+",'','1'),");
+			metadataSQL.append("('" + sheetId + "','"+excelHader[i]+"','" + headerMap.get(excelHader[i]) + "','" + headerMap.get(excelHader[i]) + "',"+fieldType+",'','1'),");
 		}
 		metadataSQL.delete(metadataSQL.lastIndexOf(","), metadataSQL.lastIndexOf(",") + 1);
 		logger.info("metadataSQL ==== " + metadataSQL);

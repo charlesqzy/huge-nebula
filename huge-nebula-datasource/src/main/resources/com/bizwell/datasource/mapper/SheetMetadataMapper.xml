@@ -7,6 +7,7 @@
 		<result column="sheet_id" property="sheetId" />
 		<result column="database_name" property="databaseName"
 			jdbcType="VARCHAR" />
+		<result column="field_column" property="fieldColumn" jdbcType="VARCHAR" />
 		<result column="field_name_old" property="fieldNameOld"
 			jdbcType="VARCHAR" />
 		<result column="field_name_new" property="fieldNameNew"
@@ -28,6 +29,7 @@
 		(
 		`sheet_id`,
 		`database_name`,
+		field_column,
 		`field_name_old`,
 		`field_name_new`,
 		`field_type`,
@@ -36,6 +38,7 @@
 		VALUES (
 		#{sheetId},
 		#{databaseName},
+		#{fieldColumn},
 		#{fieldNameOld},
 		#{fieldNameNew},
 		#{fieldType},
@@ -50,6 +53,7 @@
 		`id`,
 		`sheet_id`,
 		`database_name`,
+		field_column,
 		`field_name_old`,
 		`field_name_new`,
 		`field_type`,
@@ -61,10 +65,10 @@
 			<if test="null != id">
 				and id = #{id}
 			</if>
-			<if test="null != folderName">
-				and folder_name like concat(concat('%', #{folderName}),
-				'%')
+			<if test="null != sheetId">
+				and sheet_id = #{sheetId}
 			</if>
+
 		</where>
 	</select>
 

@@ -11,6 +11,8 @@
 			jdbcType="VARCHAR" />
 		<result column="remark" property="remark" jdbcType="VARCHAR" />
 		<result column="table_name" property="tableName" jdbcType="VARCHAR" />
+		<result column="table_clumns" property="tableClumns" jdbcType="VARCHAR" />
+		<result column="table_rows" property="tableRows" jdbcType="VARCHAR" />
 		<result column="update_time" property="updateTime" jdbcType="VARCHAR" />
 		<result column="user_id" property="userId" jdbcType="VARCHAR" />
 	</resultMap>
@@ -32,6 +34,8 @@
 		`category_flag`,
 		`remark`,
 		`table_name`,
+		table_clumns,
+		table_rows,
 		`update_time`,
 		`user_id`)
 		VALUES (
@@ -41,6 +45,8 @@
 		#{categoryFlag},
 		#{remark},
 		#{tableName},
+		#{tableClumns},
+		#{tableRows},
 		#{updateTime},
 		#{userId});
 	</insert>
@@ -57,6 +63,8 @@
 		`category_flag`,
 		`remark`,
 		`table_name`,
+		table_clumns,
+		table_rows,
 		DATE_FORMAT(update_time,'%Y-%m-%d') AS
 		update_time,
 		`user_id`
@@ -78,10 +86,16 @@
 
 
 
+
 	<select id="getSheetDataByTableName" parameterType="java.lang.String"
 		resultType="java.util.Map">
-		select * from ${tableName}
+		select * from ${tableName} limit 200
 	</select>
+	<select id="getCountByTableName" parameterType="java.lang.String"
+		resultType="java.lang.Integer">
+		select count(1) from ${tableName} 
+	</select>
+	
 
 
 	<delete id="delete" parameterType="com.bizwell.datasource.bean.ExcelSheetInfo">

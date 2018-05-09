@@ -30,6 +30,10 @@ public class ExcelSheetInfoService {
 		return excelSheetMapper.getSheetDataByTableName(tableName);
 	}
 	
+	public Integer getCountByTableName(String tableName){
+		return excelSheetMapper.getCountByTableName(tableName);
+	}
+	
 	public void delete(ExcelSheetInfo entity){
 		excelSheetMapper.delete(entity);
 	}
