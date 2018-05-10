@@ -49,7 +49,8 @@
 		`file_size`,
 		`file_rows`,
 		`file_columns`,
-		`update_time`,
+		DATE_FORMAT(update_time,'%Y-%m-%d') AS
+		update_time,
 		`user_id`
 		FROM
 		`ds_excel_file_info`

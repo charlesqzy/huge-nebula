@@ -49,6 +49,9 @@
 			<if test="null != id">
 				and id = #{id}
 			</if>
+			<if test="null != userId">
+				and user_id = #{userId}
+			</if>
 			<if test="null != folderName">
 				and folder_name like concat(concat('%', #{folderName}),
 				'%')

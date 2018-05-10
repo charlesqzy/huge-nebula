@@ -70,7 +70,7 @@ public class ExcelFileUploadController extends BaseController {
 	 */
 	@RequestMapping(value = "/datasource/uploadExcel", method = RequestMethod.POST)	
 	public @ResponseBody ResponseJson uploadExcel(@RequestParam("file") MultipartFile file,Integer userId, HttpServletRequest request) {
-
+		logger.info("uploadExcel  userId="+userId);
 		//String contentType = file.getContentType();
 		String fileName = file.getOriginalFilename();
 
@@ -136,7 +136,7 @@ public class ExcelFileUploadController extends BaseController {
 	 */
 	@RequestMapping(value = "/datasource/apppendUploadExcel", method = RequestMethod.POST)	
 	public @ResponseBody ResponseJson apppendUploadExcel(@RequestParam("file") MultipartFile file,Integer sheetId,Integer userId, HttpServletRequest request) {
-
+		logger.info("apppendUploadExcel   sheetId=="+sheetId + "  userId="+userId);
 		//String contentType = file.getContentType();
 		String fileName = file.getOriginalFilename();
 

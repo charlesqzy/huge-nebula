@@ -24,6 +24,7 @@ import com.bizwell.datasource.bean.SheetLog;
 import com.bizwell.datasource.bean.SheetMetadata;
 import com.bizwell.datasource.bean.XLSHaderType;
 import com.bizwell.datasource.bean.XlsContent;
+import com.bizwell.datasource.common.DateHelp;
 import com.bizwell.datasource.common.JsonUtils;
 import com.bizwell.datasource.json.ResponseJson;
 import com.bizwell.datasource.service.ExcelSheetInfoService;
@@ -68,9 +69,9 @@ public class ExcelSheetInfoController extends BaseController {
 	 */
     @RequestMapping(value = "/datasource/createSheet")
     @ResponseBody
-    public ResponseJson createSheet(@RequestBody XlsContent xlsContent, HttpServletRequest request) {
+    public ResponseJson createSheet(@RequestBody XlsContent xlsContent ,Integer userId, HttpServletRequest request) {
     	String filePath = request.getSession().getServletContext().getRealPath("excelfile/");
-		logger.info("filePath=" + filePath);
+		logger.info("createSheet  userId ="+ userId+ "filePath=" + filePath);
 
     	ExcelSheetInfo excelSheetInfo = null;
     	SheetLog sheetLog= null;
@@ -95,8 +96,8 @@ public class ExcelSheetInfoController extends BaseController {
 //        	excelSheetInfo.setRemark(remark);
         	excelSheetInfo.setTableClumns(sheet.getTypeList().size());
         	excelSheetInfo.setTableRows(sheet.getTypeList().size());
-        	excelSheetInfo.setUpdateTime(new Date());
-//        	excelSheetInfo.setUserId(userId);
+        	excelSheetInfo.setUpdateTime(DateHelp.getStrTime(new Date()));
+        	excelSheetInfo.setUserId(userId);
         	excelSheetInfoService.save(excelSheetInfo);
 
         	String dropSql = readExcelForHSSF.generateDropTableSQL(tableName);
@@ -133,8 +134,9 @@ public class ExcelSheetInfoController extends BaseController {
     public ResponseJson getSheet(String sheetName) {    	
     	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo();    	
     	excelSheetInfo.setSheetName(sheetName);
-    	excelSheetInfo.setUpdateTime(new Date());
-    	List<ExcelSheetInfo> list = excelSheetInfoService.select(excelSheetInfo);    	
+    	excelSheetInfo.setUpdateTime(DateHelp.getStrTime(new Date()));
+    	List<ExcelSheetInfo> list = excelSheetInfoService.select(excelSheetInfo);
+    	
     	return new ResponseJson(200l,"success",list);
     }
     
@@ -158,7 +160,7 @@ public class ExcelSheetInfoController extends BaseController {
     		@RequestParam Integer sheetId,
     		@RequestParam(defaultValue = "1") Integer pageNum) {
     	
-    	logger.info("getSheetDataByTableName.tableName=   "  +tableName + "  sheetId = " + sheetId );
+    	logger.info("getSheetDataByTableName.tableName=   "  +tableName + "  sheetId = " + sheetId +"pageNum = "+pageNum);
     	List<Map> sheetList = excelSheetInfoService.getSheetDataByTableName(tableName);    	
     	Integer totalRows = excelSheetInfoService.getCountByTableName(tableName);
     	
@@ -193,10 +195,10 @@ public class ExcelSheetInfoController extends BaseController {
      */
     @RequestMapping(value = "/datasource/createFolder")
     @ResponseBody
-    public ResponseJson createFolder(String folderName) {
-
+    public ResponseJson createFolder(String folderName,Integer userId) {
+    	logger.info("createFolder  folderName="+folderName +"  userId="+userId);
     	FolderInfo folderInfo = new FolderInfo();
-    	folderInfo.setUserId(1);
+    	folderInfo.setUserId(userId);
     	folderInfo.setFolderName(folderName);
     	folderInfo.setFolderType(2);
     	//folderInfo.setParentId(parentId);
@@ -217,9 +219,11 @@ public class ExcelSheetInfoController extends BaseController {
      */
     @RequestMapping(value = "/datasource/getFolder")
     @ResponseBody
-    public ResponseJson getFolder(String folderName) {
+    public ResponseJson getFolder(String folderName,Integer userId) {
+    	logger.info("getFolder  folderName="+folderName +"  userId="+userId);
     	FolderInfo folderInfo = new FolderInfo();
     	folderInfo.setFolderName(folderName);
+    	folderInfo.setUserId(userId);
     	List<FolderInfo> list = folderInfoService.select(folderInfo);
     	//logger.info("return"+JsonUtils.toJson(list));
     	return new ResponseJson(200l,"success",list);

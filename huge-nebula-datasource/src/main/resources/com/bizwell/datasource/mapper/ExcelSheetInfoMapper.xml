@@ -7,6 +7,7 @@
 		<result column="excel_file_id" property="excelFileId" />
 		<result column="sheet_name" property="sheetName" jdbcType="VARCHAR" />
 		<result column="folder_id" property="folderId" jdbcType="VARCHAR" />
+		<result column="folder_name" property="folderName" jdbcType="VARCHAR" />
 		<result column="category_flag" property="categoryFlag"
 			jdbcType="VARCHAR" />
 		<result column="remark" property="remark" jdbcType="VARCHAR" />
@@ -56,10 +57,11 @@
 	<select id="select" parameterType="com.bizwell.datasource.bean.ExcelSheetInfo"
 		resultMap="BaseResultMap">
 		SELECT
-		`id`,
+		t1.`id`,
 		`excel_file_id`,
 		`sheet_name`,
 		`folder_id`,
+		t2.`folder_name`,
 		`category_flag`,
 		`remark`,
 		`table_name`,
@@ -67,12 +69,13 @@
 		table_rows,
 		DATE_FORMAT(update_time,'%Y-%m-%d') AS
 		update_time,
-		`user_id`
+		t1.`user_id`
 		FROM
-		`ds_excel_sheet_info`
+		`ds_excel_sheet_info` t1
+		LEFT JOIN gb_folder_info t2 ON(t1.folder_id=t2.id)
 		<where>
 			<if test="null != id">
-				and id = #{id}
+				and t1.`id` = #{id}
 			</if>
 			<if test="null != folderId">
 				and folder_id = #{folderId}

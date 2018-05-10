@@ -7,14 +7,23 @@ public class ExcelSheetInfo {
 	private Integer excelFileId;
 	private String sheetName;
 	private Integer folderId;
+	private String folderName;
 	private Integer categoryFlag;
 	private String remark;
 	private String tableName;
 	private Integer tableClumns;
 	private Integer tableRows;
-	private Date updateTime;
+	private String updateTime;
 	
 	
+	public String getFolderName() {
+		return folderName;
+	}
+
+	public void setFolderName(String folderName) {
+		this.folderName = folderName;
+	}
+
 	public Integer getTableClumns() {
 		return tableClumns;
 	}
@@ -89,11 +98,11 @@ public class ExcelSheetInfo {
 		this.tableName = tableName;
 	}
 
-	public Date getUpdateTime() {
+	public String getUpdateTime() {
 		return updateTime;
 	}
 
-	public void setUpdateTime(Date updateTime) {
+	public void setUpdateTime(String updateTime) {
 		this.updateTime = updateTime;
 	}
 
