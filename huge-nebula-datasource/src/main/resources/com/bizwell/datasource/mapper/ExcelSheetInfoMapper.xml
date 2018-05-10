@@ -14,6 +14,7 @@
 		<result column="table_name" property="tableName" jdbcType="VARCHAR" />
 		<result column="table_clumns" property="tableClumns" jdbcType="VARCHAR" />
 		<result column="table_rows" property="tableRows" jdbcType="VARCHAR" />
+		<result column="rows_clumns" property="rowsClumns" jdbcType="VARCHAR" />
 		<result column="update_time" property="updateTime" jdbcType="VARCHAR" />
 		<result column="user_id" property="userId" jdbcType="VARCHAR" />
 	</resultMap>
@@ -67,18 +68,20 @@
 		`table_name`,
 		table_clumns,
 		table_rows,
+		CONCAT_WS('/',table_rows,table_clumns,NULL) AS rows_clumns,
 		DATE_FORMAT(update_time,'%Y-%m-%d %h:%m%:%s') AS
 		update_time,
 		t1.`user_id`
 		FROM
 		`ds_excel_sheet_info` t1
-		LEFT JOIN gb_folder_info t2 ON(t1.folder_id=t2.id)
+		LEFT JOIN gb_folder_info t2
+		ON(t1.folder_id=t2.id)
 		<where>
 			<if test="null != id">
 				and t1.`id` = #{id}
 			</if>
 			<if test="null != folderId">
-				and folder_id = #{folderId} 
+				and folder_id = #{folderId}
 			</if>
 			<if test="null != sheetName">
 				and sheet_name like concat(concat('%', #{sheetName}),
@@ -86,6 +89,23 @@
 			</if>
 		</where>
 	</select>
+
+
+	<update id="update" parameterType="com.bizwell.datasource.bean.ExcelSheetInfo">
+		UPDATE `ds_excel_sheet_info`
+		<trim prefix="set" suffixOverrides=",">
+            <if test="sheetName!=null">sheet_name=#{sheetName},</if>
+            <if test="folderId!=null">folder_id=#{folderId},</if>
+            <if test="categoryFlag!=null">category_flag=#{categoryFlag},</if>
+            <if test="remark!=null">remark=#{remark},</if>
+            <if test="tableName!=null">table_name=#{tableName},</if>
+            <if test="tableClumns!=null">table_clumns=#{tableClumns},</if>
+            <if test="tableRows!=null">table_rows=#{tableRows},</if>
+            <if test="updateRime!=null">update_time=#{updateRime},</if>
+            <if test="userId!=null">user_id=#{userId},</if>
+        </trim>
+		WHERE id = #{id};
+	</update>
 
 
 
@@ -96,9 +116,9 @@
 	</select>
 	<select id="getCountByTableName" parameterType="java.lang.String"
 		resultType="java.lang.Integer">
-		select count(1) from ${tableName} 
+		select count(1) from ${tableName}
 	</select>
-	
+
 
 
 	<delete id="delete" parameterType="com.bizwell.datasource.bean.ExcelSheetInfo">

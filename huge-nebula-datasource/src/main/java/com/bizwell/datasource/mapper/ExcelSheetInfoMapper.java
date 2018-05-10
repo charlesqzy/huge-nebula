@@ -17,6 +17,7 @@ public interface ExcelSheetInfoMapper {
     
     List<ExcelSheetInfo> select(ExcelSheetInfo entity);
     
+    Integer update(ExcelSheetInfo entity);    
     
     List<Map> getSheetDataByTableName(@Param("tableName") String tableName,@Param("start") Integer start,@Param("end") Integer end);
     

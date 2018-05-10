@@ -13,9 +13,20 @@ public class ExcelSheetInfo {
 	private String tableName;
 	private Integer tableClumns;
 	private Integer tableRows;
+	private String rowsClumns;
 	private String updateTime;
 	
 	
+	
+	
+	public String getRowsClumns() {
+		return rowsClumns;
+	}
+
+	public void setRowsClumns(String rowsClumns) {
+		this.rowsClumns = rowsClumns;
+	}
+
 	public String getFolderName() {
 		return folderName;
 	}

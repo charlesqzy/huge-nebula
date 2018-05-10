@@ -162,6 +162,26 @@ public class ExcelSheetInfoController extends BaseController {
     }
     
     
+    
+    /**
+     * 移动sheet
+     * @param sheetId
+     * @return
+     */
+    @RequestMapping(value = "/datasource/moveSheet")
+    @ResponseBody
+    public ResponseJson moveSheet(Integer sheetId,Integer targetFolderId) {    	
+    	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo();    	
+    	excelSheetInfo.setId(sheetId);
+    	excelSheetInfo.setFolderId(targetFolderId);
+    	excelSheetInfoService.update(excelSheetInfo);
+    	return new ResponseJson(200l,"success",null);
+    }
+    
+    
+    
+    
+    
     /**
      * 根据文件夹id获取sheet
      * @param folderId

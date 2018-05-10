@@ -104,7 +104,7 @@ public class ReadExcelForHSSF {
 				        	value= df.format(hssfCell.getNumericCellValue());
 				        	
 				            if(HSSFDateUtil.isCellDateFormatted(hssfCell)){
-				                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				                value= sdf.format(HSSFDateUtil.getJavaDate(hssfCell.getNumericCellValue()));
 				            }
 				            break;
@@ -119,7 +119,6 @@ public class ReadExcelForHSSF {
 			        }
 
 			        rowCellValues.put(excelHader[j], value);				
-					
 				}
 				contentList.add(rowCellValues);
 			}
@@ -206,7 +205,8 @@ public class ReadExcelForHSSF {
 			if ("string".equals(type.getType())) {
 				createSql.append(" varchar(200) ,");
 			} else if ("date".equals(type.getType())) {
-				createSql.append(" timestamp ,");
+				createSql.append(" varchar(100) ,");
+				//createSql.append(" timestamp ,");
 			} else if ("numeric".equals(type.getType())) {
 				createSql.append(" double ,");
 			}
