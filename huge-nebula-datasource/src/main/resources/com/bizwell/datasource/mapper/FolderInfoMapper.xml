@@ -50,7 +50,7 @@
 				and id = #{id}
 			</if>
 			<if test="null != userId">
-				and user_id = #{userId}
+				and user_id = #{userId} and user_id = 0
 			</if>
 			<if test="null != folderName">
 				and folder_name like concat(concat('%', #{folderName}),

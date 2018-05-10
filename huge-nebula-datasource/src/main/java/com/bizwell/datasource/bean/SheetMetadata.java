@@ -10,6 +10,7 @@ public class SheetMetadata {
 	private Integer fieldType;
 	private String fieldComment;
 	private Integer isVisible;
+	
 
 	public Integer getId() {
 		return id;

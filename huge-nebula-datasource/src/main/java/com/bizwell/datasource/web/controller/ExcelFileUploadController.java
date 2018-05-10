@@ -135,7 +135,13 @@ public class ExcelFileUploadController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/datasource/apppendUploadExcel", method = RequestMethod.POST)	
-	public @ResponseBody ResponseJson apppendUploadExcel(@RequestParam("file") MultipartFile file,Integer sheetId,Integer userId, HttpServletRequest request) {
+	public @ResponseBody ResponseJson apppendUploadExcel(
+			@RequestParam("file") MultipartFile file,
+			@RequestParam Integer sheetId,
+			@RequestParam Integer userId, 
+			@RequestParam(defaultValue = "false") Boolean replase,
+			@RequestParam HttpServletRequest request) {
+		
 		logger.info("apppendUploadExcel   sheetId=="+sheetId + "  userId="+userId);
 		//String contentType = file.getContentType();
 		String fileName = file.getOriginalFilename();
@@ -166,12 +172,19 @@ public class ExcelFileUploadController extends BaseController {
 		}
 		
 		
+
+		
 		
 		ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo();
 		excelSheetInfo.setId(sheetId);
 		List<ExcelSheetInfo> sheetInfo = excelSheetInfoService.select(excelSheetInfo);
 		if(!sheetInfo.isEmpty()){
 			String tableName = sheetInfo.get(0).getTableName();
+			
+			if(replase){
+				excelSheetInfoService.delete(excelSheetInfo);//替换原sheet，先删除
+			}
+			
 			String insertSQL = readExcelForHSSF.generateInsertTableSQL(xlsContent.getSheets()[0].getContentList(), tableName);
 			jdbcService.executeSql(insertSQL);
 			

@@ -67,7 +67,7 @@
 		`table_name`,
 		table_clumns,
 		table_rows,
-		DATE_FORMAT(update_time,'%Y-%m-%d') AS
+		DATE_FORMAT(update_time,'%Y-%m-%d %h:%m%:%s') AS
 		update_time,
 		t1.`user_id`
 		FROM
@@ -78,7 +78,7 @@
 				and t1.`id` = #{id}
 			</if>
 			<if test="null != folderId">
-				and folder_id = #{folderId}
+				and folder_id = #{folderId} 
 			</if>
 			<if test="null != sheetName">
 				and sheet_name like concat(concat('%', #{sheetName}),
@@ -92,7 +92,7 @@
 
 	<select id="getSheetDataByTableName" parameterType="java.lang.String"
 		resultType="java.util.Map">
-		select * from ${tableName} limit 200
+		select * from ${tableName} limit ${start},${end}
 	</select>
 	<select id="getCountByTableName" parameterType="java.lang.String"
 		resultType="java.lang.Integer">

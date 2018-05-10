@@ -129,6 +129,11 @@ public class ExcelSheetInfoController extends BaseController {
     
     
     
+    /**
+     * 获取sheet数据
+     * @param sheetName
+     * @return
+     */
     @RequestMapping(value = "/datasource/getSheet")
     @ResponseBody
     public ResponseJson getSheet(String sheetName) {    	
@@ -141,6 +146,27 @@ public class ExcelSheetInfoController extends BaseController {
     }
     
     
+
+    /**
+     * 删除sheet
+     * @param sheetId
+     * @return
+     */
+    @RequestMapping(value = "/datasource/deleteSheet")
+    @ResponseBody
+    public ResponseJson deleteSheet(Integer sheetId) {    	
+    	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo();    	
+    	excelSheetInfo.setId(sheetId);
+    	excelSheetInfoService.delete(excelSheetInfo);
+    	return new ResponseJson(200l,"success",null);
+    }
+    
+    
+    /**
+     * 根据文件夹id获取sheet
+     * @param folderId
+     * @return
+     */
     @RequestMapping(value = "/datasource/getSheetByFolderId")
     @ResponseBody
     public ResponseJson getSheetByFolderId(Integer folderId) {
@@ -153,15 +179,23 @@ public class ExcelSheetInfoController extends BaseController {
     }
     
     
+    /**
+     * 根据tableName获取数据
+     * @param tableName
+     * @param sheetId
+     * @param pageNum
+     * @return
+     */
     @RequestMapping(value = "/datasource/getSheetDataByTableName")
     @ResponseBody
     public ResponseJson getSheetDataByTableName(
     		@RequestParam String tableName,
     		@RequestParam Integer sheetId,
-    		@RequestParam(defaultValue = "1") Integer pageNum) {
+    		@RequestParam(defaultValue = "1") Integer pageNum,
+    		@RequestParam(defaultValue = "100") Integer pageSize) {
     	
     	logger.info("getSheetDataByTableName.tableName=   "  +tableName + "  sheetId = " + sheetId +"pageNum = "+pageNum);
-    	List<Map> sheetList = excelSheetInfoService.getSheetDataByTableName(tableName);    	
+    	List<Map> sheetList = excelSheetInfoService.getSheetDataByTableName(tableName,(pageNum-1)*pageSize,pageSize);    	
     	Integer totalRows = excelSheetInfoService.getCountByTableName(tableName);
     	
     	SheetMetadata entity = new SheetMetadata();

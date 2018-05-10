@@ -26,8 +26,8 @@ public class ExcelSheetInfoService {
 	}
 	
 	
-	public List<Map> getSheetDataByTableName(String tableName){
-		return excelSheetMapper.getSheetDataByTableName(tableName);
+	public List<Map> getSheetDataByTableName(String tableName, Integer start, Integer end){
+		return excelSheetMapper.getSheetDataByTableName(tableName,start,end);
 	}
 	
 	public Integer getCountByTableName(String tableName){
