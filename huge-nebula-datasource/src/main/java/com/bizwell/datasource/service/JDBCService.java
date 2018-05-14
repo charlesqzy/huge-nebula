@@ -23,7 +23,9 @@ public class JDBCService {
 	@Autowired
 	private DataSource dataSource;
 
-	public void executeSql(String sql)  {
+	public boolean executeSql(String sql)  {
+		
+		boolean flag = true;
 		
 		Connection connection = DataSourceUtils.getConnection(dataSource);
 		PreparedStatement preparedStatement = null;
@@ -33,12 +35,15 @@ public class JDBCService {
         try {
 			preparedStatement = connection.prepareStatement(sql);
 			// 执行sql
-			preparedStatement.execute();
+			flag = preparedStatement.execute();
 
 			connection.close();
 		} catch (SQLException e) {
+			flag = false;
 			e.printStackTrace();
 		}
+        
+        return flag;
 	     
 	}
 

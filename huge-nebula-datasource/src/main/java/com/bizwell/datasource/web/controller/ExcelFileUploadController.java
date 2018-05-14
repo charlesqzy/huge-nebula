@@ -3,21 +3,25 @@ package com.bizwell.datasource.web.controller;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import com.bizwell.datasource.bean.ExcelFileInfo;
 import com.bizwell.datasource.bean.ExcelSheetInfo;
@@ -68,8 +72,14 @@ public class ExcelFileUploadController extends BaseController {
 	 * @param file
 	 * @return
 	 */
-	@RequestMapping(value = "/datasource/uploadExcel", method = RequestMethod.POST)	
-	public @ResponseBody ResponseJson uploadExcel(@RequestParam("file") MultipartFile file,Integer userId, HttpServletRequest request) {
+	@RequestMapping(value = "/datasource/uploadExcel")	
+	public @ResponseBody ResponseJson uploadExcel(
+			@RequestParam(value = "file", required = false) MultipartFile file,
+			Integer userId,
+			HttpServletRequest request) {
+		
+		//String userId = request.getParameter("userId");
+		
 		logger.info("uploadExcel  userId="+userId);
 		//String contentType = file.getContentType();
 		String fileName = file.getOriginalFilename();
@@ -124,25 +134,36 @@ public class ExcelFileUploadController extends BaseController {
 	
 	
 	
-	
-	
+	/*
+	@Bean
+	public CommonsMultipartResolver multipartResolver() {
+	    return new CommonsMultipartResolver();
+	}
+
+	@Bean
+	public MultipartConfigElement multipartConfigElement() {
+	    MultipartConfigFactory factory = new MultipartConfigFactory();
+	    factory.setMaxFileSize("20MB");
+	    factory.setMaxRequestSize("20MB");
+	    return factory.createMultipartConfig();
+	}*/
 	
 	
 	/**
 	 * 追加数据
-	 *
+	 *apppendUploadExcel
 	 * @param file
 	 * @return
 	 */
-	@RequestMapping(value = "/datasource/apppendUploadExcel", method = RequestMethod.POST)	
+	@RequestMapping(value = "/datasource/apppendUploadExcel")	
 	public @ResponseBody ResponseJson apppendUploadExcel(
-			@RequestParam("file") MultipartFile file,
-			@RequestParam Integer sheetId,
-			@RequestParam Integer userId, 
-			@RequestParam(defaultValue = "false") Boolean replase,
-			@RequestParam HttpServletRequest request) {
+			@RequestParam(value = "file", required = false) MultipartFile file,
+			Integer sheetId,
+			Integer userId,
+			@RequestParam(defaultValue = "false")Boolean replase,
+			HttpServletRequest request) {
 		
-		logger.info("apppendUploadExcel   sheetId=="+sheetId + "  userId="+userId);
+		logger.info("apppendUploadExcel   sheetId=="+sheetId + "  userId="+userId + " replase="+replase);
 		//String contentType = file.getContentType();
 		String fileName = file.getOriginalFilename();
 
@@ -167,13 +188,16 @@ public class ExcelFileUploadController extends BaseController {
 			e.printStackTrace();
 		}
 		
+		
+		logger.info("sheetMetaList.size() == " + sheetMetaList.size() +   "        xlsContent.getSheets()[0].getTypeList().size()=" +xlsContent.getSheets()[0].getTypeList().size() );
 		if(sheetMetaList.size() != xlsContent.getSheets()[0].getTypeList().size()){
-			return new ResponseJson(202L,"文件不匹配，无法追加",null);
+			return new ResponseJson(202L,"文件不匹配，无法追加!",null);
 		}
 		
 		
 
 		
+		boolean flag = true;
 		
 		ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo();
 		excelSheetInfo.setId(sheetId);
@@ -182,11 +206,13 @@ public class ExcelFileUploadController extends BaseController {
 			String tableName = sheetInfo.get(0).getTableName();
 			
 			if(replase){
-				excelSheetInfoService.delete(excelSheetInfo);//替换原sheet，先删除
+				String truncateSql = readExcelForHSSF.generateTruncateTableSQL(tableName);
+				jdbcService.executeSql(truncateSql);
+				//excelSheetInfoService.delete(excelSheetInfo);//替换原sheet，先删除
 			}
 			
 			String insertSQL = readExcelForHSSF.generateInsertTableSQL(xlsContent.getSheets()[0].getContentList(), tableName);
-			jdbcService.executeSql(insertSQL);
+			flag = jdbcService.executeSql(insertSQL);
 			
 			
 			SheetLog sheetLog = new SheetLog();
@@ -196,12 +222,13 @@ public class ExcelFileUploadController extends BaseController {
         	sheetLogService.save(sheetLog);
 		}
 		
-
-		
-
-		// 返回json
-		//return JsonUtils.toJson(xlsContent);
+		logger.info("flag = === = = = "  +flag);
 		return new ResponseJson(200L,"success",null);
+//		if(flag){
+//			
+//		}else{
+//			return new ResponseJson(203L,"fail",null);
+//		}
 	}
 	
 	

@@ -136,7 +136,8 @@ public class ExcelSheetInfoController extends BaseController {
      */
     @RequestMapping(value = "/datasource/getSheet")
     @ResponseBody
-    public ResponseJson getSheet(String sheetName) {    	
+    public ResponseJson getSheet(String sheetName) {
+    	logger.info("getSheet  sheetName ="+ sheetName);
     	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo();    	
     	excelSheetInfo.setSheetName(sheetName);
     	excelSheetInfo.setUpdateTime(DateHelp.getStrTime(new Date()));
@@ -154,7 +155,8 @@ public class ExcelSheetInfoController extends BaseController {
      */
     @RequestMapping(value = "/datasource/deleteSheet")
     @ResponseBody
-    public ResponseJson deleteSheet(Integer sheetId) {    	
+    public ResponseJson deleteSheet(Integer sheetId) {
+    	logger.info("deleteSheet  sheetId ="+ sheetId);
     	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo();    	
     	excelSheetInfo.setId(sheetId);
     	excelSheetInfoService.delete(excelSheetInfo);
@@ -170,7 +172,8 @@ public class ExcelSheetInfoController extends BaseController {
      */
     @RequestMapping(value = "/datasource/moveSheet")
     @ResponseBody
-    public ResponseJson moveSheet(Integer sheetId,Integer targetFolderId) {    	
+    public ResponseJson moveSheet(Integer sheetId,Integer targetFolderId) { 
+    	logger.info("moveSheet  sheetId ="+ sheetId + "  targetFolderId="+targetFolderId);
     	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo();    	
     	excelSheetInfo.setId(sheetId);
     	excelSheetInfo.setFolderId(targetFolderId);
@@ -190,7 +193,7 @@ public class ExcelSheetInfoController extends BaseController {
     @RequestMapping(value = "/datasource/getSheetByFolderId")
     @ResponseBody
     public ResponseJson getSheetByFolderId(Integer folderId) {
-    	
+    	logger.info("getSheetByFolderId  folderId ="+ folderId );
     	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo(); 
     	excelSheetInfo.setFolderId(folderId);
     	List<ExcelSheetInfo> list = excelSheetInfoService.select(excelSheetInfo);
@@ -212,9 +215,9 @@ public class ExcelSheetInfoController extends BaseController {
     		@RequestParam String tableName,
     		@RequestParam Integer sheetId,
     		@RequestParam(defaultValue = "1") Integer pageNum,
-    		@RequestParam(defaultValue = "100") Integer pageSize) {
+    		@RequestParam(defaultValue = "20") Integer pageSize) {
     	
-    	logger.info("getSheetDataByTableName.tableName=   "  +tableName + "  sheetId = " + sheetId +"pageNum = "+pageNum);
+    	logger.info("getSheetDataByTableName.tableName=   "  +tableName + "  sheetId = " + sheetId +"  pageNum = "+pageNum);
     	List<Map> sheetList = excelSheetInfoService.getSheetDataByTableName(tableName,(pageNum-1)*pageSize,pageSize);    	
     	Integer totalRows = excelSheetInfoService.getCountByTableName(tableName);
     	

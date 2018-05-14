@@ -101,7 +101,7 @@
             <if test="tableName!=null">table_name=#{tableName},</if>
             <if test="tableClumns!=null">table_clumns=#{tableClumns},</if>
             <if test="tableRows!=null">table_rows=#{tableRows},</if>
-            <if test="updateRime!=null">update_time=#{updateRime},</if>
+            <if test="updateTime!=null">update_time=#{updateTime},</if>
             <if test="userId!=null">user_id=#{userId},</if>
         </trim>
 		WHERE id = #{id};

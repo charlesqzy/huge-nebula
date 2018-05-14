@@ -25,15 +25,12 @@ public class TestController {
     
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public String upload() {
-        System.out.println("111");
+        System.out.println(true && true && false);
 
-        List<Map> s1 = excelSheetInfoService.getSheetDataByTableName("xls_b2fb3a6797394401126660e420ace066_sheet_1",1,10);
-        
-        
-        System.out.println(JsonUtils.toJson(s1));
         
         return "ss";
     }
+    
 
 
   

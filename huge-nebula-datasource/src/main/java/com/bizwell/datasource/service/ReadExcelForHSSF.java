@@ -184,14 +184,20 @@ public class ReadExcelForHSSF {
 	
 	
 	
-	// 动态创建表
+	// drop表
 	public String generateDropTableSQL(String tableName) {
-
 		StringBuffer dropSql = new StringBuffer();
 		dropSql.append("DROP TABLE IF EXISTS ").append(tableName);
 		logger.info("dropSql ==== " + dropSql);
-
 		return dropSql.toString();
+	}
+	
+	// truncate表
+	public String generateTruncateTableSQL(String tableName) {
+		StringBuffer truncateSql = new StringBuffer();
+		truncateSql.append("TRUNCATE TABLE ").append(tableName);
+		logger.info("truncateSql ==== " + truncateSql);
+		return truncateSql.toString();
 	}
 
 	// 动态创建表
