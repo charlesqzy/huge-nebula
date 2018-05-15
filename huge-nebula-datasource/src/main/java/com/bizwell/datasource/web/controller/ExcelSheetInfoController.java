@@ -1,5 +1,6 @@
 package com.bizwell.datasource.web.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -71,17 +72,33 @@ public class ExcelSheetInfoController extends BaseController {
     @ResponseBody
     public ResponseJson createSheet(@RequestBody XlsContent xlsContent ,Integer userId, HttpServletRequest request) {
     	String filePath = request.getSession().getServletContext().getRealPath("excelfile/");
-		logger.info("createSheet  userId ="+ userId+ "filePath=" + filePath);
+    	String fileName = xlsContent.getFileName();
+    	String fileCode = xlsContent.getFileCode();
+    	
+		logger.info("createSheet  userId ="+ userId+ "   filePath=" + filePath + "  fileName="+fileName);
+		
+		XlsContent newXlsContent = null;
+		try {
+			newXlsContent = readExcelForHSSF.readExcel(filePath, fileName,false);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
     	ExcelSheetInfo excelSheetInfo = null;
     	SheetLog sheetLog= null;
     	
     	//String dateStr = new SimpleDateFormat("yyMMddHHmmss").format(new Date());    	
     	int i = 1;    	
-    	SheetInfo[] sheets = xlsContent.getSheets();
+    	SheetInfo[] sheets = newXlsContent.getSheets();
     	
-    	for(SheetInfo sheet : sheets){    		
-        	String tableName = "xls_"+xlsContent.getFileCode()+"_sheet_"+ i++ ;
+    	for(SheetInfo sheet : sheets){    	
+    		if(sheet.getTypeList().size()==0){
+    			continue;//如果没有数据则跳过
+    		}
+   
+    		
+        	String tableName = "xls_"+fileCode+"_sheet_"+ i++ ;
     		//动态创建mysql，插入数据    	        	
     		
     		excelSheetInfo = new ExcelSheetInfo();
@@ -89,20 +106,19 @@ public class ExcelSheetInfoController extends BaseController {
     		excelSheetInfoService.delete(excelSheetInfo);//覆盖原sheet，先删除
     		
     		
-        	excelSheetInfo.setExcelFileId(xlsContent.getExcelFileId());    		
+        	excelSheetInfo.setExcelFileId(newXlsContent.getExcelFileId());    		
         	excelSheetInfo.setSheetName(sheet.getSheetName());
         	excelSheetInfo.setFolderId(sheet.getFolderId());
 //        	excelSheetInfo.setCategoryFlag(categoryFlag);
 //        	excelSheetInfo.setRemark(remark);
         	excelSheetInfo.setTableClumns(sheet.getTypeList().size());
-        	excelSheetInfo.setTableRows(sheet.getTypeList().size());
+        	excelSheetInfo.setTableRows(sheet.getContentList().size());
         	excelSheetInfo.setUpdateTime(DateHelp.getStrTime(new Date()));
         	excelSheetInfo.setUserId(userId);
         	excelSheetInfoService.save(excelSheetInfo);
 
         	String dropSql = readExcelForHSSF.generateDropTableSQL(tableName);
-        	String createSql=readExcelForHSSF.generateCreateTableSQL(sheet.getTypeList(),
-        			sheet.getContentList(),tableName);
+        	String createSql=readExcelForHSSF.generateCreateTableSQL(sheet.getTypeList(), tableName);
         	String metadataSQL=readExcelForHSSF.generateMetadataSQL(sheet.getTypeList(),
         			sheet.getContentList(),excelSheetInfo.getId());    
         	String insertSQL=readExcelForHSSF.generateInsertTableSQL(

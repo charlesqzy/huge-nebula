@@ -103,18 +103,16 @@ public class ExcelFileUploadController extends BaseController {
 		String md5Hashcode = FileMD5Util.getFileMD5(new File(filePath + fileName));
 		ExcelFileInfo entity = new ExcelFileInfo();
 		entity.setFileCode(md5Hashcode);
-		if (null != excelFileInfoService.select(entity)) {
-			//return new ResponseJson(201l,"文件已存在",null);
+		if (excelFileInfoService.select(entity).size()>0) {
 			code = 201L;
 			message = "文件已存在,将会覆盖原文件";
 		}
 		
 		try {
-			xlsContent = readExcelForHSSF.readExcel(filePath, fileName);
+			xlsContent = readExcelForHSSF.readExcel(filePath, fileName,true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		entity.setFileCode(md5Hashcode);
 		entity.setFileName(fileName);
 		entity.setFilePath(filePath);
 		// entity.setFileSize(fileSize);
@@ -124,6 +122,8 @@ public class ExcelFileUploadController extends BaseController {
 		excelFileInfoService.save(entity);
 		xlsContent.setExcelFileId(entity.getId());
 		xlsContent.setFileCode(md5Hashcode);
+		
+		
 		logger.info("content=" + JsonUtils.toJson(xlsContent));
 		// 返回json
 		//return JsonUtils.toJson(xlsContent);
@@ -183,7 +183,7 @@ public class ExcelFileUploadController extends BaseController {
 		
 		XlsContent xlsContent = null;
 		try {
-			xlsContent = readExcelForHSSF.readExcel(filePath, fileName);
+			xlsContent = readExcelForHSSF.readExcel(filePath, fileName,false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

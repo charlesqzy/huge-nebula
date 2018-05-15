@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 import com.bizwell.datasource.bean.SheetInfo;
 import com.bizwell.datasource.bean.XLSHaderType;
 import com.bizwell.datasource.bean.XlsContent;
-import com.bizwell.datasource.common.JsonUtils;
+
 
 /**
  * excel解析 Created by liujian on 2018/4/28.
@@ -36,7 +36,7 @@ public class ReadExcelForHSSF {
 
 	private static String excelHader[] = { "A", "B", "C", "D", "E", "F", "G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z" };
 
-	public XlsContent readExcel(String filePath, String fileName) throws IOException {
+	public XlsContent readExcel(String filePath, String fileName,boolean isCut) throws IOException {
 
 		FileInputStream fileInputStream = new FileInputStream(filePath + fileName);
 		BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
@@ -123,7 +123,7 @@ public class ReadExcelForHSSF {
 				contentList.add(rowCellValues);
 			}
 
-			sheets[s] = new SheetInfo(sheetName, typeList, contentList);
+			sheets[s] = new SheetInfo(sheetName, typeList, (isCut&&contentList.size()>100?contentList.subList(0, 100):contentList));
 
 		}
 
@@ -201,8 +201,11 @@ public class ReadExcelForHSSF {
 	}
 
 	// 动态创建表
-	public String generateCreateTableSQL(List<XLSHaderType> typeList, List<Map<String, String>> contentList,
-			String tableName) {
+	public String generateCreateTableSQL(List<XLSHaderType> typeList,String tableName) {
+		
+		if(typeList.size()==0){
+			return "select 1";
+		}
 
 		StringBuffer createSql = new StringBuffer();
 		createSql.append("create table ").append(tableName).append("(");
@@ -217,9 +220,13 @@ public class ReadExcelForHSSF {
 				createSql.append(" double ,");
 			}
 		}
+		
+			
+		
 		// 删除最后一个逗号
 		createSql.delete(createSql.lastIndexOf(","), createSql.lastIndexOf(",") + 1);
 		createSql.append(")");
+		
 		logger.info("createSql ==== " + createSql);
 
 		return createSql.toString();
@@ -228,6 +235,14 @@ public class ReadExcelForHSSF {
 	// 动态插入元数据
 	public String generateMetadataSQL(List<XLSHaderType> typeList, List<Map<String, String>> contentList,
 			Integer sheetId) {
+		
+		if(typeList.size()==0){
+			return "select 1";
+		}		
+		if(contentList.size()==0){
+			return "select 1";
+		}
+		
 
 		int fieldType=2;
 		for (XLSHaderType type : typeList) {
@@ -256,6 +271,10 @@ public class ReadExcelForHSSF {
 
 	// 动态插入数据
 	public String generateInsertTableSQL(List<Map<String, String>> contentList, String tableName) {
+		if(contentList.size()==0){
+			return "select 1";
+		}
+		
 		StringBuffer insertSql = new StringBuffer();
 		insertSql.append(" insert into ").append(tableName);
 		insertSql.append(" values  ");

@@ -56,7 +56,8 @@
 				and folder_name like concat(concat('%', #{folderName}),
 				'%')
 			</if>
-		</where>
+		</where>		
+		ORDER BY level ASC
 	</select>
 
 
