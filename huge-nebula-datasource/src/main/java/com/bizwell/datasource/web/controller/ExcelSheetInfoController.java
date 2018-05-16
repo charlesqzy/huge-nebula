@@ -89,7 +89,8 @@ public class ExcelSheetInfoController extends BaseController {
     	SheetLog sheetLog= null;
     	
     	//String dateStr = new SimpleDateFormat("yyMMddHHmmss").format(new Date());    	
-    	int i = 1;    	
+    	int i = 1;
+    	int s = 0;
     	SheetInfo[] sheets = newXlsContent.getSheets();
     	
     	for(SheetInfo sheet : sheets){    	
@@ -107,8 +108,8 @@ public class ExcelSheetInfoController extends BaseController {
     		
     		
         	excelSheetInfo.setExcelFileId(newXlsContent.getExcelFileId());    		
-        	excelSheetInfo.setSheetName(sheet.getSheetName());
-        	excelSheetInfo.setFolderId(sheet.getFolderId());
+        	excelSheetInfo.setSheetName(xlsContent.getSheets()[s].getSheetName());
+        	excelSheetInfo.setFolderId(xlsContent.getSheets()[s].getFolderId());
 //        	excelSheetInfo.setCategoryFlag(categoryFlag);
 //        	excelSheetInfo.setRemark(remark);
         	excelSheetInfo.setTableClumns(sheet.getTypeList().size());
@@ -120,9 +121,13 @@ public class ExcelSheetInfoController extends BaseController {
         	String dropSql = readExcelForHSSF.generateDropTableSQL(tableName);
         	String createSql=readExcelForHSSF.generateCreateTableSQL(sheet.getTypeList(), tableName);
         	String metadataSQL=readExcelForHSSF.generateMetadataSQL(sheet.getTypeList(),
-        			sheet.getContentList(),excelSheetInfo.getId());    
+        			sheet.getContentList(),excelSheetInfo.getId());
+
+        	Integer rowIndex = xlsContent.getSheets()[s].getRowIndex();
+        	Integer startRow = rowIndex>0?rowIndex-1:rowIndex ;
+        	System.out.println("startRow===="+startRow);
         	String insertSQL=readExcelForHSSF.generateInsertTableSQL(
-        			sheet.getContentList(),tableName);        	
+        			sheet.getContentList().subList(startRow, sheet.getContentList().size()),tableName);        	
         	
         	
         	jdbcService.executeSql(dropSql);
@@ -135,6 +140,8 @@ public class ExcelSheetInfoController extends BaseController {
         	sheetLog.setUpdateTime(new Date());
         	sheetLog.setUpdateLog("new sheet ");
         	sheetLogService.save(sheetLog);
+        	
+        	s++;
     	}
     	
     	

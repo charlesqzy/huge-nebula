@@ -8,9 +8,19 @@ public class SheetInfo {
 	private List<XLSHaderType> typeList;
 	List<Map<String, String>> contentList;
 	private Integer folderId;
+	private Integer rowIndex = 0;
 	
 	
 	
+
+
+	public Integer getRowIndex() {
+		return rowIndex;
+	}
+
+	public void setRowIndex(Integer rowIndex) {
+		this.rowIndex = rowIndex;
+	}
 
 	public Integer getFolderId() {
 		return folderId;

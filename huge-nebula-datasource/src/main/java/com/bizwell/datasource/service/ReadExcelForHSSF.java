@@ -85,14 +85,6 @@ public class ReadExcelForHSSF {
 						typeList.add(new XLSHaderType(excelHader[j], type));
 					}
 					
-					// String cellValue = row.getCell(j).getStringCellValue();
-//					if (row.getCell(j) != null) {
-//			
-//							row.getCell(j).setCellType(Cell.CELL_TYPE_STRING);
-//							String cellValue = row.getCell(j).getStringCellValue();
-//							rowCellValues.put(excelHader[j], cellValue);
-//					}
-					
 					
 					String value = "";
 					
@@ -182,6 +174,19 @@ public class ReadExcelForHSSF {
 		return value;
 	}
 	
+	/**
+    * 是否是日期格式保留字段 
+    * @return boolean<ul><li>true - 是保留字段</li><li>false - 不是</li></ul> 
+    */  
+   private boolean isReserved(short reserv)  
+   {  
+       if(reserv>=27&&reserv<=31)  
+       {  
+           return true;  
+       }  
+       return false;  
+   }  
+	
 	
 	
 	// drop表
@@ -214,7 +219,7 @@ public class ReadExcelForHSSF {
 			if ("string".equals(type.getType())) {
 				createSql.append(" varchar(200) ,");
 			} else if ("date".equals(type.getType())) {
-				createSql.append(" varchar(100) ,");
+				createSql.append(" varchar(20) ,");
 				//createSql.append(" timestamp ,");
 			} else if ("numeric".equals(type.getType())) {
 				createSql.append(" double ,");
