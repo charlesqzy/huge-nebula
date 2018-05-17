@@ -7,12 +7,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="huge-nebula-datasource" />
+        <module name="huge-nebula-echarts" />
         <module name="huge-nebula-passport" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="huge-nebula" target="1.8" />
       <module name="huge-nebula-datasource" target="1.8" />
+      <module name="huge-nebula-echarts" target="1.8" />
       <module name="huge-nebula-passport" target="1.8" />
     </bytecodeTargetLevel>
   </component>
