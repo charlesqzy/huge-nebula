@@ -31,6 +31,7 @@ import com.bizwell.datasource.json.ResponseJson;
 import com.bizwell.datasource.service.ExcelSheetInfoService;
 import com.bizwell.datasource.service.FolderInfoService;
 import com.bizwell.datasource.service.JDBCService;
+import com.bizwell.datasource.service.MysqlHelper;
 import com.bizwell.datasource.service.ReadExcelForHSSF;
 import com.bizwell.datasource.service.SheetLogService;
 import com.bizwell.datasource.service.SheetMetadataService;
@@ -104,8 +105,7 @@ public class ExcelSheetInfoController extends BaseController {
     		
     		excelSheetInfo = new ExcelSheetInfo();
     		excelSheetInfo.setTableName(tableName);    		
-    		excelSheetInfoService.delete(excelSheetInfo);//覆盖原sheet，先删除
-    		
+    		excelSheetInfoService.delete(excelSheetInfo);//覆盖原sheet，先删除    		
     		
         	excelSheetInfo.setExcelFileId(newXlsContent.getExcelFileId());    		
         	excelSheetInfo.setSheetName(xlsContent.getSheets()[s].getSheetName());
@@ -118,22 +118,25 @@ public class ExcelSheetInfoController extends BaseController {
         	excelSheetInfo.setUserId(userId);
         	excelSheetInfoService.save(excelSheetInfo);
 
-        	String dropSql = readExcelForHSSF.generateDropTableSQL(tableName);
-        	String createSql=readExcelForHSSF.generateCreateTableSQL(sheet.getTypeList(), tableName);
-        	String metadataSQL=readExcelForHSSF.generateMetadataSQL(sheet.getTypeList(),
-        			sheet.getContentList(),excelSheetInfo.getId(),tableName);
-
+        	String dropSql = MysqlHelper.generateDropTableSQL(tableName);
+        	String createSql=MysqlHelper.generateCreateTableSQL(sheet.getTypeList(), tableName);
         	Integer rowIndex = xlsContent.getSheets()[s].getRowIndex();
         	Integer startRow = rowIndex>0?rowIndex-1:rowIndex ;
         	System.out.println("startRow===="+startRow);
-        	String insertSQL=readExcelForHSSF.generateInsertTableSQL(
-        			sheet.getContentList().subList(startRow, sheet.getContentList().size()),tableName);        	
+        	String insertSQL=MysqlHelper.generateInsertTableSQL(
+        			sheet.getContentList().subList(startRow, sheet.getContentList().size()),tableName);
+        	
+        	String deleteMetadataSQL=MysqlHelper.generateDeleteMetadataSQL(tableName);
+        	String insertMetadataSQL=MysqlHelper.generateInsertMetadataSQL(sheet.getTypeList(),
+        			sheet.getContentList(),excelSheetInfo.getId(),tableName);
         	
         	
         	jdbcService.executeSql(dropSql);
-        	jdbcService.executeSql(createSql);
-        	jdbcService.executeSql(metadataSQL);
-        	jdbcService.executeSql(insertSQL);        	
+        	jdbcService.executeSql(createSql);        	
+        	jdbcService.executeSql(insertSQL);
+        	
+        	jdbcService.executeSql(deleteMetadataSQL);
+        	jdbcService.executeSql(insertMetadataSQL);
         	
         	sheetLog = new SheetLog();
         	sheetLog.setSheetId(excelSheetInfo.getId());

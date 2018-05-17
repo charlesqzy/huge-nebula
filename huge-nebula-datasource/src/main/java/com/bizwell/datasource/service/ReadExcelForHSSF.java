@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import com.bizwell.datasource.bean.SheetInfo;
 import com.bizwell.datasource.bean.XLSHaderType;
 import com.bizwell.datasource.bean.XlsContent;
+import com.bizwell.datasource.common.Constants;
 
 
 /**
@@ -37,8 +38,7 @@ import com.bizwell.datasource.bean.XlsContent;
 public class ReadExcelForHSSF {
 	private static Logger logger = LoggerFactory.getLogger(ReadExcelForHSSF.class);
 
-	private static String excelHader[] = { "A", "B", "C", "D", "E", "F", "G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z" };
-	
+
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	
@@ -85,7 +85,7 @@ public class ReadExcelForHSSF {
 
 					if (i == 1) {// 取第二行数据类型
 						String type = getCellValueByCell(row.getCell(j));
-						typeList.add(new XLSHaderType(excelHader[j], type));
+						typeList.add(new XLSHaderType(Constants.excelHader[j], type));
 					}
 					
 					
@@ -112,7 +112,7 @@ public class ReadExcelForHSSF {
 				        }
 			        }
 
-			        rowCellValues.put(excelHader[j], value);			
+			        rowCellValues.put(Constants.excelHader[j], value);			
 				}
 				contentList.add(rowCellValues);
 			}
@@ -241,114 +241,8 @@ public class ReadExcelForHSSF {
    
 	
 	
-	// drop表
-	public String generateDropTableSQL(String tableName) {
-		StringBuffer dropSql = new StringBuffer();
-		dropSql.append("DROP TABLE IF EXISTS ").append(tableName);
-		logger.info("dropSql ==== " + dropSql);
-		return dropSql.toString();
-	}
-	
-	// truncate表
-	public String generateTruncateTableSQL(String tableName) {
-		StringBuffer truncateSql = new StringBuffer();
-		truncateSql.append("TRUNCATE TABLE ").append(tableName);
-		logger.info("truncateSql ==== " + truncateSql);
-		return truncateSql.toString();
-	}
 
-	// 动态创建表
-	public String generateCreateTableSQL(List<XLSHaderType> typeList,String tableName) {
-		
-		if(typeList.size()==0){
-			return "select 1";
-		}
 
-		StringBuffer createSql = new StringBuffer();
-		createSql.append("create table ").append(tableName).append("(");
-		for (XLSHaderType type : typeList) {
-			createSql.append(type.getProp());
-			if ("string".equals(type.getType())) {
-				createSql.append(" varchar(200) ,");
-			} else if ("date".equals(type.getType())) {
-				createSql.append(" varchar(20) ,");
-				//createSql.append(" timestamp ,");
-			} else if ("numeric".equals(type.getType())) {
-				createSql.append(" double ,");
-			}
-		}
-		
-			
-		
-		// 删除最后一个逗号
-		createSql.delete(createSql.lastIndexOf(","), createSql.lastIndexOf(",") + 1);
-		createSql.append(")");
-		
-		logger.info("createSql ==== " + createSql);
-
-		return createSql.toString();
-	}
-
-	// 动态插入元数据
-	public String generateMetadataSQL(List<XLSHaderType> typeList, List<Map<String, String>> contentList,
-			Integer sheetId, String tableName) {
-		
-		if(typeList.size()==0){
-			return "select 1";
-		}		
-		if(contentList.size()==0){
-			return "select 1";
-		}
-		
-
-		int fieldType=2;
-		for (XLSHaderType type : typeList) {
-			
-			if ("string".equals(type.getType())) {
-				fieldType =2;
-			} else if ("date".equals(type.getType())) {
-				fieldType =3;
-			} else if ("numeric".equals(type.getType())) {
-				fieldType = 1;
-			}
-		}
-		
-		StringBuffer metadataSQL = new StringBuffer();
-		Map<String, String> headerMap = contentList.get(0);
-		metadataSQL.append(
-				"insert into ds_sheet_metadata(sheet_id,table_name,field_column,field_name_old,field_name_new,field_type,field_comment,is_visible) values ");
-		for (int i = 0; i < headerMap.size(); i++) {
-			metadataSQL.append("('" + sheetId + "','"+tableName+"','"+excelHader[i]+"','" + headerMap.get(excelHader[i]) + "','" + headerMap.get(excelHader[i]) + "',"+fieldType+",'','1'),");
-		}
-		metadataSQL.delete(metadataSQL.lastIndexOf(","), metadataSQL.lastIndexOf(",") + 1);
-		logger.info("metadataSQL ==== " + metadataSQL);
-
-		return metadataSQL.toString();
-	}
-
-	// 动态插入数据
-	public String generateInsertTableSQL(List<Map<String, String>> contentList, String tableName) {
-		if(contentList.size()==0){
-			return "select 1";
-		}
-		
-		StringBuffer insertSql = new StringBuffer();
-		insertSql.append(" insert into ").append(tableName);
-		insertSql.append(" values  ");
-		for (int k = 1; k < contentList.size(); k++) {
-			Map<String, String> map = contentList.get(k);
-			insertSql.append("(");
-			for (int i = 0; i < map.size(); i++) {
-				insertSql.append("'").append(map.get(excelHader[i])).append("',");
-			}
-			insertSql.delete(insertSql.lastIndexOf(","), insertSql.lastIndexOf(",") + 1);
-			insertSql.append("),");
-		}
-		insertSql.delete(insertSql.lastIndexOf(","), insertSql.lastIndexOf(",") + 1);
-		logger.info("insertSql ==== " + insertSql);
-
-		return insertSql.toString();
-	}
 
 	/*public static void main(String[] args) throws IOException {
 		String filePath = "D:\\";

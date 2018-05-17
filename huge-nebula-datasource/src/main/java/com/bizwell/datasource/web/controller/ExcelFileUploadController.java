@@ -34,6 +34,7 @@ import com.bizwell.datasource.json.ResponseJson;
 import com.bizwell.datasource.service.ExcelFileInfoService;
 import com.bizwell.datasource.service.ExcelSheetInfoService;
 import com.bizwell.datasource.service.JDBCService;
+import com.bizwell.datasource.service.MysqlHelper;
 import com.bizwell.datasource.service.ReadExcelForHSSF;
 import com.bizwell.datasource.service.SheetLogService;
 import com.bizwell.datasource.service.SheetMetadataService;
@@ -206,12 +207,12 @@ public class ExcelFileUploadController extends BaseController {
 			String tableName = sheetInfo.get(0).getTableName();
 			
 			if(replase){
-				String truncateSql = readExcelForHSSF.generateTruncateTableSQL(tableName);
+				String truncateSql = MysqlHelper.generateTruncateTableSQL(tableName);
 				jdbcService.executeSql(truncateSql);
 				//excelSheetInfoService.delete(excelSheetInfo);//替换原sheet，先删除
 			}
 			
-			String insertSQL = readExcelForHSSF.generateInsertTableSQL(xlsContent.getSheets()[0].getContentList(), tableName);
+			String insertSQL = MysqlHelper.generateInsertTableSQL(xlsContent.getSheets()[0].getContentList(), tableName);
 			flag = jdbcService.executeSql(insertSQL);
 			
 			
