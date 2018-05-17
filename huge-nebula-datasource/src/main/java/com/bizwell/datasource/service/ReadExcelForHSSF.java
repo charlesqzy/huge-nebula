@@ -3,9 +3,12 @@ package com.bizwell.datasource.service;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +38,10 @@ public class ReadExcelForHSSF {
 	private static Logger logger = LoggerFactory.getLogger(ReadExcelForHSSF.class);
 
 	private static String excelHader[] = { "A", "B", "C", "D", "E", "F", "G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z" };
+	
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
+	
 
 	public XlsContent readExcel(String filePath, String fileName,boolean isCut) throws IOException {
 
@@ -55,7 +62,6 @@ public class ReadExcelForHSSF {
 		for (int s = 0; s < numberOfSheets; s++) {
 			HSSFSheet sheet = workbook.getSheetAt(s);
 			String sheetName = sheet.getSheetName();
-			// HSSFSheet sheet = workbook.getSheet("Sheet1");
 			int lastRowIndex = sheet.getLastRowNum();
 			logger.info("sheetName== " + sheetName + "   lastRowIndex=" + lastRowIndex);
 			fileRows += lastRowIndex;
@@ -73,15 +79,12 @@ public class ReadExcelForHSSF {
 
 				short lastCellNum = row.getLastCellNum();
 				rowCellValues = new HashMap<String, String>();
-				// rowCellValues = new String[lastCellNum];
 				fileColumns += lastCellNum;
 
 				for (int j = 0; j < lastCellNum; j++) {
 
 					if (i == 1) {// 取第二行数据类型
 						String type = getCellValueByCell(row.getCell(j));
-						// logger.info(" type=" + type);
-						// cellType.put(excelHader[j], type);
 						typeList.add(new XLSHaderType(excelHader[j], type));
 					}
 					
@@ -95,8 +98,7 @@ public class ReadExcelForHSSF {
 				        case HSSFCell.CELL_TYPE_NUMERIC:
 				        	value= df.format(hssfCell.getNumericCellValue());
 				        	
-				            if(HSSFDateUtil.isCellDateFormatted(hssfCell)){
-				                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				            if(HSSFDateUtil.isCellDateFormatted(hssfCell)||isReserved(hssfCell.getCellStyle().getDataFormat())||isDateFormat(hssfCell.getCellStyle().getDataFormatString())){
 				                value= sdf.format(HSSFDateUtil.getJavaDate(hssfCell.getNumericCellValue()));
 				            }
 				            break;
@@ -110,7 +112,7 @@ public class ReadExcelForHSSF {
 				        }
 			        }
 
-			        rowCellValues.put(excelHader[j], value);				
+			        rowCellValues.put(excelHader[j], value);			
 				}
 				contentList.add(rowCellValues);
 			}
@@ -121,11 +123,6 @@ public class ReadExcelForHSSF {
 
 		bufferedInputStream.close();
 
-		// Map xslContent = new HashMap();
-		// xslContent.put("fileName", fileName);
-		// xslContent.put("sheets", sheets);
-		// xslContent.put("fileRows", fileRows);
-		// xslContent.put("fileColumns", fileColumns);
 		XlsContent xslContent = new XlsContent();
 		xslContent.setFileName(fileName);
 		xslContent.setSheets(sheets);
@@ -146,13 +143,19 @@ public class ReadExcelForHSSF {
 		case HSSFCell.CELL_TYPE_NUMERIC: // 数字
 			// 如果为时间格式的内容
 			if (DateUtil.isCellDateFormatted(cell)) {
-				value = "date";
-				break;
+				value = "date";break;
 			} else {
 				value = "numeric";
 			}
 			break;
 		case HSSFCell.CELL_TYPE_STRING: // 字符串
+			String sss = cell.getStringCellValue();
+			if(isRightDateStr(cell.getStringCellValue(),"yyyy-MM-dd")){
+				value = "date";break;
+			}
+			if(isRightDateStr(cell.getStringCellValue(),"yyyy-MM-dd HH:mm:ss")){
+				value = "date";break;
+			}
 			value = "string";
 			break;
 		case HSSFCell.CELL_TYPE_BOOLEAN: // Boolean
@@ -176,7 +179,7 @@ public class ReadExcelForHSSF {
 	
 	/**
     * 是否是日期格式保留字段 
-    * @return boolean<ul><li>true - 是保留字段</li><li>false - 不是</li></ul> 
+    * @return booleantrue - 是保留字       false 不是 
     */  
    private boolean isReserved(short reserv)  
    {  
@@ -187,6 +190,55 @@ public class ReadExcelForHSSF {
        return false;  
    }  
 	
+   
+   /** 
+    * 判断是否是中文日期格式 
+    * @param isNotDate 
+    * @return boolean true - 是日期格式      false不是 
+    */  
+   private boolean isDateFormat(String isNotDate)  
+   {  
+       if(isNotDate.contains("年")||isNotDate.contains("月")||isNotDate.contains("日"))  
+       {  
+           return true;  
+       }  
+       else if(isNotDate.contains("aaa;")||isNotDate.contains("AM")||isNotDate.contains("PM"))  
+       {  
+           return true;  
+       }  
+   
+         
+       return false;  
+   }
+   
+   
+   /**
+    * 判断是否是对应的格式的日期字符串
+    * @param dateStr
+    * @param datePattern
+    * @return
+    */
+   public static boolean isRightDateStr(String dateStr,String datePattern){
+       DateFormat dateFormat  = new SimpleDateFormat(datePattern);
+       try {
+           //采用严格的解析方式，防止类似 “2017-05-35” 类型的字符串通过
+           dateFormat.setLenient(false);
+           dateFormat.parse(dateStr);
+           Date date = (Date)dateFormat.parse(dateStr);
+           //重复比对一下，防止类似 “2017-5-15” 类型的字符串通过
+           String newDateStr = dateFormat.format(date);
+           if(dateStr.equals(newDateStr)){
+               return true;
+           }else {
+               //logger.error("字符串dateStr:{}， 不是严格的 datePattern:{} 格式的字符串",dateStr,datePattern);
+               return false;
+           }
+       } catch (ParseException e) {
+    	   //logger.error("字符串dateStr:{}，不能按照 datePattern:{} 样式转换",dateStr,datePattern);
+           return false;
+       }
+   }
+   
 	
 	
 	// drop表
