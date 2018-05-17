@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bizwell.datasource.mapper.ExcelSheetInfoMapper">
+
+	<resultMap id="BaseResultMap" type="com.bizwell.datasource.bean.ExcelSheetInfo">
+		<id column="id" property="id" />
+		<result column="excel_file_id" property="excelFileId" />
+		<result column="sheet_name" property="sheetName" jdbcType="VARCHAR" />
+		<result column="folder_id" property="folderId" jdbcType="VARCHAR" />
+		<result column="folder_name" property="folderName" jdbcType="VARCHAR" />
+		<result column="category_flag" property="categoryFlag"
+			jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="table_name" property="tableName" jdbcType="VARCHAR" />
+		<result column="table_clumns" property="tableClumns" jdbcType="VARCHAR" />
+		<result column="table_rows" property="tableRows" jdbcType="VARCHAR" />
+		<result column="rows_clumns" property="rowsClumns" jdbcType="VARCHAR" />
+		<result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+		<result column="user_id" property="userId" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+
+	<insert id="save" parameterType="com.bizwell.datasource.bean.ExcelSheetInfo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="java.lang.Integer">
+			select
+			LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		`ds_excel_sheet_info`
+		(
+		`excel_file_id`,
+		`sheet_name`,
+		`folder_id`,
+		`category_flag`,
+		`remark`,
+		`table_name`,
+		table_clumns,
+		table_rows,
+		`update_time`,
+		`user_id`)
+		VALUES (
+		#{excelFileId},
+		#{sheetName},
+		#{folderId},
+		#{categoryFlag},
+		#{remark},
+		#{tableName},
+		#{tableClumns},
+		#{tableRows},
+		#{updateTime},
+		#{userId});
+	</insert>
+
+
+
+	<select id="select" parameterType="com.bizwell.datasource.bean.ExcelSheetInfo"
+		resultMap="BaseResultMap">
+		SELECT
+		t1.`id`,
+		`excel_file_id`,
+		`sheet_name`,
+		`folder_id`,
+		t2.`folder_name`,
+		`category_flag`,
+		`remark`,
+		`table_name`,
+		table_clumns,
+		table_rows,
+		CONCAT_WS('/',table_rows,table_clumns,NULL) AS rows_clumns,
+		DATE_FORMAT(update_time,'%Y-%m-%d %h:%m%:%s') AS
+		update_time,
+		t1.`user_id`
+		FROM
+		`ds_excel_sheet_info` t1
+		LEFT JOIN gb_folder_info t2
+		ON(t1.folder_id=t2.id)
+		<where>
+			<if test="null != id">
+				and t1.`id` = #{id}
+			</if>
+			<if test="null != folderId">
+				and folder_id = #{folderId}
+			</if>
+			<if test="null != sheetName">
+				and sheet_name like concat(concat('%', #{sheetName}),
+				'%')
+			</if>
+		</where>
+	</select>
+
+
+	<update id="update" parameterType="com.bizwell.datasource.bean.ExcelSheetInfo">
+		UPDATE `ds_excel_sheet_info`
+		<trim prefix="set" suffixOverrides=",">
+            <if test="sheetName!=null">sheet_name=#{sheetName},</if>
+            <if test="folderId!=null">folder_id=#{folderId},</if>
+            <if test="categoryFlag!=null">category_flag=#{categoryFlag},</if>
+            <if test="remark!=null">remark=#{remark},</if>
+            <if test="tableName!=null">table_name=#{tableName},</if>
+            <if test="tableClumns!=null">table_clumns=#{tableClumns},</if>
+            <if test="tableRows!=null">table_rows=#{tableRows},</if>
+            <if test="updateTime!=null">update_time=#{updateTime},</if>
+            <if test="userId!=null">user_id=#{userId},</if>
+        </trim>
+		WHERE id = #{id};
+	</update>
+
+
+
+
+	<select id="getSheetDataByTableName" parameterType="java.lang.String"
+		resultType="java.util.Map">
+		select * from ${tableName} limit ${start},${end}
+	</select>
+	<select id="getCountByTableName" parameterType="java.lang.String"
+		resultType="java.lang.Integer">
+		select count(1) from ${tableName}
+	</select>
+
+
+
+	<delete id="delete" parameterType="com.bizwell.datasource.bean.ExcelSheetInfo">
+		DELETE
+		FROM ds_excel_sheet_info
+		<where>
+			<if test="null != id">
+				and id = #{id}
+			</if>
+			<if test="null != tableName">
+				and table_name = #{tableName}
+			</if>
+		</where>
+	</delete>
+
+</mapper>

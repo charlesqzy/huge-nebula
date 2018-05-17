@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bizwell.datasource.mapper.FolderInfoMapper">
+
+	<resultMap id="BaseResultMap" type="com.bizwell.datasource.bean.FolderInfo">
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="folder_name" property="folderName" jdbcType="VARCHAR" />
+		<result column="folder_type" property="folderType" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
+		<result column="level" property="level" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+	<insert id="save" parameterType="com.bizwell.datasource.bean.FolderInfo"
+		useGeneratedKeys="true" keyProperty="id" >
+		<selectKey keyProperty="id" resultType="java.lang.Integer">
+			select
+			LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO `gb_folder_info`
+		(
+		`user_id`,
+		`folder_name`,
+		`folder_type`,
+		`parent_id`,
+		`level`)
+		VALUES (
+		#{userId},
+		#{folderName},
+		#{folderType},
+		#{parentId},
+		#{level});
+	</insert>
+
+
+	<select id="select" parameterType="com.bizwell.datasource.bean.FolderInfo"
+		resultMap="BaseResultMap">
+		SELECT
+		`id`,
+		`user_id`,
+		`folder_name`,
+		`folder_type`,
+		`parent_id`,
+		`level`
+		FROM `gb_folder_info`
+		<where>
+		folder_type = 2
+			<if test="null != id">
+				and id = #{id}
+			</if>
+			<if test="null != userId">
+				and user_id = #{userId} and user_id = 0
+			</if>
+			<if test="null != folderName">
+				and folder_name like concat(concat('%', #{folderName}),
+				'%')
+			</if>
+		</where>		
+		ORDER BY level ASC
+	</select>
+
+
+</mapper>

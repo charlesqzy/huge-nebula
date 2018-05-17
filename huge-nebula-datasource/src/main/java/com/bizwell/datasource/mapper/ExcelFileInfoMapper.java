@@ -1,9 +1,9 @@
 package com.bizwell.datasource.mapper;
 
 
-import com.bizwell.datasource.bean.ExcelFileInfo;
+import java.util.List;
 
-import org.apache.ibatis.annotations.Param;
+import com.bizwell.datasource.bean.ExcelFileInfo;
 
 /**
  *
@@ -11,5 +11,8 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface ExcelFileInfoMapper {
 
-    void save(ExcelFileInfo entity);
+	Integer save(ExcelFileInfo entity);
+    
+    List<ExcelFileInfo> select(ExcelFileInfo entity);
+    
 }

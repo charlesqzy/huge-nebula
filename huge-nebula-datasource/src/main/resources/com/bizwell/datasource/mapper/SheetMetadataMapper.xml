@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bizwell.datasource.mapper.SheetMetadataMapper">
+
+	<resultMap id="BaseResultMap" type="com.bizwell.datasource.bean.SheetMetadata">
+		<id column="id" property="id" />
+		<result column="sheet_id" property="sheetId" />
+		<result column="database_name" property="databaseName"
+			jdbcType="VARCHAR" />
+		<result column="field_column" property="fieldColumn" jdbcType="VARCHAR" />
+		<result column="field_name_old" property="fieldNameOld"
+			jdbcType="VARCHAR" />
+		<result column="field_name_new" property="fieldNameNew"
+			jdbcType="VARCHAR" />
+		<result column="field_type" property="fieldType" jdbcType="VARCHAR" />
+		<result column="field_comment" property="fieldComment"
+			jdbcType="VARCHAR" />
+		<result column="is_visible" property="isVisible" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+	<insert id="save" parameterType="com.bizwell.datasource.bean.SheetMetadata"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="java.lang.Long">
+			select
+			LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO `ds_sheet_metadata`
+		(
+		`sheet_id`,
+		`database_name`,
+		field_column,
+		`field_name_old`,
+		`field_name_new`,
+		`field_type`,
+		`field_comment`,
+		`is_visible`)
+		VALUES (
+		#{sheetId},
+		#{databaseName},
+		#{fieldColumn},
+		#{fieldNameOld},
+		#{fieldNameNew},
+		#{fieldType},
+		#{fieldComment},
+		#{isVisible});
+	</insert>
+
+
+	<select id="select" parameterType="com.bizwell.datasource.bean.SheetMetadata"
+		resultMap="BaseResultMap">
+		SELECT
+		`id`,
+		`sheet_id`,
+		`database_name`,
+		field_column,
+		`field_name_old`,
+		`field_name_new`,
+		`field_type`,
+		`field_comment`,
+		`is_visible`
+		FROM
+		`ds_sheet_metadata`
+		<where>
+			<if test="null != id">
+				and id = #{id}
+			</if>
+			<if test="null != sheetId">
+				and sheet_id = #{sheetId}
+			</if>
+
+		</where>
+	</select>
+
+
+</mapper>
