@@ -291,7 +291,7 @@ public class ReadExcelForHSSF {
 
 	// 动态插入元数据
 	public String generateMetadataSQL(List<XLSHaderType> typeList, List<Map<String, String>> contentList,
-			Integer sheetId) {
+			Integer sheetId, String tableName) {
 		
 		if(typeList.size()==0){
 			return "select 1";
@@ -316,9 +316,9 @@ public class ReadExcelForHSSF {
 		StringBuffer metadataSQL = new StringBuffer();
 		Map<String, String> headerMap = contentList.get(0);
 		metadataSQL.append(
-				"insert into ds_sheet_metadata(sheet_id,field_column,field_name_old,field_name_new,field_type,field_comment,is_visible) values ");
+				"insert into ds_sheet_metadata(sheet_id,table_name,field_column,field_name_old,field_name_new,field_type,field_comment,is_visible) values ");
 		for (int i = 0; i < headerMap.size(); i++) {
-			metadataSQL.append("('" + sheetId + "','"+excelHader[i]+"','" + headerMap.get(excelHader[i]) + "','" + headerMap.get(excelHader[i]) + "',"+fieldType+",'','1'),");
+			metadataSQL.append("('" + sheetId + "','"+tableName+"','"+excelHader[i]+"','" + headerMap.get(excelHader[i]) + "','" + headerMap.get(excelHader[i]) + "',"+fieldType+",'','1'),");
 		}
 		metadataSQL.delete(metadataSQL.lastIndexOf(","), metadataSQL.lastIndexOf(",") + 1);
 		logger.info("metadataSQL ==== " + metadataSQL);

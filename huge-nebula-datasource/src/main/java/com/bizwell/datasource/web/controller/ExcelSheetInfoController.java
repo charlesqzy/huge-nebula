@@ -121,7 +121,7 @@ public class ExcelSheetInfoController extends BaseController {
         	String dropSql = readExcelForHSSF.generateDropTableSQL(tableName);
         	String createSql=readExcelForHSSF.generateCreateTableSQL(sheet.getTypeList(), tableName);
         	String metadataSQL=readExcelForHSSF.generateMetadataSQL(sheet.getTypeList(),
-        			sheet.getContentList(),excelSheetInfo.getId());
+        			sheet.getContentList(),excelSheetInfo.getId(),tableName);
 
         	Integer rowIndex = xlsContent.getSheets()[s].getRowIndex();
         	Integer startRow = rowIndex>0?rowIndex-1:rowIndex ;

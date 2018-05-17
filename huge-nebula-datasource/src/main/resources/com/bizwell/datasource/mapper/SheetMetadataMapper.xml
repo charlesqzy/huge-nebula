@@ -5,7 +5,7 @@
 	<resultMap id="BaseResultMap" type="com.bizwell.datasource.bean.SheetMetadata">
 		<id column="id" property="id" />
 		<result column="sheet_id" property="sheetId" />
-		<result column="database_name" property="databaseName"
+		<result column="table_name" property="tableName"
 			jdbcType="VARCHAR" />
 		<result column="field_column" property="fieldColumn" jdbcType="VARCHAR" />
 		<result column="field_name_old" property="fieldNameOld"
@@ -28,7 +28,7 @@
 		INSERT INTO `ds_sheet_metadata`
 		(
 		`sheet_id`,
-		`database_name`,
+		`table_name`,
 		field_column,
 		`field_name_old`,
 		`field_name_new`,
@@ -37,7 +37,7 @@
 		`is_visible`)
 		VALUES (
 		#{sheetId},
-		#{databaseName},
+		#{tableName},
 		#{fieldColumn},
 		#{fieldNameOld},
 		#{fieldNameNew},
@@ -52,7 +52,7 @@
 		SELECT
 		`id`,
 		`sheet_id`,
-		`database_name`,
+		`table_name`,
 		field_column,
 		`field_name_old`,
 		`field_name_new`,

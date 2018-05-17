@@ -3,7 +3,7 @@ package com.bizwell.datasource.bean;
 public class SheetMetadata {
 	private Integer id;
 	private Integer sheetId;
-	private String databaseName;
+	private String tableName;
 	private String fieldColumn;
 	private String fieldNameOld;
 	private String fieldNameNew;
@@ -28,12 +28,13 @@ public class SheetMetadata {
 		this.sheetId = sheetId;
 	}
 
-	public String getDatabaseName() {
-		return databaseName;
+
+	public String getTableName() {
+		return tableName;
 	}
 
-	public void setDatabaseName(String databaseName) {
-		this.databaseName = databaseName;
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
 	}
 
 	public String getFieldNameOld() {

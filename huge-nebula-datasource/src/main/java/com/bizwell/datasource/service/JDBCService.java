@@ -25,12 +25,12 @@ public class JDBCService {
 
 	public boolean executeSql(String sql)  {
 		
-		boolean flag = true;
+		boolean flag = false;
 		
 		Connection connection = DataSourceUtils.getConnection(dataSource);
 		PreparedStatement preparedStatement = null;
 //		Statement preparedStatement = null;
-	    ResultSet resultSet = null;
+//	    ResultSet resultSet = null;
 	    // 创建Statement对象
         try {
 			preparedStatement = connection.prepareStatement(sql);
