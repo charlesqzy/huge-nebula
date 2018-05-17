@@ -23,6 +23,7 @@
         <java.version>1.8</java.version>
     </properties>
 
+
     <dependencies>
         <!--支持 Web 应用开发，包含 Tomcat 和 spring-mvc。 -->
 	  	<dependency>
@@ -119,5 +120,6 @@
     <modules>
     	<module>huge-nebula-passport</module>
     	<module>huge-nebula-datasource</module>
+		<module>huge-nebula-echarts</module>
     </modules>
 </project>

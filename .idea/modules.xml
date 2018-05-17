@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/huge-nebula.iml" filepath="$PROJECT_DIR$/huge-nebula.iml" />
       <module fileurl="file://$PROJECT_DIR$/huge-nebula-datasource/huge-nebula-datasource.iml" filepath="$PROJECT_DIR$/huge-nebula-datasource/huge-nebula-datasource.iml" />
+      <module fileurl="file://$PROJECT_DIR$/huge-nebula-echarts/huge-nebula-echarts.iml" filepath="$PROJECT_DIR$/huge-nebula-echarts/huge-nebula-echarts.iml" />
       <module fileurl="file://$PROJECT_DIR$/huge-nebula-passport/huge-nebula-passport.iml" filepath="$PROJECT_DIR$/huge-nebula-passport/huge-nebula-passport.iml" />
     </modules>
   </component>
