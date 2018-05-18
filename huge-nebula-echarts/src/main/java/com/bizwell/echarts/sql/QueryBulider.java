@@ -16,56 +16,54 @@ public class QueryBulider {
 
     static {
         SheetMetadata metaData1 = new SheetMetadata();
-        metaData1.setId(1);
+        metaData1.setId(804);
         metaData1.setTableName("xls_571bebf42840428bb73393264dd4d793_sheet_1");
         metaData1.setFieldType(3); //日期类型
         metaData1.setFieldNameNew("A"); //数据库的字段名称
-        metaDataMap.put(1, metaData1);
+        metaDataMap.put(804, metaData1);
 
         SheetMetadata metaData2 = new SheetMetadata();
-        metaData2.setId(2);
+        metaData2.setId(805);
         metaData2.setTableName("xls_571bebf42840428bb73393264dd4d793_sheet_1");
         metaData2.setFieldType(2); //text类型
         metaData2.setFieldNameNew("B");
-        metaDataMap.put(2, metaData2);
+        metaDataMap.put(805, metaData2);
 
         SheetMetadata metaData3 = new SheetMetadata();
-        metaData3.setId(3);
+        metaData3.setId(806);
         metaData3.setTableName("xls_571bebf42840428bb73393264dd4d793_sheet_1");
         metaData3.setFieldType(2); //text类型
         metaData3.setFieldNameNew("C");
-        metaDataMap.put(3, metaData3);
+        metaDataMap.put(806, metaData3);
 
         SheetMetadata metaData4 = new SheetMetadata();
-        metaData4.setId(4);
+        metaData4.setId(810);
         metaData4.setTableName("xls_571bebf42840428bb73393264dd4d793_sheet_1");
         metaData4.setFieldType(1); //数字类型
-        metaData4.setFieldNameNew("D");
-        metaDataMap.put(4, metaData4);
+        metaData4.setFieldNameNew("G");
+        metaDataMap.put(810, metaData4);
 
         SheetMetadata metaData5 = new SheetMetadata();
-        metaData5.setId(5);
+        metaData5.setId(809);
         metaData5.setTableName("xls_571bebf42840428bb73393264dd4d793_sheet_1");
-        metaData5.setFieldType(1); //数字类型
-        metaData5.setFieldNameNew("E");
-        metaDataMap.put(5, metaData5);
+        metaData5.setFieldType(2); //text类型
+        metaData5.setFieldNameNew("F");
+        metaDataMap.put(809, metaData5);
 
     }
 
     static String jsonString = "{" +
-            "\"dimension\": [{\"metadataId\": 1,\"dateLevel\": \"year\"}]," +
-            "\"measure1\": {\"data\": [{\"metadataId\": 4,\"aggregate\": \"sum\",\"color\": \"red\"}, " +
-            "{\"metadataId\": 5,\"aggregate\": \"count\",\"color\": \"green\"}]," +
+            "\"dimension\": [{\"metadataId\": 804,\"dateLevel\": \"week\"}]," +
+            "\"measure1\": {\"data\": [{\"metadataId\": 810,\"aggregate\": \"sum\",\"color\": \"red\"}, " +
+            "{\"metadataId\": 809,\"aggregate\": \"count\",\"color\": \"green\"}]," +
             "\"chartTypeId\": 2}," +
             "\"measure2\": {}," +
-            "\"filter\": [{\"metadataId\": 1,\"type\": \"date\",\"subType\": \"\",\"condition\": {\"startTime\": \"2018-01-01 00:00:00\",\"endTime\": \"2018-01-05 15:30:00\"}}," +
-            "{\"metadataId\": 2,\"type\": \"text\",\"subType\": \"精确筛选\",\"condition\": [\"Andriod\", \"IOS\"]}," +
-            "{\"metadataId\": 3,\"type\": \"text\",\"subType\": \"条件筛选\",\"condition\": {\"logic\": \"OR\",\"fields\": [" +
-            "{\"operator\": \"eq\",\"value\": \"上海市\"}, " +
-            "{\"operator\": \"ne\",\"value\": \"台湾\"}," +
-            "{\"operator\": \"not_null\",\"value\": \"\"}]}}," +
-            "{\"metadataId\": 4,\"type\": \"number\",\"subType\": \"条件筛选\",\"condition\": {\"logic\": \"\",\"fields\": [" +
-            "{\"operator\": \"eq\",\"value\": 18}]" +
+            "\"filter\": [{\"metadataId\": 804,\"type\": \"date\",\"subType\": \"\",\"condition\": {\"startTime\": \"2017-01-01 00:00:00\",\"endTime\": \"2018-01-05 15:30:00\"}}," +
+            "{\"metadataId\": 805,\"type\": \"text\",\"subType\": \"精确筛选\",\"condition\": [\"中餐\"]}," +
+            "{\"metadataId\": 806,\"type\": \"text\",\"subType\": \"条件筛选\",\"condition\": {\"logic\": \"OR\",\"fields\": [" +
+            "{\"operator\": \"contains\",\"value\": \"115\"}]}}," +
+            "{\"metadataId\": 810,\"type\": \"number\",\"subType\": \"条件筛选\",\"condition\": {\"logic\": \"\",\"fields\": [" +
+            "{\"operator\": \"between\",\"value\": 1,\"value2\": 8}]" +
             "}}]}";
 
     public static void main(String[] args) {
@@ -105,7 +103,8 @@ public class QueryBulider {
         String sql = "SELECT " + dimString + measureString.substring(0, measureString.length() - 1) +
                 " FROM " + tableName +
                 " WHERE " + filterString +
-                " GROUP BY " + dimString.substring(0, dimString.length() - 1);
+                " GROUP BY " + dimString.substring(0, dimString.length() - 1) +
+                " ORDER BY " + dimString.substring(0, dimString.length() - 1);
 
         return sql;
     }
@@ -311,13 +310,13 @@ public class QueryBulider {
                         result = result + "YEAR(" + fieldName + "),";
                         break;
                     case "quarter":
-                        result = result + "QUARTER(" + fieldName + "),";
+                        result = result + "CONCAT(YEAR(" + fieldName + "),\'年\'," + "QUARTER(" + fieldName + "),\'季度\'),";
                         break;
                     case "month":
                         result = result + "DATE_FORMAT(" + fieldName + ",'%Y-%m'),";
                         break;
                     case "week":
-                        result = result + "WEEKOFYEAR(" + fieldName + "),";
+                        result = result + "CONCAT(YEAR(" + fieldName + "),\'年第\'," + "WEEKOFYEAR(" + fieldName + "),\'周\'),";
                         break;
                     default:
                         result = result + fieldName + ",";
