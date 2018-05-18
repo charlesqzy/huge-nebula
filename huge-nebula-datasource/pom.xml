@@ -5,7 +5,6 @@
 	<groupId>com.bizwell.datasource</groupId>
 	<artifactId>huge-nebula-datasource</artifactId>
 	<name>huge-nebula-datasource</name>
-	<version>0.0.1-SNAPSHOT</version>
 	<description>数据源模块</description>
 	<version>0.0.1-SNAPSHOT</version>
 
