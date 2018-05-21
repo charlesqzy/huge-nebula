@@ -271,6 +271,29 @@ public class ExcelSheetInfoController extends BaseController {
     
     
     
+    
+    /**
+     * 根据tableName获取数据
+     * @param tableName
+     * @param sheetId
+     * @param pageNum
+     * @return
+     */
+    @RequestMapping(value = "/datasource/getMetadataBySheetId")
+    @ResponseBody
+    public ResponseJson getMetadataBySheetId(@RequestParam Integer sheetId) {
+    	logger.info("getMetadataBySheetId sheetId = " + sheetId );
+   	
+    	SheetMetadata entity = new SheetMetadata();
+    	entity.setSheetId(sheetId);
+    	List<SheetMetadata> metadataList = sheetMetadataService.select(entity);
+    	Map result = new HashMap<>();
+    	result.put("metadataList", metadataList);
+    	return new ResponseJson(200l,"success",result);
+    }
+    
+    
+    
     /**
      * 创建文件夹
      * @param folderName
