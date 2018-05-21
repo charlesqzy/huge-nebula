@@ -318,6 +318,9 @@ public class QueryBulider {
                     case "week":
                         result = result + "CONCAT(YEAR(" + fieldName + "),\'年第\'," + "WEEKOFYEAR(" + fieldName + "),\'周\'),";
                         break;
+                    case "day":
+                        result = result + "DATE_FORMAT(" + fieldName + ",'%Y-%m-%d'),";
+                        break;
                     default:
                         result = result + fieldName + ",";
                         break;
