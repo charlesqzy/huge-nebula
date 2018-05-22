@@ -53,17 +53,17 @@ public class QueryBulider {
     }
 
     static String jsonString = "{" +
-            "\"dimension\": [{\"metadataId\": 804,\"dateLevel\": \"week\"}]," +
-            "\"measure1\": {\"data\": [{\"metadataId\": 810,\"aggregate\": \"sum\",\"color\": \"red\"}, " +
-            "{\"metadataId\": 809,\"aggregate\": \"count\",\"color\": \"green\"}]," +
-            "\"chartTypeId\": 2}," +
-            "\"measure2\": {}," +
+            "\"echartType\": 2," +
+            "\"dimension\": [{\"metadataId\": 804,\"dateLevel\": \"按周\"}]," +
+            "\"measure1\": [{\"metadataId\": 810,\"aggregate\": \"求和\"}, " +
+            "{\"metadataId\": 809,\"aggregate\": \"计数\"}]," +
+            "\"measure2\": []," +
             "\"filter\": [{\"metadataId\": 804,\"type\": \"date\",\"subType\": \"\",\"condition\": {\"startTime\": \"2017-01-01 00:00:00\",\"endTime\": \"2018-01-05 15:30:00\"}}," +
             "{\"metadataId\": 805,\"type\": \"text\",\"subType\": \"精确筛选\",\"condition\": [\"中餐\"]}," +
             "{\"metadataId\": 806,\"type\": \"text\",\"subType\": \"条件筛选\",\"condition\": {\"logic\": \"OR\",\"fields\": [" +
-            "{\"operator\": \"contains\",\"value\": \"115\"}]}}," +
+            "{\"operator\": \"包含\",\"value\": \"115\"}]}}," +
             "{\"metadataId\": 810,\"type\": \"number\",\"subType\": \"条件筛选\",\"condition\": {\"logic\": \"\",\"fields\": [" +
-            "{\"operator\": \"between\",\"value\": 1,\"value2\": 8}]" +
+            "{\"operator\": \"区间\",\"value\": 1,\"value2\": 8}]" +
             "}}]}";
 
     public static void main(String[] args) {
@@ -81,7 +81,7 @@ public class QueryBulider {
      * @param jsonString
      * @return
      */
-    private static String getQueryString(String jsonString) {
+    public static String getQueryString(String jsonString) {
         JSONObject jsonObject = JSONObject.parseObject(jsonString);
 
         JSONArray dimension = jsonObject.getJSONArray("dimension");
@@ -89,10 +89,10 @@ public class QueryBulider {
 
         String tableName = getTargetTable(dimension);
 
-        JSONObject measure1 = jsonObject.getJSONObject("measure1");
+        JSONArray measure1 = jsonObject.getJSONArray("measure1");
         String measureString1 = getMeasureString(measure1);
 
-        JSONObject measure2 = jsonObject.getJSONObject("measure2");
+        JSONArray measure2 = jsonObject.getJSONArray("measure2");
         String measureString2 = getMeasureString(measure2);
 
         String measureString = measureString1 + measureString2;
@@ -165,28 +165,28 @@ public class QueryBulider {
                         String operator = fieldObj.getString("operator");
                         String value = fieldObj.getString("value");
                         switch (operator) {
-                            case "eq":   // 等于
+                            case "等于":   // 等于
                                 result = result + " (" + fieldName + " = \'" + value + "\') " + logic;
                                 break;
-                            case "ne":  // 不等于
+                            case "不等于":  // 不等于
                                 result = result + " (" + fieldName + " != \'" + value + "\') " + logic;
                                 break;
-                            case "contains": //包含
+                            case "包含": //包含
                                 result = result + " (" + fieldName + " like \'%" + value + "%\') " + logic;
                                 break;
-                            case "not_contains": // 不包含
+                            case "不包含": // 不包含
                                 result = result + " (" + fieldName + " not like \'%" + value + "%\') " + logic;
                                 break;
-                            case "begin_with": // 开头包含
+                            case "开头包含": // 开头包含
                                 result = result + " (" + fieldName + " like \'" + value + "%\') " + logic;
                                 break;
-                            case "end_with": // 结尾包含
+                            case "结尾包含": // 结尾包含
                                 result = result + " (" + fieldName + " like \'%" + value + "\') " + logic;
                                 break;
-                            case "is_null": // 为空
+                            case "为空": // 为空
                                 result = result + " (" + fieldName + " is null ) " + logic;
                                 break;
-                            case "not_null": // 不为空
+                            case "不为空": // 不为空
                                 result = result + " (" + fieldName + " is not null ) " + logic;
                                 break;
                             default:
@@ -206,32 +206,32 @@ public class QueryBulider {
                         String operator = fieldsObj.getString("operator");
                         Double value = fieldsObj.getDouble("value");
                         switch (operator) {
-                            case "eq":
+                            case "等于":
                                 result = result + "(" + fieldName + " = " + value.intValue() + ")";
                                 break;
-                            case "ne":
+                            case "不等于":
                                 result = result + "(" + fieldName + " != " + value.intValue() + ")";
                                 break;
-                            case "gt":
+                            case "大于":
                                 result = result + "(" + fieldName + " > " + value + ")";
                                 break;
-                            case "lt":
+                            case "小于":
                                 result = result + "(" + fieldName + " < " + value + ")";
                                 break;
-                            case "ge":
+                            case "大于等于":
                                 result = result + "(" + fieldName + " >= " + value + ")";
                                 break;
-                            case "le":
+                            case "小于等于":
                                 result = result + "(" + fieldName + " <= " + value + ")";
                                 break;
-                            case "between":
+                            case "区间":
                                 Double value2 = fieldsObj.getDouble("value2");
                                 result = result + "(" + fieldName + " BETWEEN " + value + " AND " + value2 + ")";
                                 break;
-                            case "not_null":
+                            case "不为空":
                                 result = result + "(" + fieldName + " is not null )";
                                 break;
-                            case "is_null":
+                            case "为空":
                                 result = result + "(" + fieldName + " is null )";
                                 break;
                         }
@@ -250,33 +250,32 @@ public class QueryBulider {
      * @param measure
      * @return
      */
-    private static String getMeasureString(JSONObject measure) {
+    private static String getMeasureString(JSONArray measure) {
         String result = "";
         if (measure == null || measure.isEmpty()) return result;
-        JSONArray data = measure.getJSONArray("data");
-        for (int i = 0; i < data.size(); i++) {
-            JSONObject dataObj = data.getJSONObject(i);
+        for (int i = 0; i < measure.size(); i++) {
+            JSONObject dataObj = measure.getJSONObject(i);
             int metadataId = dataObj.getIntValue("metadataId");
             SheetMetadata sheetMetadata = metaDataMap.get(metadataId);
             String fieldName = sheetMetadata.getFieldNameNew();
             String aggregate = dataObj.getString("aggregate");
             switch (aggregate) {
-                case "sum":
+                case "求和":
                     result = result + "SUM(" + fieldName + "),";
                     break;
-                case "count":
+                case "计数":
                     result = result + "COUNT(" + fieldName + "),";
                     break;
-                case "count distinct":
+                case "去重计数":
                     result = result + "COUNT(DISTINCT " + fieldName + "),";
                     break;
-                case "avg":
+                case "平均值":
                     result = result + "AVG(" + fieldName + "),";
                     break;
-                case "max":
+                case "最大值":
                     result = result + "MAX(" + fieldName + "),";
                     break;
-                case "min":
+                case "最小值":
                     result = result + "MIN(" + fieldName + "),";
                     break;
                 default:
@@ -306,19 +305,19 @@ public class QueryBulider {
             if (fieldType == 3) { // 日期类型
                 dateLevel = dimJsonObj.getString("dateLevel");
                 switch (dateLevel) {
-                    case "year":
+                    case "按年":
                         result = result + "YEAR(" + fieldName + "),";
                         break;
-                    case "quarter":
+                    case "按季":
                         result = result + "CONCAT(YEAR(" + fieldName + "),\'年\'," + "QUARTER(" + fieldName + "),\'季度\'),";
                         break;
-                    case "month":
+                    case "按月":
                         result = result + "DATE_FORMAT(" + fieldName + ",'%Y-%m'),";
                         break;
-                    case "week":
+                    case "按周":
                         result = result + "CONCAT(YEAR(" + fieldName + "),\'年第\'," + "WEEKOFYEAR(" + fieldName + "),\'周\'),";
                         break;
-                    case "day":
+                    case "按日":
                         result = result + "DATE_FORMAT(" + fieldName + ",'%Y-%m-%d'),";
                         break;
                     default:
