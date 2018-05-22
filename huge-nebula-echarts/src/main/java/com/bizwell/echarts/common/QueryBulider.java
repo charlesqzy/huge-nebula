@@ -1,8 +1,5 @@
-package com.bizwell.echarts.sql;
+package com.bizwell.echarts.common;
 
-
-import java.util.HashMap;
-import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -10,47 +7,8 @@ import com.bizwell.echarts.bean.domain.SheetMetaData;
 
 public class QueryBulider {
 
-    private static final Map<Integer, SheetMetaData> metaDataMap = new HashMap<>();
 
-    static {
-    	SheetMetaData metaData1 = new SheetMetaData();
-        metaData1.setId(804);
-        metaData1.setTableName("xls_571bebf42840428bb73393264dd4d793_sheet_1");
-        metaData1.setFieldType(3); //日期类型
-        metaData1.setFieldColumn("A"); //数据库的字段名称
-        metaDataMap.put(804, metaData1);
-
-        SheetMetaData metaData2 = new SheetMetaData();
-        metaData2.setId(805);
-        metaData2.setTableName("xls_571bebf42840428bb73393264dd4d793_sheet_1");
-        metaData2.setFieldType(2); //text类型
-        metaData2.setFieldColumn("B");
-        metaDataMap.put(805, metaData2);
-
-        SheetMetaData metaData3 = new SheetMetaData();
-        metaData3.setId(806);
-        metaData3.setTableName("xls_571bebf42840428bb73393264dd4d793_sheet_1");
-        metaData3.setFieldType(2); //text类型
-        metaData3.setFieldColumn("C");
-        metaDataMap.put(806, metaData3);
-
-        SheetMetaData metaData4 = new SheetMetaData();
-        metaData4.setId(810);
-        metaData4.setTableName("xls_571bebf42840428bb73393264dd4d793_sheet_1");
-        metaData4.setFieldType(1); //数字类型
-        metaData4.setFieldColumn("G");
-        metaDataMap.put(810, metaData4);
-
-        SheetMetaData metaData5 = new SheetMetaData();
-        metaData5.setId(809);
-        metaData5.setTableName("xls_571bebf42840428bb73393264dd4d793_sheet_1");
-        metaData5.setFieldType(2); //text类型
-        metaData5.setFieldColumn("F");
-        metaDataMap.put(809, metaData5);
-
-    }
-
-    static String jsonString = "{" +
+    /*static String jsonString = "{" +
             "\"echartType\": 2," +
             "\"dimension\": [{\"metadataId\": 804,\"dateLevel\": \"按周\"}]," +
             "\"measure1\": [{\"metadataId\": 810,\"aggregate\": \"求和\"}, " +
@@ -62,15 +20,16 @@ public class QueryBulider {
             "{\"operator\": \"包含\",\"value\": \"115\"}]}}," +
             "{\"metadataId\": 810,\"type\": \"number\",\"subType\": \"条件筛选\",\"condition\": {\"logic\": \"\",\"fields\": [" +
             "{\"operator\": \"区间\",\"value\": 1,\"value2\": 8}]" +
-            "}}]}";
+            "}}]}";*/
 
-    public static void main(String[] args) {
+    public static String getSql(String data) {
 
-        System.out.println(jsonString);
+        System.out.println(data);
 
-        String sql = getQueryString(jsonString);
+        String sql = getQueryString(data);
 
         System.out.println("sql : \n" + sql);
+        return sql;
     }
 
     /**
@@ -117,7 +76,7 @@ public class QueryBulider {
     private static String getTargetTable(JSONArray dimension) {
         JSONObject dimJsonObj = dimension.getJSONObject(0);
         int metadataId = dimJsonObj.getIntValue("metadataId");
-        SheetMetaData sheetMetaData = metaDataMap.get(metadataId);
+        SheetMetaData sheetMetaData = MetaDataMap.get(metadataId);
         return sheetMetaData.getTableName();
     }
 
@@ -133,7 +92,7 @@ public class QueryBulider {
             if (i > 0) result += " AND ";
             JSONObject obj = filter.getJSONObject(i);
             int metadataId = obj.getIntValue("metadataId");
-            SheetMetaData sheetMetaData = metaDataMap.get(metadataId);
+            SheetMetaData sheetMetaData = MetaDataMap.get(metadataId);
             String fieldName = sheetMetaData.getFieldColumn();
 
             String type = obj.getString("type");
@@ -254,7 +213,7 @@ public class QueryBulider {
         for (int i = 0; i < measure.size(); i++) {
             JSONObject dataObj = measure.getJSONObject(i);
             int metadataId = dataObj.getIntValue("metadataId");
-            SheetMetaData sheetMetaData = metaDataMap.get(metadataId);
+            SheetMetaData sheetMetaData = MetaDataMap.get(metadataId);
             String fieldName = sheetMetaData.getFieldColumn();
             String aggregate = dataObj.getString("aggregate");
             switch (aggregate) {
@@ -295,7 +254,7 @@ public class QueryBulider {
 
             JSONObject dimJsonObj = dimension.getJSONObject(i);
             int metadataId = dimJsonObj.getIntValue("metadataId");
-            SheetMetaData sheetMetaData = metaDataMap.get(metadataId);
+            SheetMetaData sheetMetaData = MetaDataMap.get(metadataId);
 
             String fieldName = sheetMetaData.getFieldColumn();
             int fieldType = sheetMetaData.getFieldType();

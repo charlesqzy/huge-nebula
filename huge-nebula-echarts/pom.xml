@@ -11,12 +11,4 @@
     <name>huge-nebula-echarts</name>
     <description>仪表盘</description>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.bizwell.datasource</groupId>
-            <artifactId>huge-nebula-datasource</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
-
 </project>

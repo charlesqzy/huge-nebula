@@ -63,7 +63,7 @@ public class FolderServiceImpl implements FolderService {
 
 	@Transactional
 	@Override
-	public void saveFolder(Integer userId, String folderName, Integer parentId, Integer level) {
+	public FolderVo saveFolder(Integer userId, String folderName, Integer parentId, Integer level) {
 
 		FolderInfo folderInfo = new FolderInfo();
 		folderInfo.setUserId(userId);
@@ -72,6 +72,10 @@ public class FolderServiceImpl implements FolderService {
 		folderInfo.setParentId(parentId);
 		folderInfo.setLevel(level);
 		folderInfoMapper.insertSelective(folderInfo);
+		FolderVo folderVo = new FolderVo();
+		BeanUtils.copyProperties(folderInfo, folderVo);
+		
+		return folderVo;
 	}
 
 	@Override

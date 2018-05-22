@@ -19,7 +19,7 @@ public interface FolderService {
 	
 	public void updateFolder(Integer id, Integer childId);
 	
-	public void saveFolder(Integer userId, String folderName,Integer parentId, Integer level);
+	public FolderVo saveFolder(Integer userId, String folderName,Integer parentId, Integer level);
 	
 	public List<FolderInfo> selectByParam(FolderParam folderParam);
 	

@@ -14,7 +14,6 @@ import com.bizwell.echarts.Application;
 import com.bizwell.echarts.bean.domain.FolderInfo;
 import com.bizwell.echarts.common.JsonUtils;
 import com.bizwell.echarts.mapper.FolderInfoMapper;
-import com.bizwell.echarts.service.JDBCService;
 
 @RunWith(SpringJUnit4ClassRunner.class)  
 @SpringBootTest(classes = Application.class)
@@ -23,8 +22,8 @@ public class TestDemo {
 	@Autowired
 	private DataSource dataSource;
 	
-	@Autowired
-	private JDBCService JDBCService;
+//	@Autowired
+//	private JDBCService JDBCService;
 	
 	@Autowired
 	private FolderInfoMapper folderInfoMapper;

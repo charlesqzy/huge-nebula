@@ -133,8 +133,8 @@ public class FolderController extends BaseController {
 				throw new EchartsException(ResponseCode.ECHARTS_FAIL05.getCode(), ResponseCode.ECHARTS_FAIL05.getMessage());
 			}
 			
-			folderService.saveFolder(userId, folderName, parentId, level);
-			jsonView = result(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
+			FolderVo folderVo = folderService.saveFolder(userId, folderName, parentId, level);
+			jsonView = result(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), folderVo);
 		} catch (EchartsException e) {
 			jsonView = result(e.getCode(), e.getMessage(), null);
 		} catch (Exception e) {

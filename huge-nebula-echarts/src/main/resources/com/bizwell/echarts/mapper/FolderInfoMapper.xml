@@ -82,7 +82,8 @@
       )
   </insert>
   
-  <insert id="insertSelective" parameterType="com.bizwell.echarts.bean.domain.FolderInfo" >
+  <insert id="insertSelective" parameterType="com.bizwell.echarts.bean.domain.FolderInfo"
+  			useGeneratedKeys="true" keyProperty="id">
     insert into gb_folder_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
