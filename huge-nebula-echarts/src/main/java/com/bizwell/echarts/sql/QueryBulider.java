@@ -13,7 +13,7 @@ public class QueryBulider {
     private static final Map<Integer, SheetMetaData> metaDataMap = new HashMap<>();
 
     static {
-    	SheetMetaData metaData1 = new SheetMetaData();
+        SheetMetaData metaData1 = new SheetMetaData();
         metaData1.setId(804);
         metaData1.setTableName("xls_571bebf42840428bb73393264dd4d793_sheet_1");
         metaData1.setFieldType(3); //日期类型
@@ -83,7 +83,10 @@ public class QueryBulider {
         JSONObject jsonObject = JSONObject.parseObject(jsonString);
 
         JSONArray dimension = jsonObject.getJSONArray("dimension");
-        String dimString = getDimColString(dimension);
+        String[] dimAndGroupByStrings = getDimColString(dimension);
+
+        String dimString = dimAndGroupByStrings[0];
+        String groupbyString = dimAndGroupByStrings[1];
 
         String tableName = getTargetTable(dimension);
 
@@ -99,10 +102,12 @@ public class QueryBulider {
         String filterString = getFilterString(filter);
 
         String sql = "SELECT " + dimString + measureString.substring(0, measureString.length() - 1) +
-                " FROM " + tableName +
-                " WHERE " + filterString +
-                " GROUP BY " + dimString.substring(0, dimString.length() - 1) +
-                " ORDER BY " + dimString.substring(0, dimString.length() - 1);
+                " FROM " + tableName;
+        if (!filterString.equals(""))
+            sql += " WHERE " + filterString;
+        sql = sql +
+                " GROUP BY " + groupbyString.substring(0, groupbyString.length() - 1) +
+                " ORDER BY " + groupbyString.substring(0, groupbyString.length() - 1);
 
         return sql;
     }
@@ -194,7 +199,6 @@ public class QueryBulider {
                     if (result.endsWith(logic))
                         result = result.substring(0, result.lastIndexOf(" ")) + " )";
                 }
-
             } else if (type.equals("number")) {
                 if (subType.equals("条件筛选")) {
                     JSONObject condition = obj.getJSONObject("condition");
@@ -237,7 +241,6 @@ public class QueryBulider {
                 }
 
             }
-
         }
         return result;
     }
@@ -259,26 +262,27 @@ public class QueryBulider {
             String aggregate = dataObj.getString("aggregate");
             switch (aggregate) {
                 case "求和":
-                    result = result + "SUM(" + fieldName + "),";
+                    result = result + "SUM(" + fieldName + ")";
                     break;
                 case "计数":
-                    result = result + "COUNT(" + fieldName + "),";
+                    result = result + "COUNT(" + fieldName + ")";
                     break;
                 case "去重计数":
-                    result = result + "COUNT(DISTINCT " + fieldName + "),";
+                    result = result + "COUNT(DISTINCT " + fieldName + ")";
                     break;
                 case "平均值":
-                    result = result + "AVG(" + fieldName + "),";
+                    result = result + "AVG(" + fieldName + ")";
                     break;
                 case "最大值":
-                    result = result + "MAX(" + fieldName + "),";
+                    result = result + "MAX(" + fieldName + ")";
                     break;
                 case "最小值":
-                    result = result + "MIN(" + fieldName + "),";
+                    result = result + "MIN(" + fieldName + ")";
                     break;
                 default:
                     break;
             }
+            result = result + " AS " + fieldName + ",";
         }
         return result;
     }
@@ -289,8 +293,13 @@ public class QueryBulider {
      * @param dimension
      * @return
      */
-    private static String getDimColString(JSONArray dimension) {
-        String result = "";
+    private static String[] getDimColString(JSONArray dimension) {
+        String result[] = new String[2];
+        if (dimension.size() == 0) return result;
+
+        String dimColumns = "";
+        String groupbyString = "";
+
         for (int i = 0; i < dimension.size(); i++) {
 
             JSONObject dimJsonObj = dimension.getJSONObject(i);
@@ -304,27 +313,34 @@ public class QueryBulider {
                 dateLevel = dimJsonObj.getString("dateLevel");
                 switch (dateLevel) {
                     case "按年":
-                        result = result + "YEAR(" + fieldName + "),";
+                        dimColumns = dimColumns + "YEAR(" + fieldName + ")";
                         break;
                     case "按季":
-                        result = result + "CONCAT(YEAR(" + fieldName + "),\'年\'," + "QUARTER(" + fieldName + "),\'季度\'),";
+                        dimColumns = dimColumns + "CONCAT(YEAR(" + fieldName + "),\'年\'," + "QUARTER(" + fieldName + "),\'季度\')";
                         break;
                     case "按月":
-                        result = result + "DATE_FORMAT(" + fieldName + ",'%Y-%m'),";
+                        dimColumns = dimColumns + "DATE_FORMAT(" + fieldName + ",'%Y-%m')";
                         break;
                     case "按周":
-                        result = result + "CONCAT(YEAR(" + fieldName + "),\'年第\'," + "WEEKOFYEAR(" + fieldName + "),\'周\'),";
+                        dimColumns = dimColumns + "CONCAT(YEAR(" + fieldName + "),\'年第\'," + "WEEKOFYEAR(" + fieldName + "),\'周\')";
                         break;
                     case "按日":
-                        result = result + "DATE_FORMAT(" + fieldName + ",'%Y-%m-%d'),";
+                        dimColumns = dimColumns + "DATE_FORMAT(" + fieldName + ",'%Y-%m-%d')";
                         break;
                     default:
-                        result = result + fieldName + ",";
                         break;
                 }
-            } else
-                result = result + fieldName + ",";
+                groupbyString = groupbyString + dimColumns + ",";
+                dimColumns = dimColumns + " AS " + fieldName + ",";
+            } else {
+                groupbyString = groupbyString + fieldName + ",";
+                dimColumns = dimColumns + fieldName + ",";
+            }
+
         }
+        result[0] = dimColumns;
+        result[1] = groupbyString;
+
         return result;
     }
 
