@@ -50,9 +50,9 @@ public class QueryBulider {
 
     }
 
-    static String jsonString = "{" +
+    static String jsonString1 = "{" +
             "\"echartType\": 2," +
-            "\"dimension\": [{\"metadataId\": 804,\"dateLevel\": \"按周\"}]," +
+            "\"dimension\": []," +
             "\"measure1\": [{\"metadataId\": 810,\"aggregate\": \"求和\"}, " +
             "{\"metadataId\": 809,\"aggregate\": \"计数\"}]," +
             "\"measure2\": []," +
@@ -64,11 +64,19 @@ public class QueryBulider {
             "{\"operator\": \"区间\",\"value\": 1,\"value2\": 8}]" +
             "}}]}";
 
+    static String jsonString2 = "{" +
+            "\"echartType\": 2," +
+            "\"dimension\": [{\"metadataId\": 804,\"dateLevel\": \"按周\"}]," +
+            "\"measure1\": [{\"metadataId\": 810,\"aggregate\": \"求和\"}, " +
+            "{\"metadataId\": 809,\"aggregate\": \"计数\"}]," +
+            "\"measure2\": []," +
+            "\"filter\": []}";
+
     public static void main(String[] args) {
 
-        System.out.println(jsonString);
+        System.out.println(jsonString1);
 
-        String sql = getQueryString(jsonString);
+        String sql = getQueryString(jsonString1);
 
         System.out.println("sql : \n" + sql);
     }
@@ -83,44 +91,64 @@ public class QueryBulider {
         JSONObject jsonObject = JSONObject.parseObject(jsonString);
 
         JSONArray dimension = jsonObject.getJSONArray("dimension");
-        String[] dimAndGroupByStrings = getDimColString(dimension);
+        JSONArray measure1 = jsonObject.getJSONArray("measure1");
+        JSONArray measure2 = jsonObject.getJSONArray("measure2");
 
+        String[] dimAndGroupByStrings = getDimColString(jsonObject.getJSONArray("dimension"));
         String dimString = dimAndGroupByStrings[0];
         String groupbyString = dimAndGroupByStrings[1];
 
-        String tableName = getTargetTable(dimension);
+        String tableName = "";
+        if (dimension != null && !dimension.isEmpty())
+            tableName = getTargetTable(dimension);
+        else if (measure1 != null && !measure1.isEmpty())
+            tableName = getTargetTable(measure1);
+        else
+            tableName = getTargetTable(measure2);
 
-        JSONArray measure1 = jsonObject.getJSONArray("measure1");
-        String measureString1 = getMeasureString(measure1);
+        String measureString1 = getMeasureString(jsonObject.getJSONArray("measure1"));
+        String measureString2 = getMeasureString(jsonObject.getJSONArray("measure2"));
+        String measureString = "";
+        if (measureString1.equals(""))
+            measureString += measureString2;
+        else if (measureString2.equals(""))
+            measureString += measureString1;
+        else
+            measureString = measureString + measureString1 + "," + measureString2;
 
-        JSONArray measure2 = jsonObject.getJSONArray("measure2");
-        String measureString2 = getMeasureString(measure2);
+        String filterString = getFilterString(jsonObject.getJSONArray("filter"));
 
-        String measureString = measureString1 + measureString2;
+        StringBuffer sqlStringBuffer = new StringBuffer();
 
-        JSONArray filter = jsonObject.getJSONArray("filter");
-        String filterString = getFilterString(filter);
+        if (!(dimString.equals("") && measureString.equals(""))) {
+            sqlStringBuffer.append("SELECT ");
+            sqlStringBuffer.append(dimString);
+            if (!dimString.equals("") && !measureString.equals(""))
+                sqlStringBuffer.append(",");
+            sqlStringBuffer.append(measureString);
+            sqlStringBuffer.append(" FROM ");
+            sqlStringBuffer.append(tableName);
+            if (!filterString.equals(""))
+                sqlStringBuffer.append(" WHERE " + filterString);
+            if (!groupbyString.equals("")) {
+                sqlStringBuffer.append(" GROUP BY " + groupbyString);
+                sqlStringBuffer.append(" ORDER BY " + groupbyString);
+            }
 
-        String sql = "SELECT " + dimString + measureString.substring(0, measureString.length() - 1) +
-                " FROM " + tableName;
-        if (!filterString.equals(""))
-            sql += " WHERE " + filterString;
-        sql = sql +
-                " GROUP BY " + groupbyString.substring(0, groupbyString.length() - 1) +
-                " ORDER BY " + groupbyString.substring(0, groupbyString.length() - 1);
-
-        return sql;
+        }
+        return sqlStringBuffer.toString();
     }
 
 
     /**
      * 用于确定查询目标表的表名
      *
-     * @param dimension
+     * @param jsonArray
      * @return
      */
-    private static String getTargetTable(JSONArray dimension) {
-        JSONObject dimJsonObj = dimension.getJSONObject(0);
+    private static String getTargetTable(JSONArray jsonArray) {
+        if (jsonArray == null || jsonArray.isEmpty()) return "";
+        JSONObject dimJsonObj = jsonArray.getJSONObject(0);
         int metadataId = dimJsonObj.getIntValue("metadataId");
         SheetMetaData sheetMetaData = metaDataMap.get(metadataId);
         return sheetMetaData.getTableName();
@@ -246,7 +274,7 @@ public class QueryBulider {
     }
 
     /**
-     * 解析度量字段，返回值以逗号结束
+     * 解析度量字段
      *
      * @param measure
      * @return
@@ -284,63 +312,67 @@ public class QueryBulider {
             }
             result = result + " AS " + fieldName + ",";
         }
+        if (result.endsWith(","))
+            result = result.substring(0, result.length() - 1);
         return result;
     }
 
     /**
-     * 解析维度字段，返回值以逗号结尾
+     * 解析维度字段
      *
      * @param dimension
      * @return
      */
     private static String[] getDimColString(JSONArray dimension) {
         String result[] = new String[2];
-        if (dimension.size() == 0) return result;
-
         String dimColumns = "";
         String groupbyString = "";
 
-        for (int i = 0; i < dimension.size(); i++) {
+        if (dimension != null && !dimension.isEmpty()) {
+            for (int i = 0; i < dimension.size(); i++) {
+                JSONObject dimJsonObj = dimension.getJSONObject(i);
+                int metadataId = dimJsonObj.getIntValue("metadataId");
+                SheetMetaData sheetMetaData = metaDataMap.get(metadataId);
 
-            JSONObject dimJsonObj = dimension.getJSONObject(i);
-            int metadataId = dimJsonObj.getIntValue("metadataId");
-            SheetMetaData sheetMetaData = metaDataMap.get(metadataId);
-
-            String fieldName = sheetMetaData.getFieldColumn();
-            int fieldType = sheetMetaData.getFieldType();
-            String dateLevel;
-            if (fieldType == 3) { // 日期类型
-                dateLevel = dimJsonObj.getString("dateLevel");
-                switch (dateLevel) {
-                    case "按年":
-                        dimColumns = dimColumns + "YEAR(" + fieldName + ")";
-                        break;
-                    case "按季":
-                        dimColumns = dimColumns + "CONCAT(YEAR(" + fieldName + "),\'年\'," + "QUARTER(" + fieldName + "),\'季度\')";
-                        break;
-                    case "按月":
-                        dimColumns = dimColumns + "DATE_FORMAT(" + fieldName + ",'%Y-%m')";
-                        break;
-                    case "按周":
-                        dimColumns = dimColumns + "CONCAT(YEAR(" + fieldName + "),\'年第\'," + "WEEKOFYEAR(" + fieldName + "),\'周\')";
-                        break;
-                    case "按日":
-                        dimColumns = dimColumns + "DATE_FORMAT(" + fieldName + ",'%Y-%m-%d')";
-                        break;
-                    default:
-                        break;
+                String fieldName = sheetMetaData.getFieldColumn();
+                int fieldType = sheetMetaData.getFieldType();
+                String dateLevel;
+                if (fieldType == 3) { // 日期类型
+                    dateLevel = dimJsonObj.getString("dateLevel");
+                    switch (dateLevel) {
+                        case "按年":
+                            dimColumns = dimColumns + "YEAR(" + fieldName + ")";
+                            break;
+                        case "按季":
+                            dimColumns = dimColumns + "CONCAT(YEAR(" + fieldName + "),\'年\'," + "QUARTER(" + fieldName + "),\'季度\')";
+                            break;
+                        case "按月":
+                            dimColumns = dimColumns + "DATE_FORMAT(" + fieldName + ",'%Y-%m')";
+                            break;
+                        case "按周":
+                            dimColumns = dimColumns + "CONCAT(YEAR(" + fieldName + "),\'年第\'," + "WEEKOFYEAR(" + fieldName + "),\'周\')";
+                            break;
+                        case "按日":
+                            dimColumns = dimColumns + "DATE_FORMAT(" + fieldName + ",'%Y-%m-%d')";
+                            break;
+                        default:
+                            break;
+                    }
+                    groupbyString = groupbyString + dimColumns + ",";
+                    dimColumns = dimColumns + " AS " + fieldName + ",";
+                } else {
+                    groupbyString = groupbyString + fieldName + ",";
+                    dimColumns = dimColumns + fieldName + ",";
                 }
-                groupbyString = groupbyString + dimColumns + ",";
-                dimColumns = dimColumns + " AS " + fieldName + ",";
-            } else {
-                groupbyString = groupbyString + fieldName + ",";
-                dimColumns = dimColumns + fieldName + ",";
-            }
 
+                if (groupbyString.endsWith(","))
+                    groupbyString = groupbyString.substring(0, groupbyString.length() - 1);
+                if (dimColumns.endsWith(","))
+                    dimColumns = dimColumns.substring(0, dimColumns.length() - 1);
+            }
         }
         result[0] = dimColumns;
         result[1] = groupbyString;
-
         return result;
     }
 
