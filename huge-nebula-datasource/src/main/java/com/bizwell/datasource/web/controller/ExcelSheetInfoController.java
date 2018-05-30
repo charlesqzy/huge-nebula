@@ -273,7 +273,7 @@ public class ExcelSheetInfoController extends BaseController {
     
     
     /**
-     * 根据tableName获取数据
+     * 根据sheetId获取数据
      * @param tableName
      * @param sheetId
      * @param pageNum
@@ -284,11 +284,22 @@ public class ExcelSheetInfoController extends BaseController {
     public ResponseJson getMetadataBySheetId(@RequestParam Integer sheetId) {
     	logger.info("getMetadataBySheetId sheetId = " + sheetId );
    	
-    	SheetMetadata entity = new SheetMetadata();
-    	entity.setSheetId(sheetId);
-    	List<SheetMetadata> metadataList = sheetMetadataService.select(entity);
+    	SheetMetadata metadata = new SheetMetadata();
+    	metadata.setSheetId(sheetId);
+    	List<SheetMetadata> metadataList = sheetMetadataService.select(metadata);
+    	
+    	
+    	String sheetName = "";
+    	ExcelSheetInfo sheetInfo = new ExcelSheetInfo();
+    	sheetInfo.setId(sheetId);
+    	List<ExcelSheetInfo> sheetList = excelSheetInfoService.select(sheetInfo);
+    	if(sheetList.size()>0){
+    		sheetName = sheetList.get(0).getSheetName();
+    	}
+    	
     	Map result = new HashMap<>();
     	result.put("metadataList", metadataList);
+    	result.put("sheetName", sheetName);
     	return new ResponseJson(200l,"success",result);
     }
     
@@ -308,7 +319,7 @@ public class ExcelSheetInfoController extends BaseController {
     	folderInfo.setFolderName(folderName);
     	folderInfo.setFolderType(2);
     	//folderInfo.setParentId(parentId);
-    	folderInfo.setLevel(1);
+    	folderInfo.setLevel(2);
     	int folderId = folderInfoService.save(folderInfo);
     	Map result = new HashMap();    	
     	result.put("folderInfo", folderInfo);
