@@ -84,5 +84,16 @@ public class FolderServiceImpl implements FolderService {
 		List<FolderInfo> list = folderInfoMapper.selectByParam(folderParam);
 		return list;
 	}
+
+	@Transactional
+	@Override
+	public void updateStatus(Integer id, String status, String shareRemarks) {
+
+		FolderInfo folderInfo = new FolderInfo();
+		folderInfo.setId(id);
+		folderInfo.setReserved1(status);
+		folderInfo.setReserved2(shareRemarks);
+		folderInfoMapper.updateByPrimaryKeySelective(folderInfo);
+	}
 	
 }

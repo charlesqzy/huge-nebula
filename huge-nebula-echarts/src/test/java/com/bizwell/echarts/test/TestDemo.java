@@ -12,7 +12,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.bizwell.echarts.Application;
 import com.bizwell.echarts.bean.domain.FolderInfo;
-import com.bizwell.echarts.common.JsonUtils;
 import com.bizwell.echarts.mapper.FolderInfoMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)  
@@ -49,10 +48,9 @@ public class TestDemo {
 		for (FolderInfo folderInfo : list) {
 			System.out.println(folderInfo);
 		}
-		String json = JsonUtils.toJson(list);
-		System.out.println(json);
+//		String json = JsonUtils.toJson(list);
+//		System.out.println(json);
 		
 	}
 	
-
 }

@@ -7,21 +7,6 @@ import com.bizwell.echarts.bean.domain.SheetMetaData;
 
 public class QueryBulider {
 
-
-    /*static String jsonString = "{" +
-            "\"echartType\": 2," +
-            "\"dimension\": [{\"metadataId\": 804,\"dateLevel\": \"按周\"}]," +
-            "\"measure1\": [{\"metadataId\": 810,\"aggregate\": \"求和\"}, " +
-            "{\"metadataId\": 809,\"aggregate\": \"计数\"}]," +
-            "\"measure2\": []," +
-            "\"filter\": [{\"metadataId\": 804,\"type\": \"date\",\"subType\": \"\",\"condition\": {\"startTime\": \"2017-01-01 00:00:00\",\"endTime\": \"2018-01-05 15:30:00\"}}," +
-            "{\"metadataId\": 805,\"type\": \"text\",\"subType\": \"精确筛选\",\"condition\": [\"中餐\"]}," +
-            "{\"metadataId\": 806,\"type\": \"text\",\"subType\": \"条件筛选\",\"condition\": {\"logic\": \"OR\",\"fields\": [" +
-            "{\"operator\": \"包含\",\"value\": \"115\"}]}}," +
-            "{\"metadataId\": 810,\"type\": \"number\",\"subType\": \"条件筛选\",\"condition\": {\"logic\": \"\",\"fields\": [" +
-            "{\"operator\": \"区间\",\"value\": 1,\"value2\": 8}]" +
-            "}}]}";*/
-
     public static String getSql(String data) {
 
         System.out.println(data);
@@ -42,39 +27,64 @@ public class QueryBulider {
         JSONObject jsonObject = JSONObject.parseObject(jsonString);
 
         JSONArray dimension = jsonObject.getJSONArray("dimension");
-        String dimString = getDimColString(dimension);
-
-        String tableName = getTargetTable(dimension);
-
         JSONArray measure1 = jsonObject.getJSONArray("measure1");
-        String measureString1 = getMeasureString(measure1);
-
         JSONArray measure2 = jsonObject.getJSONArray("measure2");
-        String measureString2 = getMeasureString(measure2);
 
-        String measureString = measureString1 + measureString2;
+        String[] dimAndGroupByStrings = getDimColString(jsonObject.getJSONArray("dimension"));
+        String dimString = dimAndGroupByStrings[0];
+        String groupbyString = dimAndGroupByStrings[1];
 
-        JSONArray filter = jsonObject.getJSONArray("filter");
-        String filterString = getFilterString(filter);
+        String tableName = "";
+        if (dimension != null && !dimension.isEmpty())
+            tableName = getTargetTable(dimension);
+        else if (measure1 != null && !measure1.isEmpty())
+            tableName = getTargetTable(measure1);
+        else
+            tableName = getTargetTable(measure2);
 
-        String sql = "SELECT " + dimString + measureString.substring(0, measureString.length() - 1) +
-                " FROM " + tableName +
-                " WHERE " + filterString +
-                " GROUP BY " + dimString.substring(0, dimString.length() - 1) +
-                " ORDER BY " + dimString.substring(0, dimString.length() - 1);
+        String measureString1 = getMeasureString(jsonObject.getJSONArray("measure1"));
+        String measureString2 = getMeasureString(jsonObject.getJSONArray("measure2"));
+        String measureString = "";
+        if (measureString1.equals(""))
+            measureString += measureString2;
+        else if (measureString2.equals(""))
+            measureString += measureString1;
+        else
+            measureString = measureString + measureString1 + "," + measureString2;
 
-        return sql;
+        String filterString = getFilterString(jsonObject.getJSONArray("filter"));
+
+        StringBuffer sqlStringBuffer = new StringBuffer();
+
+        if (!(dimString.equals("") && measureString.equals(""))) {
+            sqlStringBuffer.append("SELECT ");
+            sqlStringBuffer.append(dimString);
+            if (!dimString.equals("") && !measureString.equals(""))
+                sqlStringBuffer.append(",");
+            sqlStringBuffer.append(measureString);
+            sqlStringBuffer.append(" FROM ");
+            sqlStringBuffer.append(tableName);
+            if (!filterString.equals(""))
+                sqlStringBuffer.append(" WHERE " + filterString);
+            if (!groupbyString.equals("")) {
+                sqlStringBuffer.append(" GROUP BY " + groupbyString);
+                sqlStringBuffer.append(" ORDER BY " + groupbyString);
+            }
+
+        }
+        return sqlStringBuffer.toString();
     }
 
 
     /**
      * 用于确定查询目标表的表名
      *
-     * @param dimension
+     * @param jsonArray
      * @return
      */
-    private static String getTargetTable(JSONArray dimension) {
-        JSONObject dimJsonObj = dimension.getJSONObject(0);
+    private static String getTargetTable(JSONArray jsonArray) {
+        if (jsonArray == null || jsonArray.isEmpty()) return "";
+        JSONObject dimJsonObj = jsonArray.getJSONObject(0);
         int metadataId = dimJsonObj.getIntValue("metadataId");
         SheetMetaData sheetMetaData = MetaDataMap.get(metadataId);
         return sheetMetaData.getTableName();
@@ -153,7 +163,6 @@ public class QueryBulider {
                     if (result.endsWith(logic))
                         result = result.substring(0, result.lastIndexOf(" ")) + " )";
                 }
-
             } else if (type.equals("number")) {
                 if (subType.equals("条件筛选")) {
                     JSONObject condition = obj.getJSONObject("condition");
@@ -196,13 +205,12 @@ public class QueryBulider {
                 }
 
             }
-
         }
         return result;
     }
 
     /**
-     * 解析度量字段，返回值以逗号结束
+     * 解析度量字段
      *
      * @param measure
      * @return
@@ -218,74 +226,89 @@ public class QueryBulider {
             String aggregate = dataObj.getString("aggregate");
             switch (aggregate) {
                 case "求和":
-                    result = result + "SUM(" + fieldName + "),";
+                    result = result + "SUM(" + fieldName + ")";
                     break;
                 case "计数":
-                    result = result + "COUNT(" + fieldName + "),";
+                    result = result + "COUNT(" + fieldName + ")";
                     break;
                 case "去重计数":
-                    result = result + "COUNT(DISTINCT " + fieldName + "),";
+                    result = result + "COUNT(DISTINCT " + fieldName + ")";
                     break;
                 case "平均值":
-                    result = result + "AVG(" + fieldName + "),";
+                    result = result + "AVG(" + fieldName + ")";
                     break;
                 case "最大值":
-                    result = result + "MAX(" + fieldName + "),";
+                    result = result + "MAX(" + fieldName + ")";
                     break;
                 case "最小值":
-                    result = result + "MIN(" + fieldName + "),";
+                    result = result + "MIN(" + fieldName + ")";
                     break;
                 default:
                     break;
             }
+            result = result + " AS " + fieldName + ",";
         }
+        if (result.endsWith(","))
+            result = result.substring(0, result.length() - 1);
         return result;
     }
 
     /**
-     * 解析维度字段，返回值以逗号结尾
+     * 解析维度字段
      *
      * @param dimension
      * @return
      */
-    private static String getDimColString(JSONArray dimension) {
-        String result = "";
-        for (int i = 0; i < dimension.size(); i++) {
+    private static String[] getDimColString(JSONArray dimension) {
+        String result[] = new String[2];
+        String dimColumns = "";
+        String groupbyString = "";
 
-            JSONObject dimJsonObj = dimension.getJSONObject(i);
-            int metadataId = dimJsonObj.getIntValue("metadataId");
-            SheetMetaData sheetMetaData = MetaDataMap.get(metadataId);
+        if (dimension != null && !dimension.isEmpty()) {
+            for (int i = 0; i < dimension.size(); i++) {
+                JSONObject dimJsonObj = dimension.getJSONObject(i);
+                int metadataId = dimJsonObj.getIntValue("metadataId");
+                SheetMetaData sheetMetaData = MetaDataMap.get(metadataId);
 
-            String fieldName = sheetMetaData.getFieldColumn();
-            int fieldType = sheetMetaData.getFieldType();
-            String dateLevel;
-            if (fieldType == 3) { // 日期类型
-                dateLevel = dimJsonObj.getString("dateLevel");
-                switch (dateLevel) {
-                    case "按年":
-                        result = result + "YEAR(" + fieldName + "),";
-                        break;
-                    case "按季":
-                        result = result + "CONCAT(YEAR(" + fieldName + "),\'年\'," + "QUARTER(" + fieldName + "),\'季度\'),";
-                        break;
-                    case "按月":
-                        result = result + "DATE_FORMAT(" + fieldName + ",'%Y-%m'),";
-                        break;
-                    case "按周":
-                        result = result + "CONCAT(YEAR(" + fieldName + "),\'年第\'," + "WEEKOFYEAR(" + fieldName + "),\'周\'),";
-                        break;
-                    case "按日":
-                        result = result + "DATE_FORMAT(" + fieldName + ",'%Y-%m-%d'),";
-                        break;
-                    default:
-                        result = result + fieldName + ",";
-                        break;
+                String fieldName = sheetMetaData.getFieldColumn();
+                int fieldType = sheetMetaData.getFieldType();
+                String dateLevel;
+                if (fieldType == 3) { // 日期类型
+                    dateLevel = dimJsonObj.getString("dateLevel");
+                    switch (dateLevel) {
+                        case "按年":
+                            dimColumns = dimColumns + "YEAR(" + fieldName + ")";
+                            break;
+                        case "按季":
+                            dimColumns = dimColumns + "CONCAT(YEAR(" + fieldName + "),\'年\'," + "QUARTER(" + fieldName + "),\'季度\')";
+                            break;
+                        case "按月":
+                            dimColumns = dimColumns + "DATE_FORMAT(" + fieldName + ",'%Y-%m')";
+                            break;
+                        case "按周":
+                            dimColumns = dimColumns + "CONCAT(YEAR(" + fieldName + "),\'年第\'," + "WEEKOFYEAR(" + fieldName + "),\'周\')";
+                            break;
+                        case "按日":
+                            dimColumns = dimColumns + "DATE_FORMAT(" + fieldName + ",'%Y-%m-%d')";
+                            break;
+                        default:
+                            break;
+                    }
+                    groupbyString = groupbyString + dimColumns + ",";
+                    dimColumns = dimColumns + " AS " + fieldName + ",";
+                } else {
+                    groupbyString = groupbyString + fieldName + ",";
+                    dimColumns = dimColumns + fieldName + ",";
                 }
-            } else
-                result = result + fieldName + ",";
+
+                if (groupbyString.endsWith(","))
+                    groupbyString = groupbyString.substring(0, groupbyString.length() - 1);
+                if (dimColumns.endsWith(","))
+                    dimColumns = dimColumns.substring(0, dimColumns.length() - 1);
+            }
         }
+        result[0] = dimColumns;
+        result[1] = groupbyString;
         return result;
     }
-
-
 }

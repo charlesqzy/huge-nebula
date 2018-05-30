@@ -15,6 +15,10 @@ public class Series {
 	
 	private String stack;
 	
+	private Boolean smooth;
+	
+	private String  areaStyle;
+	
 	private List<Object> data;
 	
 	public Object getName() {
@@ -41,6 +45,22 @@ public class Series {
 		this.stack = stack;
 	}
 
+	public Boolean getSmooth() {
+		return smooth;
+	}
+
+	public void setSmooth(Boolean smooth) {
+		this.smooth = smooth;
+	}
+
+	public String getAreaStyle() {
+		return areaStyle;
+	}
+
+	public void setAreaStyle(String areaStyle) {
+		this.areaStyle = areaStyle;
+	}
+
 	public List<Object> getData() {
 		return data;
 	}
@@ -51,7 +71,8 @@ public class Series {
 
 	@Override
 	public String toString() {
-		return String.format("Series [name=%s, type=%s, stack=%s, data=%s]", name, type, stack, data);
+		return String.format("Series [name=%s, type=%s, stack=%s, smooth=%s, areaStyle=%s, data=%s]", name, type, stack,
+				smooth, areaStyle, data);
 	}
 
 }

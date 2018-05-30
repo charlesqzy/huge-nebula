@@ -17,8 +17,8 @@ import com.bizwell.echarts.service.AbstractReportService;
  * @date 2018年5月21日
  *
  */
-@Service("01Service")
-public class BarServiceImpl extends AbstractReportService {
+@Service("04Service")
+public class BarOrLineServiceImpl extends AbstractReportService {
 
 	@Override
 	protected ResultData setupData(List<Map<String, Object>> list, String data) {
@@ -34,6 +34,9 @@ public class BarServiceImpl extends AbstractReportService {
 			}
 			names.add(name);
 		}
+		
+		String type = JsonUtils.getString(data, "type");
+		String stack = JsonUtils.getString(data, "stack");
 		
 		List<Series> seriesList = new ArrayList<Series>();
 		List<String> legend = new ArrayList<String>();
@@ -51,8 +54,20 @@ public class BarServiceImpl extends AbstractReportService {
 			legend.add(fieldName);
 			Series series = new Series();
 			series.setName(fieldName);
-			series.setType("bar");
+			series.setStack(stack);
 			series.setData(values);
+			if (type.equals("bar")) {
+				series.setType(type);			
+			}
+			if (type.equals("line")) {
+				series.setType(type);
+				series.setSmooth(true);
+			}
+			if (type.equals("area")) {
+				series.setType("line");
+				series.setSmooth(true);
+				series.setAreaStyle("{normal: {}}");
+			}
 			seriesList.add(series);
 		}
 		

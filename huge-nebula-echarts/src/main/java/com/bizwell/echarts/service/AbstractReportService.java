@@ -9,6 +9,11 @@ import com.bizwell.echarts.bean.vo.ResultData;
 import com.bizwell.echarts.common.QueryBulider;
 import com.bizwell.echarts.mapper.EchartsMapper;
 
+/**
+ * @author zhangjianjun
+ * @date 2018年5月23日
+ *
+ */
 public abstract class AbstractReportService implements ReportService {
 	
 	@Autowired

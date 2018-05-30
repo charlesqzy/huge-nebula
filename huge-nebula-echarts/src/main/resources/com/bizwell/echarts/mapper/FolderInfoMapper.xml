@@ -54,7 +54,7 @@
 			</trim>
 		</if>
   	</where>
-  	order by t1.id ASC
+  	order by t1.update_time ASC, t2.update_time ASC
   </select>
   
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >

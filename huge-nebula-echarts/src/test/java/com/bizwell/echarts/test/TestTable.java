@@ -42,9 +42,9 @@ public class TestTable {
 		            "\"measure1\": [{\"metadataId\": 835,\"aggregate\": \"sum\",\"color\": \"red\"}, " +
 		            "{\"metadataId\": 837,\"aggregate\": \"count\",\"color\": \"green\"}]}";
 		 
-		 ReportService reportService = (ReportService) SpringContext.getBean("01Service");
-		 ResultData data = reportService.selectEcharts(jsonString);
-		 System.out.println(data);
+//		 ReportService reportService = (ReportService) SpringContext.getBean("01Service");
+//		 ResultData data = reportService.selectEcharts(jsonString);
+//		 System.out.println(data);
 	}
 	
 	
