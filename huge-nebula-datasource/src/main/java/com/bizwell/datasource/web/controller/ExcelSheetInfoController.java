@@ -71,12 +71,16 @@ public class ExcelSheetInfoController extends BaseController {
 	 */
     @RequestMapping(value = "/datasource/createSheet")
     @ResponseBody
-    public ResponseJson createSheet(@RequestBody XlsContent xlsContent ,Integer userId, HttpServletRequest request) {
+    public ResponseJson createSheet(@RequestBody XlsContent xlsContent ,
+    		//@RequestParam(defaultValue = "0")Integer userId, 
+    		HttpServletRequest request) {
     	String filePath = request.getSession().getServletContext().getRealPath("excelfile/");
     	String fileName = xlsContent.getFileName();
     	String fileCode = xlsContent.getFileCode();
     	
-		logger.info("createSheet  userId ="+ userId+ "   filePath=" + filePath + "  fileName="+fileName);
+		Integer userId= xlsContent.getUserId();
+    	
+		logger.info("createSheet userid="+userId+"  filePath=" + filePath + "  fileName="+fileName);
 		
 		XlsContent newXlsContent = null;
 		try {
@@ -107,7 +111,7 @@ public class ExcelSheetInfoController extends BaseController {
     		excelSheetInfo.setTableName(tableName);    		
     		excelSheetInfoService.delete(excelSheetInfo);//覆盖原sheet，先删除    		
     		
-        	excelSheetInfo.setExcelFileId(newXlsContent.getExcelFileId());    		
+        	excelSheetInfo.setExcelFileId(xlsContent.getExcelFileId());    		
         	excelSheetInfo.setSheetName(xlsContent.getSheets()[s].getSheetName());
         	excelSheetInfo.setFolderId(xlsContent.getSheets()[s].getFolderId());
 //        	excelSheetInfo.setCategoryFlag(categoryFlag);
@@ -128,7 +132,7 @@ public class ExcelSheetInfoController extends BaseController {
         	
         	String deleteMetadataSQL=MysqlHelper.generateDeleteMetadataSQL(tableName);
         	String insertMetadataSQL=MysqlHelper.generateInsertMetadataSQL(sheet.getTypeList(),
-        			sheet.getContentList(),excelSheetInfo.getId(),tableName);
+        			sheet.getContentList(),excelSheetInfo.getId(),tableName,userId);
         	
         	
         	jdbcService.executeSql(dropSql);
@@ -162,9 +166,10 @@ public class ExcelSheetInfoController extends BaseController {
      */
     @RequestMapping(value = "/datasource/getSheet")
     @ResponseBody
-    public ResponseJson getSheet(String sheetName) {
-    	logger.info("getSheet  sheetName ="+ sheetName);
-    	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo();    	
+    public ResponseJson getSheet(Integer userId,String sheetName) {
+    	logger.info("getSheet  userId="+userId+" sheetName ="+ sheetName);
+    	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo();
+    	excelSheetInfo.setUserId(userId);
     	excelSheetInfo.setSheetName(sheetName);
     	excelSheetInfo.setUpdateTime(DateHelp.getStrTime(new Date()));
     	List<ExcelSheetInfo> list = excelSheetInfoService.select(excelSheetInfo);
@@ -336,7 +341,8 @@ public class ExcelSheetInfoController extends BaseController {
      */
     @RequestMapping(value = "/datasource/getFolder")
     @ResponseBody
-    public ResponseJson getFolder(String folderName,Integer userId) {
+    public ResponseJson getFolder(String folderName,
+    		@RequestParam(defaultValue = "0")Integer userId) {
     	logger.info("getFolder  folderName="+folderName +"  userId="+userId);
     	FolderInfo folderInfo = new FolderInfo();
     	folderInfo.setFolderName(folderName);

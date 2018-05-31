@@ -69,7 +69,7 @@
 		table_clumns,
 		table_rows,
 		CONCAT_WS('/',table_rows,table_clumns,NULL) AS rows_clumns,
-		DATE_FORMAT(t2.update_time,'%Y-%m-%d %h:%m%:%s') AS
+		DATE_FORMAT(t1.update_time,'%Y-%m-%d %h:%m%:%s') AS
 		update_time,
 		t1.`user_id`
 		FROM
@@ -82,6 +82,9 @@
 			</if>
 			<if test="null != folderId">
 				and folder_id = #{folderId}
+			</if>
+			<if test="null != userId">
+				and t1.`user_id` = #{userId}
 			</if>
 			<if test="null != sheetName">
 				and sheet_name like concat(concat('%', #{sheetName}),

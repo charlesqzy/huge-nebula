@@ -76,7 +76,7 @@ public class ExcelFileUploadController extends BaseController {
 	@RequestMapping(value = "/datasource/uploadExcel")	
 	public @ResponseBody ResponseJson uploadExcel(
 			@RequestParam(value = "file", required = false) MultipartFile file,
-			Integer userId,
+			@RequestParam(defaultValue = "0")Integer userId,
 			HttpServletRequest request) {
 		
 		//String userId = request.getParameter("userId");
@@ -117,8 +117,8 @@ public class ExcelFileUploadController extends BaseController {
 		entity.setFileName(fileName);
 		entity.setFilePath(filePath);
 		// entity.setFileSize(fileSize);
-		entity.setFileRows((Integer) xlsContent.getFileRows());
-		entity.setFileColumns((Integer) xlsContent.getFileColumns());
+		entity.setFileRows(xlsContent.getFileRows());
+		entity.setFileColumns(xlsContent.getFileColumns());
 		entity.setUserId(userId);
 		excelFileInfoService.save(entity);
 		xlsContent.setExcelFileId(entity.getId());
@@ -129,27 +129,9 @@ public class ExcelFileUploadController extends BaseController {
 		// 返回json
 		//return JsonUtils.toJson(xlsContent);
 		return new ResponseJson(code,message,xlsContent);
-
-
 	}
 	
-	
-	
-	/*
-	@Bean
-	public CommonsMultipartResolver multipartResolver() {
-	    return new CommonsMultipartResolver();
-	}
 
-	@Bean
-	public MultipartConfigElement multipartConfigElement() {
-	    MultipartConfigFactory factory = new MultipartConfigFactory();
-	    factory.setMaxFileSize("20MB");
-	    factory.setMaxRequestSize("20MB");
-	    return factory.createMultipartConfig();
-	}*/
-	
-	
 	/**
 	 * 追加数据
 	 *apppendUploadExcel
@@ -160,12 +142,11 @@ public class ExcelFileUploadController extends BaseController {
 	public @ResponseBody ResponseJson apppendUploadExcel(
 			@RequestParam(value = "file", required = false) MultipartFile file,
 			Integer sheetId,
-			Integer userId,
+			@RequestParam(defaultValue = "0")Integer userId,
 			@RequestParam(defaultValue = "false")Boolean replase,
 			HttpServletRequest request) {
 		
 		logger.info("apppendUploadExcel   sheetId=="+sheetId + "  userId="+userId + " replase="+replase);
-		//String contentType = file.getContentType();
 		String fileName = file.getOriginalFilename();
 
 		String filePath = request.getSession().getServletContext().getRealPath("excelfile/");

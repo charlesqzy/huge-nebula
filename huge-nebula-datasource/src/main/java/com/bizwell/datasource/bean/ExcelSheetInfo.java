@@ -15,7 +15,7 @@ public class ExcelSheetInfo {
 	private Integer tableRows;
 	private String rowsClumns;
 	private String updateTime;
-	
+	private Integer userId;
 	
 	
 	
@@ -51,7 +51,6 @@ public class ExcelSheetInfo {
 		this.tableRows = tableRows;
 	}
 
-	private Integer userId;
 
 	public Integer getId() {
 		return id;

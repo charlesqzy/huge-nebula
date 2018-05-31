@@ -15,12 +15,13 @@ import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ import com.bizwell.datasource.bean.SheetInfo;
 import com.bizwell.datasource.bean.XLSHaderType;
 import com.bizwell.datasource.bean.XlsContent;
 import com.bizwell.datasource.common.Constants;
+import com.bizwell.datasource.common.JsonUtils;
 
 
 /**
@@ -38,19 +40,23 @@ import com.bizwell.datasource.common.Constants;
 public class ReadExcelForHSSF {
 	private static Logger logger = LoggerFactory.getLogger(ReadExcelForHSSF.class);
 
-
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
-	
 
 	public XlsContent readExcel(String filePath, String fileName,boolean isCut) throws IOException {
 
-		FileInputStream fileInputStream = new FileInputStream(filePath + fileName);
+		String fileFullName = filePath + fileName;
+		
+		FileInputStream fileInputStream = new FileInputStream(fileFullName);
 		BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
-		POIFSFileSystem fileSystem = new POIFSFileSystem(bufferedInputStream);
-		HSSFWorkbook workbook = new HSSFWorkbook(fileSystem);
 
-		int numberOfSheets = workbook.getNumberOfSheets();
+		Workbook wb = null;  
+        if(fileFullName.indexOf(".xlsx")>-1){//判断excel版本
+        	wb = new XSSFWorkbook(new FileInputStream(fileFullName));  
+        } else {  
+        	wb = new HSSFWorkbook(new FileInputStream(fileFullName));  
+        } 
+
+		int numberOfSheets = wb.getNumberOfSheets();
 		logger.info("numberOfSheets=" + numberOfSheets);
 
 		int fileRows = 0;
@@ -60,18 +66,22 @@ public class ReadExcelForHSSF {
 
 		// 循环每个sheet
 		for (int s = 0; s < numberOfSheets; s++) {
-			HSSFSheet sheet = workbook.getSheetAt(s);
+			Sheet sheet =  wb.getSheetAt(s);
 			String sheetName = sheet.getSheetName();
 			int lastRowIndex = sheet.getLastRowNum();
 			logger.info("sheetName== " + sheetName + "   lastRowIndex=" + lastRowIndex);
 			fileRows += lastRowIndex;
-
+			
+			if(null != sheet.getRow(0)){
+				fileColumns += sheet.getRow(0).getLastCellNum();
+			}
+			
 			List<XLSHaderType> typeList = new ArrayList<XLSHaderType>();
 			Map<String, String> rowCellValues;
 			List<Map<String, String>> contentList = new ArrayList<Map<String, String>>();
 
 			for (int i = 0; i <= lastRowIndex; i++) {
-				HSSFRow row = sheet.getRow(i);
+				Row row = sheet.getRow(i);
 
 				if (row == null) {
 					break;
@@ -79,7 +89,6 @@ public class ReadExcelForHSSF {
 
 				short lastCellNum = row.getLastCellNum();
 				rowCellValues = new HashMap<String, String>();
-				fileColumns += lastCellNum;
 
 				for (int j = 0; j < lastCellNum; j++) {
 
@@ -88,10 +97,9 @@ public class ReadExcelForHSSF {
 						typeList.add(new XLSHaderType(Constants.excelHader[j], type));
 					}
 					
-					
 					String value = "";
 					
-					HSSFCell hssfCell = row.getCell(j);
+					Cell hssfCell = row.getCell(j);
 			        DecimalFormat df = new DecimalFormat("#");
 			        if(hssfCell != null){
 				        switch (row.getCell(j).getCellType()){
@@ -118,7 +126,6 @@ public class ReadExcelForHSSF {
 			}
 
 			sheets[s] = new SheetInfo(sheetName, typeList, (isCut&&contentList.size()>100?contentList.subList(0, 100):contentList));
-
 		}
 
 		bufferedInputStream.close();
@@ -244,13 +251,13 @@ public class ReadExcelForHSSF {
 
 
 
-	/*public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException {
 		String filePath = "D:\\";
-		String fileName = "test3.xls";
+		String fileName = "predict.xls";
 
-		XlsContent xlsContent = new ReadExcelForHSSF().readExcel(filePath, fileName);
+		XlsContent xlsContent = new ReadExcelForHSSF().readExcel(filePath, fileName,false);
 
 		System.out.println(JsonUtils.toJson(xlsContent));
-	}*/
+	}
 
 }

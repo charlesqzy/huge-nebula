@@ -69,7 +69,7 @@ public class MysqlHelper {
 	 */
 	public static String generateDeleteMetadataSQL(String tableName) {
 		StringBuffer deleteSql = new StringBuffer();
-		deleteSql.append("delete from ").append(tableName).append(" where table_name='").append(tableName).append("';");
+		deleteSql.append("delete from ds_sheet_metadata where table_name='").append(tableName).append("';");
 		logger.info("deleteSql ==== " + deleteSql);
 		return deleteSql.toString();
 	}
@@ -77,7 +77,7 @@ public class MysqlHelper {
 
 	// 动态插入元数据
 	public static String generateInsertMetadataSQL(List<XLSHaderType> typeList, List<Map<String, String>> contentList,
-			Integer sheetId, String tableName) {
+			Integer sheetId, String tableName,Integer userId) {
 		
 		if(typeList.size()==0){
 			return "select 1";
@@ -88,22 +88,32 @@ public class MysqlHelper {
 		
 
 		int fieldType=2;
-		for (XLSHaderType type : typeList) {			
-			if ("string".equals(type.getType())) {
-				fieldType =2;
-			} else if ("date".equals(type.getType())) {
-				fieldType =3;
-			} else if ("numeric".equals(type.getType())) {
-				fieldType = 1;
-			}
-		}
+//		for (XLSHaderType type : typeList) {			
+//			if ("string".equals(type.getType())) {
+//				fieldType =2;
+//			} else if ("date".equals(type.getType())) {
+//				fieldType =3;
+//			} else if ("numeric".equals(type.getType())) {
+//				fieldType = 1;
+//			}
+//		}
 		
 		StringBuffer metadataSQL = new StringBuffer();
 		Map<String, String> headerMap = contentList.get(0);
 		metadataSQL.append(
-				"insert into ds_sheet_metadata(sheet_id,table_name,field_column,field_name_old,field_name_new,field_type,field_comment,is_visible) values ");
+				"insert into ds_sheet_metadata(sheet_id,table_name,field_column,field_name_old,field_name_new,field_type,field_comment,is_visible,user_id) values ");
 		for (int i = 0; i < headerMap.size(); i++) {
-			metadataSQL.append("('" + sheetId + "','"+tableName+"','"+Constants.excelHader[i]+"','" + headerMap.get(Constants.excelHader[i]) + "','" + headerMap.get(Constants.excelHader[i]) + "',"+fieldType+",'','1'),");
+			
+			
+			if ("string".equals(typeList.get(i).getType())) {
+				fieldType =2;
+			} else if ("date".equals(typeList.get(i).getType())) {
+				fieldType =3;
+			} else if ("numeric".equals(typeList.get(i).getType())) {
+				fieldType = 1;
+			}
+			
+			metadataSQL.append("('" + sheetId + "','"+tableName+"','"+Constants.excelHader[i]+"','" + headerMap.get(Constants.excelHader[i]) + "','" + headerMap.get(Constants.excelHader[i]) + "',"+fieldType+",'','1','"+userId+"'),");
 		}
 		metadataSQL.delete(metadataSQL.lastIndexOf(","), metadataSQL.lastIndexOf(",") + 1);
 		logger.info("metadataSQL ==== " + metadataSQL);
