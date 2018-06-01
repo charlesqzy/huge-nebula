@@ -23,4 +23,9 @@ public class FolderInfoService {
 	public List<FolderInfo> select(FolderInfo entity){
 		return folderInfoMapper.select(entity);
 	}
+	
+	
+	public Integer delete(FolderInfo entity){
+		return folderInfoMapper.delete(entity);
+	}
 }

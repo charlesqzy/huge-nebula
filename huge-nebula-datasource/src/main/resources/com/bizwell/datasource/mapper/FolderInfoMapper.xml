@@ -13,7 +13,7 @@
 
 
 	<insert id="save" parameterType="com.bizwell.datasource.bean.FolderInfo"
-		useGeneratedKeys="true" keyProperty="id" >
+		useGeneratedKeys="true" keyProperty="id">
 		<selectKey keyProperty="id" resultType="java.lang.Integer">
 			select
 			LAST_INSERT_ID()
@@ -45,7 +45,7 @@
 		`level`
 		FROM `gb_folder_info`
 		<where>
-		folder_type = 2
+			folder_type = 2
 			<if test="null != id">
 				and id = #{id}
 			</if>
@@ -56,9 +56,18 @@
 				and folder_name like concat(concat('%', #{folderName}),
 				'%')
 			</if>
-		</where>		
+		</where>
 		ORDER BY level ASC
 	</select>
 
+	<delete id="delete" parameterType="com.bizwell.datasource.bean.FolderInfo">
+		DELETE FROM gb_folder_info
+		<where>
+			folder_type = 2
+			<if test="null != id">
+				and id = #{id}
+			</if>
+		</where>
+	</delete>
 
 </mapper>

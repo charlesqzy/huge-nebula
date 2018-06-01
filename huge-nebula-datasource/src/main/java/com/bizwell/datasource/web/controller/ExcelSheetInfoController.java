@@ -72,12 +72,11 @@ public class ExcelSheetInfoController extends BaseController {
     @RequestMapping(value = "/datasource/createSheet")
     @ResponseBody
     public ResponseJson createSheet(@RequestBody XlsContent xlsContent ,
-    		//@RequestParam(defaultValue = "0")Integer userId, 
     		HttpServletRequest request) {
+    	
     	String filePath = request.getSession().getServletContext().getRealPath("excelfile/");
     	String fileName = xlsContent.getFileName();
     	String fileCode = xlsContent.getFileCode();
-    	
 		Integer userId= xlsContent.getUserId();
     	
 		logger.info("createSheet userid="+userId+"  filePath=" + filePath + "  fileName="+fileName);
@@ -86,15 +85,13 @@ public class ExcelSheetInfoController extends BaseController {
 		try {
 			newXlsContent = readExcelForHSSF.readExcel(filePath, fileName,false);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
     	ExcelSheetInfo excelSheetInfo = null;
     	SheetLog sheetLog= null;
     	
-    	//String dateStr = new SimpleDateFormat("yyMMddHHmmss").format(new Date());    	
-    	int i = 1;
+    	
     	int s = 0;
     	SheetInfo[] sheets = newXlsContent.getSheets();
     	
@@ -102,9 +99,8 @@ public class ExcelSheetInfoController extends BaseController {
     		if(sheet.getTypeList().size()==0){
     			continue;//如果没有数据则跳过
     		}
-   
     		
-        	String tableName = "xls_"+fileCode+"_sheet_"+ i++ ;
+        	String tableName = "xls_"+fileCode+"_u"+userId +"_s"+ s+1;
     		//动态创建mysql，插入数据    	        	
     		
     		excelSheetInfo = new ExcelSheetInfo();
@@ -213,9 +209,6 @@ public class ExcelSheetInfoController extends BaseController {
     }
     
     
-    
-    
-    
     /**
      * 根据文件夹id获取sheet
      * @param folderId
@@ -223,10 +216,11 @@ public class ExcelSheetInfoController extends BaseController {
      */
     @RequestMapping(value = "/datasource/getSheetByFolderId")
     @ResponseBody
-    public ResponseJson getSheetByFolderId(Integer folderId) {
+    public ResponseJson getSheetByFolderId(Integer folderId,Integer userId) {
     	logger.info("getSheetByFolderId  folderId ="+ folderId );
     	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo(); 
     	excelSheetInfo.setFolderId(folderId);
+    	excelSheetInfo.setUserId(userId);
     	List<ExcelSheetInfo> list = excelSheetInfoService.select(excelSheetInfo);
     	
     	return new ResponseJson(200l,"success",list);
@@ -275,8 +269,6 @@ public class ExcelSheetInfoController extends BaseController {
     }
     
     
-    
-    
     /**
      * 根据sheetId获取数据
      * @param tableName
@@ -308,48 +300,5 @@ public class ExcelSheetInfoController extends BaseController {
     	return new ResponseJson(200l,"success",result);
     }
     
-    
-    
-    /**
-     * 创建文件夹
-     * @param folderName
-     * @return
-     */
-    @RequestMapping(value = "/datasource/createFolder")
-    @ResponseBody
-    public ResponseJson createFolder(String folderName,Integer userId) {
-    	logger.info("createFolder  folderName="+folderName +"  userId="+userId);
-    	FolderInfo folderInfo = new FolderInfo();
-    	folderInfo.setUserId(userId);
-    	folderInfo.setFolderName(folderName);
-    	folderInfo.setFolderType(2);
-    	//folderInfo.setParentId(parentId);
-    	folderInfo.setLevel(2);
-    	int folderId = folderInfoService.save(folderInfo);
-    	Map result = new HashMap();    	
-    	result.put("folderInfo", folderInfo);
-    	return new ResponseJson(200l,"success",result);
-    }
-    
-    
-    
-    
-    /**
-     * 获取文件夹
-     * @param folderName
-     * @return
-     */
-    @RequestMapping(value = "/datasource/getFolder")
-    @ResponseBody
-    public ResponseJson getFolder(String folderName,
-    		@RequestParam(defaultValue = "0")Integer userId) {
-    	logger.info("getFolder  folderName="+folderName +"  userId="+userId);
-    	FolderInfo folderInfo = new FolderInfo();
-    	folderInfo.setFolderName(folderName);
-    	folderInfo.setUserId(userId);
-    	List<FolderInfo> list = folderInfoService.select(folderInfo);
-    	//logger.info("return"+JsonUtils.toJson(list));
-    	return new ResponseJson(200l,"success",list);
-    }
 
 }

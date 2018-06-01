@@ -15,4 +15,6 @@ public interface FolderInfoMapper {
     
     List<FolderInfo> select(FolderInfo entity);
     
+    Integer delete(FolderInfo entity);
+    
 }
