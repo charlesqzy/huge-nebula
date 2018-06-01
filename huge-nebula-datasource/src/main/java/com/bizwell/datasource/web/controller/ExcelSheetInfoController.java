@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,7 @@ import com.bizwell.datasource.bean.SheetMetadata;
 import com.bizwell.datasource.bean.XLSHaderType;
 import com.bizwell.datasource.bean.XlsContent;
 import com.bizwell.datasource.common.DateHelp;
+import com.bizwell.datasource.common.HttpClientUtil;
 import com.bizwell.datasource.common.JsonUtils;
 import com.bizwell.datasource.json.ResponseJson;
 import com.bizwell.datasource.service.ExcelSheetInfoService;
@@ -49,8 +51,6 @@ public class ExcelSheetInfoController extends BaseController {
 	@Autowired
 	private ExcelSheetInfoService excelSheetInfoService;
 	
-	@Autowired
-	private FolderInfoService folderInfoService;
 	
 	@Autowired
 	private SheetMetadataService sheetMetadataService;
@@ -63,6 +63,10 @@ public class ExcelSheetInfoController extends BaseController {
 
 	@Autowired
 	private JDBCService jdbcService;
+	
+	
+	@Value("${echarts.metadata.refresh}")
+	String httpUrl = "";
 	
 	/**
 	 * 创建sheet
@@ -80,6 +84,7 @@ public class ExcelSheetInfoController extends BaseController {
 		Integer userId= xlsContent.getUserId();
     	
 		logger.info("createSheet userid="+userId+"  filePath=" + filePath + "  fileName="+fileName);
+		logger.info("createSheet httpUrl="+httpUrl);
 		
 		XlsContent newXlsContent = null;
 		try {
@@ -143,6 +148,12 @@ public class ExcelSheetInfoController extends BaseController {
         	sheetLog.setUpdateTime(new Date());
         	sheetLog.setUpdateLog("new sheet ");
         	sheetLogService.save(sheetLog);
+        	
+        	
+        	/* requset echarts project */
+    		Map data = new HashMap<>();
+    		data.put("userId", userId+"");
+    		HttpClientUtil.sendHttpPost(httpUrl, data);
         	
         	s++;
     	}
@@ -283,6 +294,7 @@ public class ExcelSheetInfoController extends BaseController {
    	
     	SheetMetadata metadata = new SheetMetadata();
     	metadata.setSheetId(sheetId);
+    	metadata.setSort(" order by field_type DESC ");
     	List<SheetMetadata> metadataList = sheetMetadataService.select(metadata);
     	
     	

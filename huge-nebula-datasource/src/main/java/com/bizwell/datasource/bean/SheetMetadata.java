@@ -10,6 +10,7 @@ public class SheetMetadata {
 	private Integer fieldType;
 	private String fieldComment;
 	private Integer isVisible;
+	private String sort; 
 	
 
 	public Integer getId() {
@@ -85,4 +86,13 @@ public class SheetMetadata {
 		this.fieldColumn = fieldColumn;
 	}
 
+	public String getSort() {
+		return sort;
+	}
+
+	public void setSort(String sort) {
+		this.sort = sort;
+	}
+
+	
 }
