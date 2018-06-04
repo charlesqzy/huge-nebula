@@ -50,23 +50,11 @@ public class QueryBulider {
 
     }
 
-    static String jsonString1 = "{" +
-            "\"echartType\": 2," +
-            "\"dimension\": []," +
-            "\"measure1\": [{\"metadataId\": 810,\"aggregate\": \"求和\"}, " +
-            "{\"metadataId\": 809,\"aggregate\": \"计数\"}]," +
-            "\"measure2\": []," +
-            "\"filter\": [{\"metadataId\": 804,\"type\": \"date\",\"subType\": \"\",\"condition\": {\"startTime\": \"2017-01-01 00:00:00\",\"endTime\": \"2018-01-05 15:30:00\"}}," +
-            "{\"metadataId\": 805,\"type\": \"text\",\"subType\": \"精确筛选\",\"condition\": [\"中餐\"]}," +
-            "{\"metadataId\": 806,\"type\": \"text\",\"subType\": \"条件筛选\",\"condition\": {\"logic\": \"OR\",\"fields\": [" +
-            "{\"operator\": \"包含\",\"value\": \"115\"}]}}," +
-            "{\"metadataId\": 810,\"type\": \"number\",\"subType\": \"条件筛选\",\"condition\": {\"logic\": \"\",\"fields\": [" +
-            "{\"operator\": \"区间\",\"value\": 1,\"value2\": 8}]" +
-            "}}]}";
+    static String jsonString1 = "{\"echartType\":\"09\",\"moduleType\":\"04\",\"dimension\":[{\"metadataId\":1,\"name\":\"日期\",\"aggregate\":\"求和\",\"dateLevel\":\"按月\"}],\"measure1\":[{\"metadataId\":8,\"name\":\"人数\",\"aggregate\":\"求和\",\"dateLevel\":\"按日\"},{\"metadataId\":7,\"name\":\"账单数\",\"aggregate\":\"求和\",\"dateLevel\":\"按日\"}],\"measure2\":[],\"filter\":[],\"type\":\"bar\",\"stack\":\"\"}";
 
     static String jsonString2 = "{" +
             "\"echartType\": 2," +
-            "\"dimension\": [{\"metadataId\": 804,\"dateLevel\": \"按周\"}]," +
+            "\"dimension\": [{\"metadataId\": 804,\"dateLevel\": \"按日\"},{\"metadataId\": 805,\"dateLevel\": \"按周\"}]," +
             "\"measure1\": [{\"metadataId\": 810,\"aggregate\": \"求和\"}, " +
             "{\"metadataId\": 809,\"aggregate\": \"计数\"}]," +
             "\"measure2\": []," +
@@ -74,9 +62,9 @@ public class QueryBulider {
 
     public static void main(String[] args) {
 
-        System.out.println(jsonString1);
+        System.out.println(jsonString2);
 
-        String sql = getQueryString(jsonString1);
+        String sql = getQueryString(jsonString2);
 
         System.out.println("sql : \n" + sql);
     }
@@ -337,39 +325,39 @@ public class QueryBulider {
                 String fieldName = sheetMetaData.getFieldColumn();
                 int fieldType = sheetMetaData.getFieldType();
                 String dateLevel;
+                String tmpDimString = "";
                 if (fieldType == 3) { // 日期类型
                     dateLevel = dimJsonObj.getString("dateLevel");
                     switch (dateLevel) {
                         case "按年":
-                            dimColumns = dimColumns + "YEAR(" + fieldName + ")";
+                            tmpDimString = "YEAR(" + fieldName + ")";
                             break;
                         case "按季":
-                            dimColumns = dimColumns + "CONCAT(YEAR(" + fieldName + "),\'年\'," + "QUARTER(" + fieldName + "),\'季度\')";
+                            tmpDimString = "CONCAT(YEAR(" + fieldName + "),\'年\'," + "QUARTER(" + fieldName + "),\'季度\')";
                             break;
                         case "按月":
-                            dimColumns = dimColumns + "DATE_FORMAT(" + fieldName + ",'%Y-%m')";
+                            tmpDimString = "DATE_FORMAT(" + fieldName + ",'%Y-%m')";
                             break;
                         case "按周":
-                            dimColumns = dimColumns + "CONCAT(YEAR(" + fieldName + "),\'年第\'," + "WEEKOFYEAR(" + fieldName + "),\'周\')";
+                            tmpDimString = "CONCAT(YEAR(" + fieldName + "),\'年第\'," + "WEEKOFYEAR(" + fieldName + "),\'周\')";
                             break;
                         case "按日":
-                            dimColumns = dimColumns + "DATE_FORMAT(" + fieldName + ",'%Y-%m-%d')";
+                            tmpDimString = "DATE_FORMAT(" + fieldName + ",'%Y-%m-%d')";
                             break;
                         default:
                             break;
                     }
-                    groupbyString = groupbyString + dimColumns + ",";
-                    dimColumns = dimColumns + " AS " + fieldName + ",";
+                    groupbyString = groupbyString + tmpDimString + ",";
+                    dimColumns = dimColumns + tmpDimString + " AS " + fieldName + ",";
                 } else {
                     groupbyString = groupbyString + fieldName + ",";
                     dimColumns = dimColumns + fieldName + ",";
                 }
-
-                if (groupbyString.endsWith(","))
-                    groupbyString = groupbyString.substring(0, groupbyString.length() - 1);
-                if (dimColumns.endsWith(","))
-                    dimColumns = dimColumns.substring(0, dimColumns.length() - 1);
             }
+            if (groupbyString.endsWith(","))
+                groupbyString = groupbyString.substring(0, groupbyString.length() - 1);
+            if (dimColumns.endsWith(","))
+                dimColumns = dimColumns.substring(0, dimColumns.length() - 1);
         }
         result[0] = dimColumns;
         result[1] = groupbyString;
