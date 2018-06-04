@@ -34,6 +34,7 @@ import com.bizwell.datasource.service.ExcelSheetInfoService;
 import com.bizwell.datasource.service.FolderInfoService;
 import com.bizwell.datasource.service.JDBCService;
 import com.bizwell.datasource.service.MysqlHelper;
+import com.bizwell.datasource.service.ReadCSVUtil;
 import com.bizwell.datasource.service.ReadExcelForHSSF;
 import com.bizwell.datasource.service.SheetLogService;
 import com.bizwell.datasource.service.SheetMetadataService;
@@ -88,7 +89,11 @@ public class ExcelSheetInfoController extends BaseController {
 		
 		XlsContent newXlsContent = null;
 		try {
-			newXlsContent = readExcelForHSSF.readExcel(filePath, fileName,false);
+			if (fileName.indexOf(".xlsx") > -1 || fileName.indexOf(".xls") > -1) {// 判断文件类型
+				newXlsContent =  readExcelForHSSF.readExcel(filePath, fileName, false);
+			} else if (fileName.indexOf(".csv") > -1) {
+				newXlsContent = ReadCSVUtil.readCSV(filePath, fileName, true);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

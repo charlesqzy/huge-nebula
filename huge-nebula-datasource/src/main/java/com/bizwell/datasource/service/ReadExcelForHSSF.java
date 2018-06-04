@@ -3,12 +3,9 @@ package com.bizwell.datasource.service;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +27,7 @@ import com.bizwell.datasource.bean.SheetInfo;
 import com.bizwell.datasource.bean.XLSHaderType;
 import com.bizwell.datasource.bean.XlsContent;
 import com.bizwell.datasource.common.Constants;
-import com.bizwell.datasource.common.JsonUtils;
+import com.bizwell.datasource.common.DateHelp;
 
 
 /**
@@ -61,7 +58,6 @@ public class ReadExcelForHSSF {
 
 		int fileRows = 0;
 		int fileColumns = 0;
-
 		SheetInfo[] sheets = new SheetInfo[numberOfSheets];
 
 		// 循环每个sheet
@@ -157,10 +153,10 @@ public class ReadExcelForHSSF {
 			break;
 		case HSSFCell.CELL_TYPE_STRING: // 字符串
 			String sss = cell.getStringCellValue();
-			if(isRightDateStr(cell.getStringCellValue(),"yyyy-MM-dd")){
+			if(DateHelp.isRightDateStr(cell.getStringCellValue(),"yyyy-MM-dd")){
 				value = "date";break;
 			}
-			if(isRightDateStr(cell.getStringCellValue(),"yyyy-MM-dd HH:mm:ss")){
+			if(DateHelp.isRightDateStr(cell.getStringCellValue(),"yyyy-MM-dd HH:mm:ss")){
 				value = "date";break;
 			}
 			value = "string";
@@ -219,34 +215,7 @@ public class ReadExcelForHSSF {
    }
    
    
-   /**
-    * 判断是否是对应的格式的日期字符串
-    * @param dateStr
-    * @param datePattern
-    * @return
-    */
-   public static boolean isRightDateStr(String dateStr,String datePattern){
-       DateFormat dateFormat  = new SimpleDateFormat(datePattern);
-       try {
-           //采用严格的解析方式，防止类似 “2017-05-35” 类型的字符串通过
-           dateFormat.setLenient(false);
-           dateFormat.parse(dateStr);
-           Date date = (Date)dateFormat.parse(dateStr);
-           //重复比对一下，防止类似 “2017-5-15” 类型的字符串通过
-           String newDateStr = dateFormat.format(date);
-           if(dateStr.equals(newDateStr)){
-               return true;
-           }else {
-               //logger.error("字符串dateStr:{}， 不是严格的 datePattern:{} 格式的字符串",dateStr,datePattern);
-               return false;
-           }
-       } catch (ParseException e) {
-    	   //logger.error("字符串dateStr:{}，不能按照 datePattern:{} 样式转换",dateStr,datePattern);
-           return false;
-       }
-   }
-   
-	
+
 	
 
 
