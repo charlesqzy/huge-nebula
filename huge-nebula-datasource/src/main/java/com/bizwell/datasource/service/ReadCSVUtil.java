@@ -1,52 +1,106 @@
 package com.bizwell.datasource.service;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
+import com.bizwell.datasource.bean.SheetInfo;
+import com.bizwell.datasource.bean.XLSHaderType;
+import com.bizwell.datasource.bean.XlsContent;
+import com.bizwell.datasource.common.Constants;
+import com.bizwell.datasource.common.DateHelp;
+import com.bizwell.datasource.common.JsonUtils;
+import com.csvreader.CsvReader;
 
 public class ReadCSVUtil {
-    public static void readCSV(){
-        try {
-        	String fileName = "D:\\predict.csv";
-        	DataInputStream in = new DataInputStream(new FileInputStream(new File(fileName)));
-        	BufferedReader bufferedReader= new BufferedReader(new InputStreamReader(in,"GBK"));
-            bufferedReader.readLine();// try-catch omitted
-            CSVFormat format = CSVFormat.DEFAULT.withDelimiter(',');
-            CSVParser parser = new CSVParser(bufferedReader, format);
-            List<CSVRecord> records = parser.getRecords();//跳过第一行所有行的记录
-            
-            
-            int rows = records.size();
-            int cloumns = records.get(0).size();
-            System.out.println(rows);
-            System.out.println(cloumns);
-            
-            
-            for(int i=0;i<records.size();i++){
-                String[] temp=new String[records.get(i).size()];
-                for(int j=0;j<records.get(i).size();j++){
-                    temp[j]=String.valueOf(records.get(i).get(j));
-                }
-                for(int ii=0;ii<temp.length;ii++){
-                    System.out.print(temp[ii]+"  ");
-                }
-                System.out.println();
-            }
-        }catch (Exception e){
-        	e.printStackTrace();
-            System.out.print("please check your upload");
-        }
 
-    }
-    
-    public static void main(String[] args) {
-    	ReadCSVUtil.readCSV();
+	public static XlsContent readCSV(String filePath, String fileName, boolean isCut) throws IOException {
+
+		int fileRows = 0;
+		int fileColumns = 0;
+		SheetInfo[] sheets = new SheetInfo[1];
+
+		// 创建CSV读对象
+		CsvReader csvReader = new CsvReader(filePath + fileName, ',', Charset.forName("GBK"));
+
+		List<XLSHaderType> typeList = new ArrayList<XLSHaderType>();
+		List<Map<String, String>> contentList = new ArrayList<Map<String, String>>();
+		Map<String, String> rowCellValues = null;
+
+		String type;
+		int s = 0;
+		while (csvReader.readRecord()) {
+
+			if (s == 0) {// 取第一行的数据类型
+				fileColumns = csvReader.getColumnCount();
+				for (int j = 0; j < fileColumns; j++) {
+					String value = csvReader.get(j);
+
+					type = "";
+					if (DateHelp.isRightDateStr(value, "yyyy-MM-dd")) {
+						type = "3";
+					} else if (DateHelp.isRightDateStr(value, "yyyy-MM-dd HH:mm:ss")) {
+						type = "3";
+					} else if (isNumericzidai(value)) {
+						type = "1";
+					} else {
+						type = "2";
+					}
+
+					XLSHaderType xlsHaderType = new XLSHaderType();
+					xlsHaderType.setProp(Constants.excelHader[j]);
+					xlsHaderType.setType(type);
+					xlsHaderType.setLabel(value);
+					typeList.add(xlsHaderType);
+				}
+			} else {
+				rowCellValues = new HashMap<String, String>();
+				for (int j = 0; j < fileColumns; j++) {
+					String value = csvReader.get(j);
+					rowCellValues.put(Constants.excelHader[j], value);
+				}
+				contentList.add(rowCellValues);
+			}
+
+			fileRows += 1;
+			s++;
+		}
+
+		sheets[0] = new SheetInfo(fileName, typeList,
+				(isCut && contentList.size() > 100 ? contentList.subList(0, 100) : contentList));
+
+		XlsContent xslContent = new XlsContent();
+		xslContent.setFileName(fileName);
+		xslContent.setSheets(sheets);
+		xslContent.setFileRows(fileRows);
+		xslContent.setFileColumns(fileColumns);
+		return xslContent;
 	}
+
+	public static boolean isNumericzidai(String str) {
+		Pattern pattern = Pattern.compile("-?[0-9]+\\.?[0-9]*");
+		Matcher isNum = pattern.matcher(str);
+		if (!isNum.matches()) {
+			return false;
+		}
+		return true;
+	}
+
+	public static void main(String[] args) throws IOException {
+
+		String path = "D:\\";
+		String fileName = "predict.csv";
+		
+		
+		XlsContent xlsContent = ReadCSVUtil.readCSV(path, fileName, false);
+
+		System.out.println(JsonUtils.toJson(xlsContent));
+	}
+
 }
