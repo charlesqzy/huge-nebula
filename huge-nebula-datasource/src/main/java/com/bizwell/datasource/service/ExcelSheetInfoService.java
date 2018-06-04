@@ -30,7 +30,7 @@ public class ExcelSheetInfoService {
 		excelSheetMapper.update(entity);
 	}
 	
-	public List<Map> getSheetDataByTableName(String tableName, Integer start, Integer end){
+	public List<Map<String,String>> getSheetDataByTableName(String tableName, Integer start, Integer end){
 		return excelSheetMapper.getSheetDataByTableName(tableName,start,end);
 	}
 	

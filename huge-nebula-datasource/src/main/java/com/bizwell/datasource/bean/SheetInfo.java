@@ -6,7 +6,7 @@ import java.util.Map;
 public class SheetInfo {
 	private String sheetName;
 	private List<XLSHaderType> typeList;
-	List<Map<String, String>> contentList;
+	private List<Map<String, String>> contentList;
 	private Integer folderId;
 	private Integer rowIndex = 0;
 	

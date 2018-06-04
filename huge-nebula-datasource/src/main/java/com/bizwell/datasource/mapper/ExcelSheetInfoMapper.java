@@ -19,7 +19,7 @@ public interface ExcelSheetInfoMapper {
     
     Integer update(ExcelSheetInfo entity);    
     
-    List<Map> getSheetDataByTableName(@Param("tableName") String tableName,@Param("start") Integer start,@Param("end") Integer end);
+    List<Map<String,String>> getSheetDataByTableName(@Param("tableName") String tableName,@Param("start") Integer start,@Param("end") Integer end);
     
     Integer getCountByTableName(@Param("tableName") String tableName);
     

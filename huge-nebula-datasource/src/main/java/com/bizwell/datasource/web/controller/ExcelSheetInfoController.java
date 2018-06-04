@@ -247,14 +247,14 @@ public class ExcelSheetInfoController extends BaseController {
      */
     @RequestMapping(value = "/datasource/getSheetDataByTableName")
     @ResponseBody
-    public ResponseJson getSheetDataByTableName(
+    public String getSheetDataByTableName(
     		@RequestParam String tableName,
     		@RequestParam Integer sheetId,
     		@RequestParam(defaultValue = "1") Integer pageNum,
     		@RequestParam(defaultValue = "20") Integer pageSize) {
     	
-    	logger.info("getSheetDataByTableName.tableName=   "  +tableName + "  sheetId = " + sheetId +"  pageNum = "+pageNum);
-    	List<Map> sheetList = excelSheetInfoService.getSheetDataByTableName(tableName,(pageNum-1)*pageSize,pageSize);    	
+    	logger.info("getSheetDataByTableName.tableName= "  +tableName + "  sheetId = " + sheetId +"  pageNum = "+pageNum);
+    	List<Map<String,String>> sheetList = excelSheetInfoService.getSheetDataByTableName(tableName,(pageNum-1)*pageSize,pageSize);    	
     	Integer totalRows = excelSheetInfoService.getCountByTableName(tableName);
     	
     	SheetMetadata entity = new SheetMetadata();
@@ -266,6 +266,7 @@ public class ExcelSheetInfoController extends BaseController {
     		headerType = new XLSHaderType();
     		headerType.setProp(data.getFieldColumn());
     		headerType.setLabel(data.getFieldNameNew());
+    		headerType.setType(data.getFieldType()+"");
     		haderList.add(headerType);
     	}
     	
@@ -274,9 +275,16 @@ public class ExcelSheetInfoController extends BaseController {
     	result.put("header", haderList);
     	result.put("totalRows", totalRows);
     	result.put("pageNum", pageNum);
+    	//return new ResponseJson(200l,"success",result);
     	
-    	logger.info("result =   "  + JsonUtils.toJson(result));
-    	return new ResponseJson(200l,"success",result);
+    	
+    	Map m = new HashMap();
+    	m.put("code", 200);
+    	m.put("message", "success");
+    	m.put("data", result);
+    	logger.info("result =   "  + JsonUtils.toJson(m));
+    	
+    	return JsonUtils.toJson(m);
     }
     
     

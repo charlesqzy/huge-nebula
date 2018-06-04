@@ -251,7 +251,7 @@ public class ReadExcelForHSSF {
 
 
 
-	public static void main(String[] args) throws IOException {
+	/*public static void main(String[] args) throws IOException {
 		String filePath = "D:\\";
 		String fileName = "predict.xls";
 
@@ -259,5 +259,6 @@ public class ReadExcelForHSSF {
 
 		System.out.println(JsonUtils.toJson(xlsContent));
 	}
+	*/
 
 }
