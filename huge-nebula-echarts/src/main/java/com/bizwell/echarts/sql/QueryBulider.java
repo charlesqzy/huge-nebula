@@ -326,6 +326,7 @@ public class QueryBulider {
                 int fieldType = sheetMetaData.getFieldType();
                 String dateLevel;
                 String tmpDimString = "";
+                
                 if (fieldType == 3) { // 日期类型
                     dateLevel = dimJsonObj.getString("dateLevel");
                     switch (dateLevel) {
