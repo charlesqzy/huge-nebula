@@ -1,6 +1,7 @@
 package com.bizwell.datasource.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,5 +23,10 @@ public class SheetMetadataService {
 	
 	public List<SheetMetadata> select(SheetMetadata entity){
 		return sheetMetadataMapper.select(entity);
+	}
+	
+	
+	public List<Map> getXlsDataByFilter(String tableName,String fieldColumn){
+		return sheetMetadataMapper.getXlsDataByFilter(tableName, fieldColumn);
 	}
 }

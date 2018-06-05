@@ -68,18 +68,16 @@ public class ExcelFileUploadController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/datasource/uploadExcel")
-	public @ResponseBody ResponseJson uploadExcel(@RequestParam(value = "file", required = false) MultipartFile file,
-			@RequestParam(defaultValue = "0") Integer userId, HttpServletRequest request) {
-
-		// String userId = request.getParameter("userId");
-
-		logger.info("uploadExcel  userId=" + userId);
-		// String contentType = file.getContentType();
+	public @ResponseBody ResponseJson uploadExcel(
+			@RequestParam(value = "file", required = true) MultipartFile file,
+			@RequestParam(defaultValue = "0") Integer userId, 
+			HttpServletRequest request) {
+		
 		String fileName = file.getOriginalFilename();
-
 		String filePath = request.getSession().getServletContext().getRealPath("excelfile/");
-		logger.info("filePath=" + filePath);
 
+		logger.info("uploadExcel  userId=" + userId + "   filePath=" + filePath  +  "   fileName="+fileName);
+		
 		try {
 			this.uploadFile(file.getBytes(), filePath, fileName);
 		} catch (Exception e) {
@@ -133,8 +131,10 @@ public class ExcelFileUploadController extends BaseController {
 	 */
 	@RequestMapping(value = "/datasource/apppendUploadExcel")
 	public @ResponseBody ResponseJson apppendUploadExcel(
-			@RequestParam(value = "file", required = false) MultipartFile file, Integer sheetId,
-			@RequestParam(defaultValue = "0") Integer userId, @RequestParam(defaultValue = "false") Boolean replase,
+			@RequestParam(value = "file", required = true) MultipartFile file, 
+			@RequestParam Integer sheetId,
+			@RequestParam(defaultValue = "0") Integer userId, 
+			@RequestParam(defaultValue = "false") Boolean replase,
 			HttpServletRequest request) {
 
 		logger.info("apppendUploadExcel   sheetId==" + sheetId + "  userId=" + userId + " replase=" + replase);
@@ -175,10 +175,11 @@ public class ExcelFileUploadController extends BaseController {
 		if (!sheetInfo.isEmpty()) {
 			String tableName = sheetInfo.get(0).getTableName();
 
+			String msg = "append sheet";
 			if (replase) {
 				String truncateSql = MysqlHelper.generateTruncateTableSQL(tableName);
 				jdbcService.executeSql(truncateSql);
-				// excelSheetInfoService.delete(excelSheetInfo);//替换原sheet，先删除
+				msg="replase sheet";
 			}
 
 			String insertSQL = MysqlHelper.generateInsertTableSQL(xlsContent.getSheets()[0].getContentList(),
@@ -188,14 +189,13 @@ public class ExcelFileUploadController extends BaseController {
 			SheetLog sheetLog = new SheetLog();
 			sheetLog.setSheetId(excelSheetInfo.getId());
 			sheetLog.setUpdateTime(new Date());
-			sheetLog.setUpdateLog("append sheet ");
+			sheetLog.setUpdateLog(msg);
 			sheetLogService.save(sheetLog);
 		}
 
-		logger.info("flag = === = = = " + flag);
+		logger.info("flag = === =" + flag);
 		return new ResponseJson(200L, "success", null);
 		// if(flag){
-		//
 		// }else{
 		// return new ResponseJson(203L,"fail",null);
 		// }

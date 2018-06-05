@@ -52,7 +52,6 @@ public class ExcelSheetInfoController extends BaseController {
 	@Autowired
 	private ExcelSheetInfoService excelSheetInfoService;
 	
-	
 	@Autowired
 	private SheetMetadataService sheetMetadataService;
 		
@@ -291,39 +290,5 @@ public class ExcelSheetInfoController extends BaseController {
     	
     	return JsonUtils.toJson(m);
     }
-    
-    
-    /**
-     * 根据sheetId获取数据
-     * @param tableName
-     * @param sheetId
-     * @param pageNum
-     * @return
-     */
-    @RequestMapping(value = "/datasource/getMetadataBySheetId")
-    @ResponseBody
-    public ResponseJson getMetadataBySheetId(@RequestParam Integer sheetId) {
-    	logger.info("getMetadataBySheetId sheetId = " + sheetId );
-   	
-    	SheetMetadata metadata = new SheetMetadata();
-    	metadata.setSheetId(sheetId);
-    	metadata.setSort(" order by field_type DESC ");
-    	List<SheetMetadata> metadataList = sheetMetadataService.select(metadata);
-    	
-    	
-    	String sheetName = "";
-    	ExcelSheetInfo sheetInfo = new ExcelSheetInfo();
-    	sheetInfo.setId(sheetId);
-    	List<ExcelSheetInfo> sheetList = excelSheetInfoService.select(sheetInfo);
-    	if(sheetList.size()>0){
-    		sheetName = sheetList.get(0).getSheetName();
-    	}
-    	
-    	Map result = new HashMap<>();
-    	result.put("metadataList", metadataList);
-    	result.put("sheetName", sheetName);
-    	return new ResponseJson(200l,"success",result);
-    }
-    
 
 }

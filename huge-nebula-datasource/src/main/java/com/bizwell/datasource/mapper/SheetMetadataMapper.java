@@ -2,6 +2,9 @@ package com.bizwell.datasource.mapper;
 
 
 import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
 
 import com.bizwell.datasource.bean.SheetMetadata;
 
@@ -15,4 +18,5 @@ public interface SheetMetadataMapper {
     
     List<SheetMetadata> select(SheetMetadata entity);
     
+    List<Map> getXlsDataByFilter(@Param("tableName") String tableName,@Param("fieldColumn") String fieldColumn);
 }

@@ -50,8 +50,6 @@ public class MysqlHelper {
 			}
 		}
 		
-			
-		
 		// 删除最后一个逗号
 		createSql.delete(createSql.lastIndexOf(","), createSql.lastIndexOf(",") + 1);
 		createSql.append(")");
@@ -88,15 +86,6 @@ public class MysqlHelper {
 		
 
 		int fieldType=2;
-//		for (XLSHaderType type : typeList) {			
-//			if ("string".equals(type.getType())) {
-//				fieldType =2;
-//			} else if ("date".equals(type.getType())) {
-//				fieldType =3;
-//			} else if ("numeric".equals(type.getType())) {
-//				fieldType = 1;
-//			}
-//		}
 		
 		StringBuffer metadataSQL = new StringBuffer();
 		Map<String, String> headerMap = contentList.get(0);
@@ -144,4 +133,11 @@ public class MysqlHelper {
 
 		return insertSql.toString();
 	}
+	
 }
+
+
+
+
+
+

@@ -97,7 +97,6 @@ public class ReadCSVUtil {
 		String path = "D:\\";
 		String fileName = "predict.csv";
 		
-		
 		XlsContent xlsContent = ReadCSVUtil.readCSV(path, fileName, false);
 
 		System.out.println(JsonUtils.toJson(xlsContent));

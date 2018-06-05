@@ -152,7 +152,6 @@ public class ReadExcelForHSSF {
 			}
 			break;
 		case HSSFCell.CELL_TYPE_STRING: // 字符串
-			String sss = cell.getStringCellValue();
 			if(DateHelp.isRightDateStr(cell.getStringCellValue(),"yyyy-MM-dd")){
 				value = "date";break;
 			}
@@ -209,16 +208,9 @@ public class ReadExcelForHSSF {
        {  
            return true;  
        }  
-   
-         
        return false;  
    }
    
-   
-
-	
-
-
 
 	/*public static void main(String[] args) throws IOException {
 		String filePath = "D:\\";
