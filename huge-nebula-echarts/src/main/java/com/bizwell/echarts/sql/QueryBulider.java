@@ -58,7 +58,9 @@ public class QueryBulider {
             "\"measure1\": [{\"metadataId\": 810,\"aggregate\": \"求和\"}, " +
             "{\"metadataId\": 809,\"aggregate\": \"计数\"}]," +
             "\"measure2\": []," +
-            "\"filter\": [{\"metadataId\":804,\"name\":\"billdate\",\"type\":\"date\",\"selectIndex\":1,\"isshow\":true,\"condition\":{\"startTime\":\"\",\"endTime\":\"\"}}]}";
+            "\"filter\": [{\"metadataId\":804,\"name\":\"billdate\",\"type\":\"date\",\"selectIndex\":1,\"isshow\":true,\"condition\":{\"startTime\":\"2018-06-01 00:00:00\",\"endTime\":\"\"}}," +
+            "{\"metadataId\":804,\"name\":\"billdate\",\"type\":\"date\",\"selectIndex\":1,\"isshow\":true,\"condition\":{\"startTime\":\"\",\"endTime\":\"2018-06-08 00:00:00\"}}," +
+            "{\"metadataId\":806,\"type\":\"text\",\"subType\":\"精确筛选\",\"condition\":[\"Andriod\",\"IOS\"], \"invertSelection\":true } ]}";
 
     public static void main(String[] args) {
 
@@ -151,7 +153,7 @@ public class QueryBulider {
     private static String getFilterString(JSONArray filter) {
         String result = "";
         for (int i = 0; i < filter.size(); i++) {
-            if (i > 0) result += " AND ";
+            if (i > 0 && !result.equals("")) result += " AND ";
             JSONObject obj = filter.getJSONObject(i);
             int metadataId = obj.getIntValue("metadataId");
             SheetMetaData sheetMetaData = metaDataMap.get(metadataId);
@@ -164,8 +166,14 @@ public class QueryBulider {
                 JSONObject condition = obj.getJSONObject("condition");
                 String startTime = condition.getString("startTime");
                 String endTime = condition.getString("endTime");
-                if (!(startTime.equals("") && endTime.equals("")))
-                    result = result + "(" + fieldName + " BETWEEN \'" + startTime + "\' AND \'" + endTime + "\')";
+                if (!(startTime.equals("") && endTime.equals(""))) {
+                    if (startTime.equals("")) {
+                        result = result + fieldName + " <= \'" + endTime + "\'";
+                    } else if (endTime.equals("")) {
+                        result = result + fieldName + " >= \'" + startTime + "\'";
+                    } else
+                        result = result + "(" + fieldName + " BETWEEN \'" + startTime + "\' AND \'" + endTime + "\')";
+                }
             } else if (type.equals("text")) {
                 if (subType.equals("精确筛选")) {
                     JSONArray condition = obj.getJSONArray("condition");
