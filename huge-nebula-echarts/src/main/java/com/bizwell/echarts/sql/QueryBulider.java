@@ -54,11 +54,11 @@ public class QueryBulider {
 
     static String jsonString2 = "{" +
             "\"echartType\": 2," +
-            "\"dimension\": [{\"metadataId\": 804,\"dateLevel\": \"按日\"},{\"metadataId\": 805,\"dateLevel\": \"按周\"}]," +
+            "\"dimension\": [{\"metadataId\": 804,\"dateLevel\": \"按日\"}]," +
             "\"measure1\": [{\"metadataId\": 810,\"aggregate\": \"求和\"}, " +
             "{\"metadataId\": 809,\"aggregate\": \"计数\"}]," +
             "\"measure2\": []," +
-            "\"filter\": []}";
+            "\"filter\": [{\"metadataId\":804,\"name\":\"billdate\",\"type\":\"date\",\"selectIndex\":1,\"isshow\":true,\"condition\":{\"startTime\":\"\",\"endTime\":\"\"}}]}";
 
     public static void main(String[] args) {
 
@@ -164,7 +164,8 @@ public class QueryBulider {
                 JSONObject condition = obj.getJSONObject("condition");
                 String startTime = condition.getString("startTime");
                 String endTime = condition.getString("endTime");
-                result = result + "(" + fieldName + " BETWEEN \'" + startTime + "\' AND \'" + endTime + "\')";
+                if (!(startTime.equals("") && endTime.equals("")))
+                    result = result + "(" + fieldName + " BETWEEN \'" + startTime + "\' AND \'" + endTime + "\')";
             } else if (type.equals("text")) {
                 if (subType.equals("精确筛选")) {
                     JSONArray condition = obj.getJSONArray("condition");
@@ -173,7 +174,11 @@ public class QueryBulider {
                         if (j > 0 && j < condition.size()) colVal += ",";
                         colVal = colVal + "\'" + condition.getString(j) + "\'";
                     }
-                    result = result + "(" + fieldName + " IN (" + colVal + ") )";
+                    boolean invertSelection = obj.getBoolean("invertSelection");
+                    if (invertSelection)
+                        result = result + "(" + fieldName + " NOT IN (" + colVal + ") )";
+                    else
+                        result = result + "(" + fieldName + " IN (" + colVal + ") )";
                 } else if (subType.equals("条件筛选")) {
                     JSONObject condition = obj.getJSONObject("condition");
                     String logic = condition.getString("logic");
@@ -326,7 +331,7 @@ public class QueryBulider {
                 int fieldType = sheetMetaData.getFieldType();
                 String dateLevel;
                 String tmpDimString = "";
-                
+
                 if (fieldType == 3) { // 日期类型
                     dateLevel = dimJsonObj.getString("dateLevel");
                     switch (dateLevel) {
