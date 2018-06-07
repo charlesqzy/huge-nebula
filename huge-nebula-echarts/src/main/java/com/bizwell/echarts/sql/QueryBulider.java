@@ -59,7 +59,7 @@ public class QueryBulider {
             "{\"metadataId\": 809,\"aggregate\": \"计数\"}]," +
             "\"measure2\": []," +
             "\"filter\": [{\"metadataId\":804,\"name\":\"billdate\",\"type\":\"date\",\"selectIndex\":1,\"isshow\":true,\"condition\":{\"startTime\":\"2018-06-01 00:00:00\",\"endTime\":\"\"}}," +
-            "{\"metadataId\":804,\"name\":\"billdate\",\"type\":\"date\",\"selectIndex\":1,\"isshow\":true,\"condition\":{\"startTime\":\"\",\"endTime\":\"2018-06-08 00:00:00\"}}," +
+            "{\"metadataId\": 810, \"name\": \"hotelid\", \"type\": \"number\", \"subType\": \"条件筛选\", \"isshow\": true, \"condition\": { \"type\": \"不为空\", \"value\": [ 9.98 ] } }," +
             "{\"metadataId\":806,\"type\":\"text\",\"subType\":\"精确筛选\",\"condition\":[\"Andriod\",\"IOS\"], \"invertSelection\":true } ]}";
 
     public static void main(String[] args) {
@@ -231,41 +231,37 @@ public class QueryBulider {
             } else if (type.equals("number")) {
                 if (subType.equals("条件筛选")) {
                     JSONObject condition = obj.getJSONObject("condition");
-                    JSONArray fields = condition.getJSONArray("fields");
-                    for (int j = 0; j < fields.size(); j++) {
-                        JSONObject fieldsObj = fields.getJSONObject(j);
-                        String operator = fieldsObj.getString("operator");
-                        Double value = fieldsObj.getDouble("value");
-                        switch (operator) {
-                            case "等于":
-                                result = result + "(" + fieldName + " = " + value.intValue() + ")";
-                                break;
-                            case "不等于":
-                                result = result + "(" + fieldName + " != " + value.intValue() + ")";
-                                break;
-                            case "大于":
-                                result = result + "(" + fieldName + " > " + value + ")";
-                                break;
-                            case "小于":
-                                result = result + "(" + fieldName + " < " + value + ")";
-                                break;
-                            case "大于等于":
-                                result = result + "(" + fieldName + " >= " + value + ")";
-                                break;
-                            case "小于等于":
-                                result = result + "(" + fieldName + " <= " + value + ")";
-                                break;
-                            case "区间":
-                                Double value2 = fieldsObj.getDouble("value2");
-                                result = result + "(" + fieldName + " BETWEEN " + value + " AND " + value2 + ")";
-                                break;
-                            case "不为空":
-                                result = result + "(" + fieldName + " is not null )";
-                                break;
-                            case "为空":
-                                result = result + "(" + fieldName + " is null )";
-                                break;
-                        }
+                    String conditionType = condition.getString("type");
+                    JSONArray conditionValues = condition.getJSONArray("value");
+
+                    switch (conditionType) {
+                        case "等于":
+                            result = result + "(" + fieldName + " = " + conditionValues.getDouble(0) + ")";
+                            break;
+                        case "不等于":
+                            result = result + "(" + fieldName + " != " + conditionValues.getDouble(0) + ")";
+                            break;
+                        case "大于":
+                            result = result + "(" + fieldName + " > " + conditionValues.getDouble(0) + ")";
+                            break;
+                        case "小于":
+                            result = result + "(" + fieldName + " < " + conditionValues.getDouble(0) + ")";
+                            break;
+                        case "大于等于":
+                            result = result + "(" + fieldName + " >= " + conditionValues.getDouble(0) + ")";
+                            break;
+                        case "小于等于":
+                            result = result + "(" + fieldName + " <= " + conditionValues.getDouble(0) + ")";
+                            break;
+                        case "区间":
+                            result = result + "(" + fieldName + " BETWEEN " + conditionValues.getDouble(0) + " AND " + conditionValues.getDouble(1) + ")";
+                            break;
+                        case "不为空":
+                            result = result + "(" + fieldName + " is not null )";
+                            break;
+                        case "为空":
+                            result = result + "(" + fieldName + " is null )";
+                            break;
                     }
                 }
 
