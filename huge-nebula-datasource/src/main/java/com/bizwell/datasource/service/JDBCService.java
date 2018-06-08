@@ -25,7 +25,7 @@ public class JDBCService {
 
 	public boolean executeSql(String sql)  {
 		
-		boolean flag = false;
+		boolean flag = true;
 		
 		Connection connection = DataSourceUtils.getConnection(dataSource);
 		PreparedStatement preparedStatement = null;
@@ -35,7 +35,7 @@ public class JDBCService {
         try {
 			preparedStatement = connection.prepareStatement(sql);
 			// 执行sql
-			flag = preparedStatement.execute();
+			preparedStatement.execute();
 
 			connection.close();
 		} catch (SQLException e) {

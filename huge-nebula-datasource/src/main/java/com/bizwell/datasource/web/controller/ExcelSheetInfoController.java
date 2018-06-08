@@ -84,7 +84,9 @@ public class ExcelSheetInfoController extends BaseController {
 		Integer userId= xlsContent.getUserId();
     	
 		logger.info("createSheet userid="+userId+"  filePath=" + filePath + "  fileName="+fileName);
-		logger.info("createSheet httpUrl="+httpUrl);
+		
+		long returnCode = 200L;
+		String returnMsg = "success";
 		
 		XlsContent newXlsContent = null;
 		try {
@@ -128,7 +130,7 @@ public class ExcelSheetInfoController extends BaseController {
         	excelSheetInfoService.save(excelSheetInfo);
 
         	String dropSql = MysqlHelper.generateDropTableSQL(tableName);
-        	String createSql=MysqlHelper.generateCreateTableSQL(sheet.getTypeList(), tableName);
+        	String createSql=MysqlHelper.generateCreateTableSQL(xlsContent.getSheets()[s].getTypeList(), tableName);
         	Integer rowIndex = xlsContent.getSheets()[s].getRowIndex();
         	Integer startRow = rowIndex>0?rowIndex-1:rowIndex ;
         	System.out.println("startRow===="+startRow);
@@ -136,16 +138,22 @@ public class ExcelSheetInfoController extends BaseController {
         			sheet.getContentList().subList(startRow, sheet.getContentList().size()),tableName);
         	
         	String deleteMetadataSQL=MysqlHelper.generateDeleteMetadataSQL(tableName);
-        	String insertMetadataSQL=MysqlHelper.generateInsertMetadataSQL(sheet.getTypeList(),
+        	//取页面传来的header类型
+        	String insertMetadataSQL=MysqlHelper.generateInsertMetadataSQL(xlsContent.getSheets()[s].getTypeList(),
         			sheet.getContentList(),excelSheetInfo.getId(),tableName,userId);
         	
+        	boolean flag1 = jdbcService.executeSql(dropSql);
+        	boolean flag2 =jdbcService.executeSql(createSql);
+        	boolean flag3 =jdbcService.executeSql(insertSQL);
         	
-        	jdbcService.executeSql(dropSql);
-        	jdbcService.executeSql(createSql);        	
-        	jdbcService.executeSql(insertSQL);
+        	boolean flag4 =jdbcService.executeSql(deleteMetadataSQL);
+        	boolean flag5 =jdbcService.executeSql(insertMetadataSQL);
         	
-        	jdbcService.executeSql(deleteMetadataSQL);
-        	jdbcService.executeSql(insertMetadataSQL);
+        	if(!(flag1&&flag2&&flag3&&flag4&&flag5)){
+        		returnCode = 202;
+        		returnMsg = "error";
+        		break;
+        	}
         	
         	sheetLog = new SheetLog();
         	sheetLog.setSheetId(excelSheetInfo.getId());
@@ -155,6 +163,7 @@ public class ExcelSheetInfoController extends BaseController {
         	
         	
         	/* requset echarts project */
+        	logger.info("createSheet httpUrl="+httpUrl);
     		Map data = new HashMap<>();
     		data.put("userId", userId+"");
     		HttpClientUtil.sendHttpPost(httpUrl, data);
@@ -165,7 +174,7 @@ public class ExcelSheetInfoController extends BaseController {
     	
     	Map result = new HashMap();
     	result.put("excelSheetInfo", excelSheetInfo);
-    	return new ResponseJson(200l,sheets[0].getSheetName(),result);
+    	return new ResponseJson(returnCode,returnMsg,result);
     }
     
     

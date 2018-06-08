@@ -116,6 +116,7 @@ public class ExcelFileUploadController extends BaseController {
 		excelFileInfoService.save(entity);
 		xlsContent.setExcelFileId(entity.getId());
 		xlsContent.setFileCode(md5Hashcode);
+		xlsContent.setUserId(userId);
 
 		logger.info("content=" + JsonUtils.toJson(xlsContent));
 		// 返回json
