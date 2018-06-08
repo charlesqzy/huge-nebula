@@ -42,7 +42,7 @@ public class MetadataController {
      */
     @RequestMapping(value = "/datasource/getMetadataBySheetId")
     @ResponseBody
-    public ResponseJson getMetadataBySheetId(@RequestParam Integer sheetId) {
+    public ResponseJson getMetadataBySheetId(@RequestParam(required=true) Integer sheetId) {
     	logger.info("getMetadataBySheetId sheetId = " + sheetId );
    	
     	SheetMetadata metadata = new SheetMetadata();
@@ -73,8 +73,8 @@ public class MetadataController {
     @RequestMapping(value = "/datasource/getXlsDataByFilter")
     @ResponseBody
     public ResponseJson getXlsDataByFilter(
-    		@RequestParam String tableName,
-    		@RequestParam String fieldColumn) {
+    		@RequestParam(required=true) String tableName,
+    		@RequestParam(required=true) String fieldColumn) {
     	
     	logger.info("getXlsDataByFilter tableName=" + tableName + "  fieldColumn="+fieldColumn);
     	

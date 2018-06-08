@@ -70,16 +70,20 @@ public class ExcelFileUploadController extends BaseController {
 	@RequestMapping(value = "/datasource/uploadExcel")
 	public @ResponseBody ResponseJson uploadExcel(
 			@RequestParam(value = "file", required = true) MultipartFile file,
-			@RequestParam(defaultValue = "0") Integer userId, 
+			@RequestParam(defaultValue = "0",required=true) Integer userId, 
 			HttpServletRequest request) {
 		
 		String fileName = file.getOriginalFilename();
-		String filePath = request.getSession().getServletContext().getRealPath("excelfile/");
+		String filePath = request.getSession().getServletContext().getRealPath("excelfile/")+userId+"/";
 
 		logger.info("uploadExcel  userId=" + userId + "   filePath=" + filePath  +  "   fileName="+fileName);
 		
+		int fileSize = 0;
+		
+		
 		try {
 			this.uploadFile(file.getBytes(), filePath, fileName);
+			fileSize = file.getBytes().length;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -109,7 +113,7 @@ public class ExcelFileUploadController extends BaseController {
 		}
 		entity.setFileName(fileName);
 		entity.setFilePath(filePath);
-		// entity.setFileSize(fileSize);
+		entity.setFileSize(fileSize);
 		entity.setFileRows(xlsContent.getFileRows());
 		entity.setFileColumns(xlsContent.getFileColumns());
 		entity.setUserId(userId);

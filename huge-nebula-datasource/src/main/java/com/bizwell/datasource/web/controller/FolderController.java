@@ -37,7 +37,9 @@ public class FolderController extends BaseController {
 	 */
 	@RequestMapping(value = "/datasource/createFolder")
 	@ResponseBody
-	public ResponseJson createFolder(String folderName, Integer userId) {
+	public ResponseJson createFolder(
+			@RequestParam(required=true)String folderName, 
+			@RequestParam(required=true)Integer userId) {
 		logger.info("createFolder  folderName=" + folderName + "  userId=" + userId);
 		FolderInfo folderInfo = new FolderInfo();
 		folderInfo.setUserId(userId);
@@ -59,7 +61,9 @@ public class FolderController extends BaseController {
 	 */
 	@RequestMapping(value = "/datasource/getFolder")
 	@ResponseBody
-	public ResponseJson getFolder(String folderName, @RequestParam(defaultValue = "0") Integer userId) {
+	public ResponseJson getFolder(
+			@RequestParam(required=true)String folderName, 
+			@RequestParam(defaultValue = "0") Integer userId) {
 		logger.info("getFolder  folderName=" + folderName + "  userId=" + userId);
 		FolderInfo folderInfo = new FolderInfo();
 		folderInfo.setFolderName(folderName);
@@ -79,7 +83,7 @@ public class FolderController extends BaseController {
 	 */
 	@RequestMapping(value = "/datasource/deleteFolder")
 	@ResponseBody
-	public ResponseJson deleteFolder(Integer floderId) {
+	public ResponseJson deleteFolder(@RequestParam(required=true)Integer floderId) {
 		logger.info("deleteFolder  floderId =" + floderId);
 		FolderInfo folderInfo = new FolderInfo();
 		folderInfo.setId(floderId);

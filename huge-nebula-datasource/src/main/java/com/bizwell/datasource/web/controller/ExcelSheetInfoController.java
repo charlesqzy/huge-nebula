@@ -77,11 +77,12 @@ public class ExcelSheetInfoController extends BaseController {
     @ResponseBody
     public ResponseJson createSheet(@RequestBody XlsContent xlsContent ,
     		HttpServletRequest request) {
-    	
-    	String filePath = request.getSession().getServletContext().getRealPath("excelfile/");
+    	Integer userId= xlsContent.getUserId();
     	String fileName = xlsContent.getFileName();
     	String fileCode = xlsContent.getFileCode();
-		Integer userId= xlsContent.getUserId();
+    	String filePath = request.getSession().getServletContext().getRealPath("excelfile/")+userId+"/";
+    	
+		
     	
 		logger.info("createSheet userid="+userId+"  filePath=" + filePath + "  fileName="+fileName);
 		
@@ -186,7 +187,9 @@ public class ExcelSheetInfoController extends BaseController {
      */
     @RequestMapping(value = "/datasource/getSheet")
     @ResponseBody
-    public ResponseJson getSheet(Integer userId,String sheetName) {
+    public ResponseJson getSheet(
+    		@RequestParam(required=true)Integer userId,
+    		@RequestParam(required=true)String sheetName) {
     	logger.info("getSheet  userId="+userId+" sheetName ="+ sheetName);
     	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo();
     	excelSheetInfo.setUserId(userId);
@@ -206,7 +209,7 @@ public class ExcelSheetInfoController extends BaseController {
      */
     @RequestMapping(value = "/datasource/deleteSheet")
     @ResponseBody
-    public ResponseJson deleteSheet(Integer sheetId) {
+    public ResponseJson deleteSheet(@RequestParam(required=true)Integer sheetId) {
     	logger.info("deleteSheet  sheetId ="+ sheetId);
     	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo();    	
     	excelSheetInfo.setId(sheetId);
@@ -223,7 +226,9 @@ public class ExcelSheetInfoController extends BaseController {
      */
     @RequestMapping(value = "/datasource/moveSheet")
     @ResponseBody
-    public ResponseJson moveSheet(Integer sheetId,Integer targetFolderId) { 
+    public ResponseJson moveSheet(
+    		@RequestParam(required=true)Integer sheetId,
+    		@RequestParam(required=true)Integer targetFolderId) { 
     	logger.info("moveSheet  sheetId ="+ sheetId + "  targetFolderId="+targetFolderId);
     	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo();    	
     	excelSheetInfo.setId(sheetId);
@@ -240,7 +245,9 @@ public class ExcelSheetInfoController extends BaseController {
      */
     @RequestMapping(value = "/datasource/getSheetByFolderId")
     @ResponseBody
-    public ResponseJson getSheetByFolderId(Integer folderId,Integer userId) {
+    public ResponseJson getSheetByFolderId(
+    		@RequestParam(required=true)Integer folderId,
+    		@RequestParam(required=true)Integer userId) {
     	logger.info("getSheetByFolderId  folderId ="+ folderId );
     	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo(); 
     	excelSheetInfo.setFolderId(folderId);
@@ -254,15 +261,15 @@ public class ExcelSheetInfoController extends BaseController {
     /**
      * 根据tableName获取数据
      * @param tableName
-     * @param sheetId
+     * @param sheetId@RequestParam(required=true)
      * @param pageNum
      * @return
      */
     @RequestMapping(value = "/datasource/getSheetDataByTableName")
     @ResponseBody
     public String getSheetDataByTableName(
-    		@RequestParam String tableName,
-    		@RequestParam Integer sheetId,
+    		@RequestParam(required=true) String tableName,
+    		@RequestParam(required=true) Integer sheetId,
     		@RequestParam(defaultValue = "1") Integer pageNum,
     		@RequestParam(defaultValue = "20") Integer pageSize) {
     	
