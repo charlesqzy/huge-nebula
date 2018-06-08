@@ -60,7 +60,13 @@ public class QueryBulider {
             "\"measure2\": []," +
             "\"filter\": [{\"metadataId\":804,\"name\":\"billdate\",\"type\":\"date\",\"selectIndex\":1,\"isshow\":true,\"condition\":{\"startTime\":\"2018-06-01 00:00:00\",\"endTime\":\"\"}}," +
             "{\"metadataId\": 810, \"name\": \"hotelid\", \"type\": \"number\", \"subType\": \"条件筛选\", \"isshow\": true, \"condition\": { \"type\": \"不为空\", \"value\": [ 9.98 ] } }," +
-            "{\"metadataId\":806,\"type\":\"text\",\"subType\":\"精确筛选\",\"condition\":[\"Andriod\",\"IOS\"], \"invertSelection\":true } ]}";
+            "{\"metadataId\":806,\"type\":\"text\",\"subType\":\"精确筛选\",\"condition\":[\"Andriod\",\"IOS\"], \"invertSelection\":true }," +
+            "{\"metadataId\": 804,\"name\": \"billdate\", \"type\": \"date\", \"selectIndex\": 7, \"isshow\": true, \"condition\": { \"startTime\": \"\", \"endTime\": \"\" } }" +
+            "{\"metadataId\": 809, \"type\": \"text\", \"name\": \"hotelname\", \"subType\": \"精确筛选\", \"isshow\": true, \"invertSelection\": true, \"condition\": [ \"海腾名苑店\",\"汤臣豪园\" ] } ," +
+            "{\"metadataId\": 805, \"type\": \"text\", \"name\": \"hotelname\", \"subType\": \"条件筛选\", \"isshow\": true, \"condition\": { \"logic\": \"OR\", \"fields\": [ { \"operator\": \"等于\", \"value\": \"11\" }, { \"operator\": \"结尾包含\", \"value\": \"11\" } ] } }  ]}";
+
+    static String jsonString3 = "{\"echartType\":\"09\",\"moduleType\":\"04\",\"dimension\":[{\"metadataId\":804,\"name\":\"billdate\",\"aggregate\":\"求和\",\"dateLevel\":\"按日\"}],\"measure1\":[{\"metadataId\":810,\"name\":\"餐段数\",\"aggregate\":\"求和\"}],\"measure2\":[],\"filter\":[{\"metadataId\":810,\"name\":\"餐段数\",\"type\":\"number\",\"subType\":\"条件筛选\",\"isshow\":true,\"condition\":{\"type\":\"大于\",\"value\":[55]}},{\"metadataId\":809,\"type\":\"text\",\"name\":\"billdate\",\"subType\":\"精确筛选\",\"isshow\":true,\"invertSelection\":false,\"condition\":[\"海腾名苑店\"]}],\"type\":\"bar\",\"stack\":\"\"}";
+
 
     public static void main(String[] args) {
 
@@ -153,7 +159,6 @@ public class QueryBulider {
     private static String getFilterString(JSONArray filter) {
         String result = "";
         for (int i = 0; i < filter.size(); i++) {
-            if (i > 0 && !result.equals("")) result += " AND ";
             JSONObject obj = filter.getJSONObject(i);
             int metadataId = obj.getIntValue("metadataId");
             SheetMetaData sheetMetaData = metaDataMap.get(metadataId);
@@ -162,17 +167,19 @@ public class QueryBulider {
             String type = obj.getString("type");
             String subType = obj.getString("subType");
 
+            String tmpResult = "";
+
             if (type.equals("date")) {
                 JSONObject condition = obj.getJSONObject("condition");
                 String startTime = condition.getString("startTime");
                 String endTime = condition.getString("endTime");
                 if (!(startTime.equals("") && endTime.equals(""))) {
                     if (startTime.equals("")) {
-                        result = result + fieldName + " <= \'" + endTime + "\'";
+                        tmpResult = fieldName + " <= \'" + endTime + "\'";
                     } else if (endTime.equals("")) {
-                        result = result + fieldName + " >= \'" + startTime + "\'";
+                        tmpResult = fieldName + " >= \'" + startTime + "\'";
                     } else
-                        result = result + "(" + fieldName + " BETWEEN \'" + startTime + "\' AND \'" + endTime + "\')";
+                        tmpResult = "(" + fieldName + " BETWEEN \'" + startTime + "\' AND \'" + endTime + "\')";
                 }
             } else if (type.equals("text")) {
                 if (subType.equals("精确筛选")) {
@@ -184,49 +191,49 @@ public class QueryBulider {
                     }
                     boolean invertSelection = obj.getBoolean("invertSelection");
                     if (invertSelection)
-                        result = result + "(" + fieldName + " NOT IN (" + colVal + ") )";
+                        tmpResult = "(" + fieldName + " NOT IN (" + colVal + ") )";
                     else
-                        result = result + "(" + fieldName + " IN (" + colVal + ") )";
+                        tmpResult = "(" + fieldName + " IN (" + colVal + ") )";
                 } else if (subType.equals("条件筛选")) {
                     JSONObject condition = obj.getJSONObject("condition");
                     String logic = condition.getString("logic");
                     JSONArray fields = condition.getJSONArray("fields");
                     for (int j = 0; j < fields.size(); j++) {
-                        if (j == 0) result += "( ";
+                        if (j == 0) tmpResult += "( ";
                         JSONObject fieldObj = fields.getJSONObject(j);
                         String operator = fieldObj.getString("operator");
                         String value = fieldObj.getString("value");
                         switch (operator) {
                             case "等于":   // 等于
-                                result = result + " (" + fieldName + " = \'" + value + "\') " + logic;
+                                tmpResult = tmpResult + " (" + fieldName + " = \'" + value + "\') " + logic;
                                 break;
                             case "不等于":  // 不等于
-                                result = result + " (" + fieldName + " != \'" + value + "\') " + logic;
+                                tmpResult = tmpResult + " (" + fieldName + " != \'" + value + "\') " + logic;
                                 break;
                             case "包含": //包含
-                                result = result + " (" + fieldName + " like \'%" + value + "%\') " + logic;
+                                tmpResult = tmpResult + " (" + fieldName + " like \'%" + value + "%\') " + logic;
                                 break;
                             case "不包含": // 不包含
-                                result = result + " (" + fieldName + " not like \'%" + value + "%\') " + logic;
+                                tmpResult = tmpResult + " (" + fieldName + " not like \'%" + value + "%\') " + logic;
                                 break;
                             case "开头包含": // 开头包含
-                                result = result + " (" + fieldName + " like \'" + value + "%\') " + logic;
+                                tmpResult = tmpResult + " (" + fieldName + " like \'" + value + "%\') " + logic;
                                 break;
                             case "结尾包含": // 结尾包含
-                                result = result + " (" + fieldName + " like \'%" + value + "\') " + logic;
+                                tmpResult = tmpResult + " (" + fieldName + " like \'%" + value + "\') " + logic;
                                 break;
                             case "为空": // 为空
-                                result = result + " (" + fieldName + " is null ) " + logic;
+                                tmpResult = tmpResult + " (" + fieldName + " is null ) " + logic;
                                 break;
                             case "不为空": // 不为空
-                                result = result + " (" + fieldName + " is not null ) " + logic;
+                                tmpResult = tmpResult + " (" + fieldName + " is not null ) " + logic;
                                 break;
                             default:
                                 break;
                         }
                     }
-                    if (result.endsWith(logic))
-                        result = result.substring(0, result.lastIndexOf(" ")) + " )";
+                    if (tmpResult.endsWith(logic))
+                        tmpResult = tmpResult.substring(0, tmpResult.lastIndexOf(" ")) + " )";
                 }
             } else if (type.equals("number")) {
                 if (subType.equals("条件筛选")) {
@@ -236,37 +243,40 @@ public class QueryBulider {
 
                     switch (conditionType) {
                         case "等于":
-                            result = result + "(" + fieldName + " = " + conditionValues.getDouble(0) + ")";
+                            tmpResult = "(" + fieldName + " = " + conditionValues.getDouble(0) + ")";
                             break;
                         case "不等于":
-                            result = result + "(" + fieldName + " != " + conditionValues.getDouble(0) + ")";
+                            tmpResult = "(" + fieldName + " != " + conditionValues.getDouble(0) + ")";
                             break;
                         case "大于":
-                            result = result + "(" + fieldName + " > " + conditionValues.getDouble(0) + ")";
+                            tmpResult = "(" + fieldName + " > " + conditionValues.getDouble(0) + ")";
                             break;
                         case "小于":
-                            result = result + "(" + fieldName + " < " + conditionValues.getDouble(0) + ")";
+                            tmpResult = "(" + fieldName + " < " + conditionValues.getDouble(0) + ")";
                             break;
                         case "大于等于":
-                            result = result + "(" + fieldName + " >= " + conditionValues.getDouble(0) + ")";
+                            tmpResult = "(" + fieldName + " >= " + conditionValues.getDouble(0) + ")";
                             break;
                         case "小于等于":
-                            result = result + "(" + fieldName + " <= " + conditionValues.getDouble(0) + ")";
+                            tmpResult = "(" + fieldName + " <= " + conditionValues.getDouble(0) + ")";
                             break;
                         case "区间":
-                            result = result + "(" + fieldName + " BETWEEN " + conditionValues.getDouble(0) + " AND " + conditionValues.getDouble(1) + ")";
+                            tmpResult = "(" + fieldName + " BETWEEN " + conditionValues.getDouble(0) + " AND " + conditionValues.getDouble(1) + ")";
                             break;
                         case "不为空":
-                            result = result + "(" + fieldName + " is not null )";
+                            tmpResult = "(" + fieldName + " is not null )";
                             break;
                         case "为空":
-                            result = result + "(" + fieldName + " is null )";
+                            tmpResult = "(" + fieldName + " is null )";
                             break;
                     }
                 }
 
             }
+            if (!tmpResult.equals("")) result = result + tmpResult + " AND ";
         }
+
+        if (result.endsWith(" AND ")) result = result.substring(0, result.lastIndexOf(" AND "));
         return result;
     }
 
