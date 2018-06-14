@@ -47,7 +47,7 @@ public class FolderController extends BaseController {
 		folderInfo.setFolderType(2);
 		// folderInfo.setParentId(parentId);
 		folderInfo.setLevel(2);
-		int folderId = folderInfoService.save(folderInfo);
+		folderInfoService.save(folderInfo);
 		Map result = new HashMap();
 		result.put("folderInfo", folderInfo);
 		return new ResponseJson(200l, "success", result);
@@ -62,7 +62,7 @@ public class FolderController extends BaseController {
 	@RequestMapping(value = "/datasource/getFolder")
 	@ResponseBody
 	public ResponseJson getFolder(
-			@RequestParam(required=true)String folderName, 
+			@RequestParam(required=false)String folderName, 
 			@RequestParam(defaultValue = "0") Integer userId) {
 		logger.info("getFolder  folderName=" + folderName + "  userId=" + userId);
 		FolderInfo folderInfo = new FolderInfo();

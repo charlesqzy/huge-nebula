@@ -189,7 +189,7 @@ public class ExcelSheetInfoController extends BaseController {
     @ResponseBody
     public ResponseJson getSheet(
     		@RequestParam(required=true)Integer userId,
-    		@RequestParam(required=true)String sheetName) {
+    		@RequestParam(required=false)String sheetName) {
     	logger.info("getSheet  userId="+userId+" sheetName ="+ sheetName);
     	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo();
     	excelSheetInfo.setUserId(userId);
@@ -246,8 +246,8 @@ public class ExcelSheetInfoController extends BaseController {
     @RequestMapping(value = "/datasource/getSheetByFolderId")
     @ResponseBody
     public ResponseJson getSheetByFolderId(
-    		@RequestParam(required=true)Integer folderId,
-    		@RequestParam(required=true)Integer userId) {
+    		@RequestParam(required=false)Integer folderId,
+    		@RequestParam(required=false)Integer userId) {
     	logger.info("getSheetByFolderId  folderId ="+ folderId );
     	ExcelSheetInfo excelSheetInfo = new ExcelSheetInfo(); 
     	excelSheetInfo.setFolderId(folderId);
@@ -261,7 +261,7 @@ public class ExcelSheetInfoController extends BaseController {
     /**
      * 根据tableName获取数据
      * @param tableName
-     * @param sheetId@RequestParam(required=true)
+     * @param sheetId
      * @param pageNum
      * @return
      */
