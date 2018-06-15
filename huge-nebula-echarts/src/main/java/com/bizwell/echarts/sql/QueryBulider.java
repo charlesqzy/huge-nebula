@@ -110,7 +110,7 @@ public class QueryBulider {
         else if (measureString2.equals(""))
             measureString += measureString1;
         else
-            measureString = measureString + measureString1 + "," + measureString2;
+            measureString = measureString + measureString1 + ", " + measureString2;  // 此处必须为", "，后续处理需要
 
         String filterString = getFilterString(jsonObject.getJSONArray("filter"));
 
@@ -120,7 +120,7 @@ public class QueryBulider {
             sqlStringBuffer.append("SELECT ");
             sqlStringBuffer.append(dimString);
             if (!dimString.equals("") && !measureString.equals(""))
-                sqlStringBuffer.append(",");
+                sqlStringBuffer.append(", ");    // 此处必须为", "，后续处理需要
             sqlStringBuffer.append(measureString);
             sqlStringBuffer.append(" FROM ");
             sqlStringBuffer.append(tableName);
@@ -317,10 +317,10 @@ public class QueryBulider {
                 default:
                     break;
             }
-            result = result + " AS " + fieldName + ",";
+            result = result + " AS " + fieldName + ", ";   //注意此处必须为", "，后续处理需要
         }
-        if (result.endsWith(","))
-            result = result.substring(0, result.length() - 1);
+        if (result.endsWith(", "))
+            result = result.substring(0, result.length() - 2);
         return result;
     }
 
@@ -368,16 +368,16 @@ public class QueryBulider {
                             break;
                     }
                     groupbyString = groupbyString + tmpDimString + ",";
-                    dimColumns = dimColumns + tmpDimString + " AS " + fieldName + ",";
+                    dimColumns = dimColumns + tmpDimString + " AS " + fieldName + ", "; //注意此处必须为", "，后续处理需要
                 } else {
                     groupbyString = groupbyString + fieldName + ",";
-                    dimColumns = dimColumns + fieldName + ",";
+                    dimColumns = dimColumns + fieldName + ", ";  //注意此处必须为", "，后续处理需要
                 }
             }
             if (groupbyString.endsWith(","))
                 groupbyString = groupbyString.substring(0, groupbyString.length() - 1);
-            if (dimColumns.endsWith(","))
-                dimColumns = dimColumns.substring(0, dimColumns.length() - 1);
+            if (dimColumns.endsWith(", "))
+                dimColumns = dimColumns.substring(0, dimColumns.length() - 2);
         }
         result[0] = dimColumns;
         result[1] = groupbyString;
