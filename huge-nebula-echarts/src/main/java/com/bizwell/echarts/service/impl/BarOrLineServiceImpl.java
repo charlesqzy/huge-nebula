@@ -21,27 +21,31 @@ import com.bizwell.echarts.service.AbstractReportService;
 public class BarOrLineServiceImpl extends AbstractReportService {
 
 	@Override
-	protected ResultData setupData(List<Map<String, Object>> list, String data) {
+	protected ResultData setupData(List<Map<String, Object>> list, String data, Integer userId) {
 
 		// 获取维度字段名称
-		List<SheetMetaData> dimensions = JsonUtils.getFields(data, "dimension", "metadataId");
+		List<SheetMetaData> dimensions = JsonUtils.getFields(data, "dimension", "metadataId", userId);
 		// 组装维度
-		List<String> names = new ArrayList<String>();
+		List<Object> names = new ArrayList<Object>();
 		for (Map<String, Object> map : list) {
 			String name = new String();
 			for (SheetMetaData sheetMetaData : dimensions) {
-				name = name + map.get(sheetMetaData.getFieldColumn());
+				name = name + map.get(sheetMetaData.getFieldColumn()) + "|";
+			}
+			if (name.endsWith("|")) {
+				name = name.substring(0, name.length() - 1);
 			}
 			names.add(name);
 		}
 		
 		String type = JsonUtils.getString(data, "type");
 		String stack = JsonUtils.getString(data, "stack");
+		String echartType = JsonUtils.getString(data, "echartType");
 		
 		List<Series> seriesList = new ArrayList<Series>();
 		List<String> legend = new ArrayList<String>();
 		// 获取数值字段
-		List<SheetMetaData> measures = JsonUtils.getFields(data, "measure1", "metadataId");
+		List<SheetMetaData> measures = JsonUtils.getFields(data, "measure1", "metadataId", userId);
 		
 		for (SheetMetaData sheetMetaData : measures) {
 			List<Object> values = new ArrayList<Object>();
@@ -57,7 +61,7 @@ public class BarOrLineServiceImpl extends AbstractReportService {
 			series.setStack(stack);
 			series.setData(values);
 			if (type.equals("bar")) {
-				series.setType(type);			
+				series.setType(type);
 			}
 			if (type.equals("line")) {
 				series.setType(type);
@@ -75,6 +79,7 @@ public class BarOrLineServiceImpl extends AbstractReportService {
 		resultData.setNames(names);
 		resultData.setSeries(seriesList);
 		resultData.setLegend(legend);
+		resultData.setEchartType(echartType);
 		return resultData;
 	}
 	

@@ -29,8 +29,8 @@ public class TestDemo {
 	
 	@Test
 	public void testJDBC() throws SQLException {
-		System.out.println("连接池 : " + dataSource);
-		System.out.println("连接 : " + dataSource.getConnection());
+//		System.out.println("连接池 : " + dataSource);
+//		System.out.println("连接 : " + dataSource.getConnection());
 		
 	}
 	
@@ -44,10 +44,10 @@ public class TestDemo {
 	@Test
 	public void testFolder() {
 		
-		List<FolderInfo> list = folderInfoMapper.selectFolder(2);
-		for (FolderInfo folderInfo : list) {
-			System.out.println(folderInfo);
-		}
+//		List<FolderInfo> list = folderInfoMapper.selectFolder(2);
+//		for (FolderInfo folderInfo : list) {
+//			System.out.println(folderInfo);
+//		}
 //		String json = JsonUtils.toJson(list);
 //		System.out.println(json);
 		

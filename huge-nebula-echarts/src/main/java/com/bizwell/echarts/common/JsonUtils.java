@@ -3,6 +3,8 @@ package com.bizwell.echarts.common;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bizwell.echarts.bean.domain.SheetMetaData;
@@ -14,7 +16,7 @@ import com.bizwell.echarts.bean.domain.SheetMetaData;
  */
 public class JsonUtils {
 	
-	public static List<SheetMetaData> getFields(String data, String field, String metadataId) {
+	public static List<SheetMetaData> getFields(String data, String field, String metadataId, Integer userId) {
 		
 		List<SheetMetaData> list = new ArrayList<SheetMetaData>();
 		
@@ -23,7 +25,7 @@ public class JsonUtils {
 		for (int i = 0; i < jsonArray.size(); i++) {
 			JSONObject object = jsonArray.getJSONObject(i);
 			Integer id = object.getIntValue(metadataId);
-			SheetMetaData sheetMetadata = MetaDataMap.get(id);
+			SheetMetaData sheetMetadata = MetaDataMap.get(userId, id);
 			list.add(sheetMetadata);
 		}
 		
@@ -32,7 +34,9 @@ public class JsonUtils {
 	
 	// 解析json, 获取字符串类型数据
 	public static String getString(String data, String name) {
-		
+		if (StringUtils.isEmpty(data) || StringUtils.isEmpty(name)) {
+			return null;
+		}
 		JSONObject jsonObject = JSONObject.parseObject(data);
 		String string = jsonObject.getString(name);
 		return string;

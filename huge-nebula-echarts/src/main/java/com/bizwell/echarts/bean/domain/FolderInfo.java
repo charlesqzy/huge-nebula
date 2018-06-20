@@ -1,5 +1,6 @@
 package com.bizwell.echarts.bean.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,9 +33,9 @@ public class FolderInfo {
 
     private String reserved2;
 
-    private String reserved3;
+    private Boolean showMore;
     
-    private List<ChildrenFolder> childrenFolder;
+    private List<ChildrenFolder> childrenFolder = new ArrayList<ChildrenFolder>();
 
     public Integer getId() {
         return id;
@@ -132,20 +133,20 @@ public class FolderInfo {
 		this.reserved2 = reserved2;
 	}
 
-	public String getReserved3() {
-		return reserved3;
+	public Boolean getShowMore() {
+		return showMore;
 	}
 
-	public void setReserved3(String reserved3) {
-		this.reserved3 = reserved3;
+	public void setShowMore(Boolean showMore) {
+		this.showMore = showMore;
 	}
 
 	@Override
 	public String toString() {
 		return String.format(
-				"FolderInfo [id=%s, userId=%s, folderName=%s, folderType=%s, parentId=%s, level=%s, isDel=%s, createTime=%s, updateTime=%s, reserved1=%s, reserved2=%s, reserved3=%s, childrenFolder=%s]",
+				"FolderInfo [id=%s, userId=%s, folderName=%s, folderType=%s, parentId=%s, level=%s, isDel=%s, createTime=%s, updateTime=%s, reserved1=%s, reserved2=%s, showMore=%s, childrenFolder=%s]",
 				id, userId, folderName, folderType, parentId, level, isDel, createTime, updateTime, reserved1,
-				reserved2, reserved3, childrenFolder);
+				reserved2, showMore, childrenFolder);
 	}
 
 }

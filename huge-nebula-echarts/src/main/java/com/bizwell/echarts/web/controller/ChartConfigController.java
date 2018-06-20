@@ -1,7 +1,5 @@
 package com.bizwell.echarts.web.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bizwell.echarts.bean.dto.ChartConfigParam;
 import com.bizwell.echarts.bean.vo.ChartConfigVo;
+import com.bizwell.echarts.bean.vo.ResultLocation;
 import com.bizwell.echarts.common.JsonUtils;
 import com.bizwell.echarts.common.JsonView;
 import com.bizwell.echarts.exception.EchartsException;
@@ -52,13 +51,16 @@ public class ChartConfigController extends BaseController {
 	
 	@RequestMapping(value = "/get", method = RequestMethod.POST)
 	@ResponseBody
-	public JsonView get(@RequestParam(value = "userId", required = true) Integer userId,
-			@RequestParam(value = "panelId", required = true) Integer panelId) {
+	public JsonView get(@RequestParam(value = "panelId", required = true) Integer panelId) {
 		
 		JsonView jsonView = new JsonView();
 		try {
-			List<Object> list = chartConfigService.selectLocation(userId, panelId);
-			jsonView = result(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), list);
+			ResultLocation resultLocation = new ResultLocation();
+			if (null != panelId) {
+				resultLocation = chartConfigService.selectLocation(panelId);				
+			}
+			
+			jsonView = result(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), resultLocation);
 		} catch (EchartsException e) {
 			jsonView = result(e.getCode(), e.getMessage(), null);
 		} catch (Exception e) {
@@ -133,24 +135,6 @@ public class ChartConfigController extends BaseController {
 			
 			chartConfigService.delete(id);
 			jsonView = result(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
-		} catch (EchartsException e) {
-			jsonView = result(e.getCode(), e.getMessage(), null);
-		} catch (Exception e) {
-			jsonView = result(ResponseCode.ERROR.getCode(), ResponseCode.ERROR.getMessage(), null);
-			e.printStackTrace();
-		}
-		return jsonView;
-	}
-	
-	@RequestMapping(value = "/getShare", method = RequestMethod.POST)
-	@ResponseBody
-	public JsonView getShare(@RequestParam(value = "userId", required = true) Integer userId,
-			@RequestParam(value = "panelId", required = true) Integer panelId) {
-		
-		JsonView jsonView = new JsonView();
-		try {
-			List<Object> list = chartConfigService.selectLocation(userId, panelId);
-			jsonView = result(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), list);
 		} catch (EchartsException e) {
 			jsonView = result(e.getCode(), e.getMessage(), null);
 		} catch (Exception e) {

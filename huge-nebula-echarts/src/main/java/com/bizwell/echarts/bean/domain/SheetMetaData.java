@@ -2,7 +2,7 @@ package com.bizwell.echarts.bean.domain;
 
 /**
  * @author zhangjianjun
- * @date 2018年5月21日
+ * @date 2018年5月31日
  *
  */
 public class SheetMetaData {
@@ -24,6 +24,8 @@ public class SheetMetaData {
     private String fieldComment;
 
     private Integer isVisible;
+
+    private Integer userId;
 
     public Integer getId() {
         return id;
@@ -97,11 +99,20 @@ public class SheetMetaData {
         this.isVisible = isVisible;
     }
 
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
 	@Override
 	public String toString() {
 		return String.format(
-				"SheetMetaData [id=%s, sheetId=%s, tableName=%s, fieldColumn=%s, fieldNameOld=%s, fieldNameNew=%s, fieldType=%s, fieldComment=%s, isVisible=%s]",
-				id, sheetId, tableName, fieldColumn, fieldNameOld, fieldNameNew, fieldType, fieldComment, isVisible);
+				"SheetMetaData [id=%s, sheetId=%s, tableName=%s, fieldColumn=%s, fieldNameOld=%s, fieldNameNew=%s, fieldType=%s, fieldComment=%s, isVisible=%s, userId=%s]",
+				id, sheetId, tableName, fieldColumn, fieldNameOld, fieldNameNew, fieldType, fieldComment, isVisible,
+				userId);
 	}
     
 }

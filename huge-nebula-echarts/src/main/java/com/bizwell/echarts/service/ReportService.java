@@ -9,6 +9,6 @@ import com.bizwell.echarts.bean.vo.ResultData;
  */
 public interface ReportService {
 	
-	public ResultData selectEcharts(String data);
+	public ResultData selectEcharts(String data, Integer userId);
 
 }

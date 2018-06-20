@@ -17,7 +17,8 @@ public enum ResponseCode {
 	ECHARTS_FAIL04(5004, "文件名称为空"),
 	ECHARTS_FAIL05(5005, "文件类型为空"),
 	ECHARTS_FAIL06(5006, "不支持的图表"),
-	ECHARTS_FAIL07(5007, "仪表盘id为空");
+	ECHARTS_FAIL07(5007, "仪表盘id为空"),
+	ECHARTS_FAIL08(5008, "维度或数值个数选择错误");
 	
 	// 编码
     private Integer code;

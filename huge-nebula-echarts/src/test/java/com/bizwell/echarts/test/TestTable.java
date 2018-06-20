@@ -28,10 +28,10 @@ public class TestTable {
 //		String sql = "select t.* from gb_user t order by t.create_time asc";
 		String sql = "SELECT SUBSTR(t.A,1,10) AS A, SUM(t.I) AS I, SUM(t.K) AS K FROM xls_571bebf42840428bb73393264dd4d793_sheet_1 t GROUP BY t.A ORDER BY t.A ASC";
 		
-		List<Map<String,Object>> list = echartsMapper.selectBySql(sql);
-		for (Map<String, Object> map : list) {
-			System.out.println(map);			
-		}
+//		List<Map<String,Object>> list = echartsMapper.selectBySql(sql);
+//		for (Map<String, Object> map : list) {
+//			System.out.println(map);			
+//		}
 		
 	}
 	

@@ -1,5 +1,6 @@
 package com.bizwell.echarts.bean.vo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.bizwell.echarts.bean.domain.ChildrenFolder;
@@ -15,9 +16,9 @@ public class FolderVo {
 
 	private String folderName;
 
-	private List<ChildrenFolder> childrenFolder;
+	private List<ChildrenFolder> childrenFolder = new ArrayList<ChildrenFolder>();
 	
-	private Boolean showMore = false;
+	private Boolean showMore;
 	
 	public Integer getId() {
 		return id;

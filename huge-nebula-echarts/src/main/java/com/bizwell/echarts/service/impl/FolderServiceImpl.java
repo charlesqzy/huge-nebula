@@ -95,5 +95,14 @@ public class FolderServiceImpl implements FolderService {
 		folderInfo.setReserved2(shareRemarks);
 		folderInfoMapper.updateByPrimaryKeySelective(folderInfo);
 	}
+
+	@Override
+	public void updateShowMore(Integer id, Boolean showMore) {
+
+		FolderInfo folderInfo = new FolderInfo();
+		folderInfo.setId(id);
+		folderInfo.setShowMore(showMore);
+		folderInfoMapper.updateByPrimaryKeySelective(folderInfo);
+	}
 	
 }

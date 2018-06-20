@@ -162,5 +162,23 @@ public class FolderController extends BaseController {
 		}
 		return jsonView;
 	}
+	
+	@RequestMapping(value = "/updateShowMore", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonView updateShowMore(@RequestParam(value = "id", required = true) Integer id,
+			@RequestParam(value = "showMore", required = true) Boolean showMore) {
+		
+		JsonView jsonView = new JsonView();
+		try {
+			folderService.updateShowMore(id, showMore);
+			jsonView = result(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
+		} catch (EchartsException e) {
+			jsonView = result(e.getCode(), e.getMessage(), null);
+		} catch (Exception e) {
+			jsonView = result(ResponseCode.ERROR.getCode(), ResponseCode.ERROR.getMessage(), null);
+			e.printStackTrace();
+		}
+		return jsonView;
+	}
 
 }
