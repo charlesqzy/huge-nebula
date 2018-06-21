@@ -55,9 +55,9 @@ public class QueryBulider {
     static String jsonString2 = "{" +
             "\"echartType\": 2," +
             "\"dimension\": [{\"metadataId\": 804,\"dateLevel\": \"按日\"}]," +
-            "\"measure1\": [{\"metadataId\": 810,\"aggregate\": \"求和\"}, " +
+            "\"measure1\": [{\"metadataId\": 810,\"aggregate\": \"求和\"}, {\"metadataId\": 810,\"aggregate\": \"计数\"}," +
             "{\"metadataId\": 809,\"aggregate\": \"计数\"}]," +
-            "\"measure2\": []," +
+            "\"measure2\": [{\"metadataId\": 810,\"aggregate\": \"计数\"}]," +
             "\"filter\": [{\"metadataId\":804,\"name\":\"billdate\",\"type\":\"date\",\"selectIndex\":1,\"isshow\":true,\"condition\":{\"startTime\":\"2018-06-01 00:00:00\",\"endTime\":\"\"}}," +
             "{\"metadataId\": 810, \"name\": \"hotelid\", \"type\": \"number\", \"subType\": \"条件筛选\", \"isshow\": true, \"condition\": { \"type\": \"不为空\", \"value\": [ 9.98 ] } }," +
             "{\"metadataId\":806,\"type\":\"text\",\"subType\":\"精确筛选\",\"condition\":[\"Andriod\",\"IOS\"], \"invertSelection\":true }," +
@@ -89,28 +89,14 @@ public class QueryBulider {
         JSONArray dimension = jsonObject.getJSONArray("dimension");
         JSONArray measure1 = jsonObject.getJSONArray("measure1");
         JSONArray measure2 = jsonObject.getJSONArray("measure2");
+        JSONArray measure = combineJSONArray(measure1, measure2);
 
         String[] dimAndGroupByStrings = getDimColString(jsonObject.getJSONArray("dimension"));
         String dimString = dimAndGroupByStrings[0];
-        String groupbyString = dimAndGroupByStrings[1];
+        String groupByString = dimAndGroupByStrings[1];
 
-        String tableName = "";
-        if (dimension != null && !dimension.isEmpty())
-            tableName = getTargetTable(dimension);
-        else if (measure1 != null && !measure1.isEmpty())
-            tableName = getTargetTable(measure1);
-        else
-            tableName = getTargetTable(measure2);
-
-        String measureString1 = getMeasureString(jsonObject.getJSONArray("measure1"));
-        String measureString2 = getMeasureString(jsonObject.getJSONArray("measure2"));
-        String measureString = "";
-        if (measureString1.equals(""))
-            measureString += measureString2;
-        else if (measureString2.equals(""))
-            measureString += measureString1;
-        else
-            measureString = measureString + measureString1 + ", " + measureString2;  // 此处必须为", "，后续处理需要
+        String tableName = getTableName(dimension, measure);
+        String measureString = getMeasureString(measure);
 
         String filterString = getFilterString(jsonObject.getJSONArray("filter"));
 
@@ -126,13 +112,47 @@ public class QueryBulider {
             sqlStringBuffer.append(tableName);
             if (!filterString.equals(""))
                 sqlStringBuffer.append(" WHERE " + filterString);
-            if (!groupbyString.equals("")) {
-                sqlStringBuffer.append(" GROUP BY " + groupbyString);
-                sqlStringBuffer.append(" ORDER BY " + groupbyString);
+            if (!groupByString.equals("")) {
+                sqlStringBuffer.append(" GROUP BY " + groupByString);
+                sqlStringBuffer.append(" ORDER BY " + groupByString);
             }
 
         }
         return sqlStringBuffer.toString();
+    }
+
+    /**
+     * 获取对应的表名
+     *
+     * @param dimension
+     * @param measure
+     * @return
+     */
+    private static String getTableName(JSONArray dimension, JSONArray measure) {
+        String tableName = null;
+        if (dimension != null && !dimension.isEmpty())
+            tableName = getTargetTable(dimension);
+        else if (measure != null && !measure.isEmpty())
+            tableName = getTargetTable(measure);
+        return tableName;
+    }
+
+    /**
+     * 将两个JSONArray合并成一个JSONArray
+     *
+     * @param measure1
+     * @param measure2
+     * @return
+     */
+    private static JSONArray combineJSONArray(JSONArray measure1, JSONArray measure2) {
+        if (measure1 == null && measure2 == null) return null;
+        else if (measure1 == null) return measure2;
+        else if (measure2 == null) return measure1;
+        else {
+            for (int i = 0; i < measure2.size(); i++)
+                measure1.add(measure2.getJSONObject(i));
+            return measure1;
+        }
     }
 
 
@@ -297,27 +317,27 @@ public class QueryBulider {
             String aggregate = dataObj.getString("aggregate");
             switch (aggregate) {
                 case "求和":
-                    result = result + "SUM(" + fieldName + ")";
+                    result = result + "SUM(" + fieldName + ") AS " + fieldName + "_SUM" + i;
                     break;
                 case "计数":
-                    result = result + "COUNT(" + fieldName + ")";
+                    result = result + "COUNT(" + fieldName + ") AS " + fieldName + "_COUNT" + i;
                     break;
                 case "去重计数":
-                    result = result + "COUNT(DISTINCT " + fieldName + ")";
+                    result = result + "COUNT(DISTINCT " + fieldName + ") AS " + fieldName + "_DISCOUNT" + i;
                     break;
                 case "平均值":
-                    result = result + "AVG(" + fieldName + ")";
+                    result = result + "AVG(" + fieldName + ") AS " + fieldName + "_AVG" + i;
                     break;
                 case "最大值":
-                    result = result + "MAX(" + fieldName + ")";
+                    result = result + "MAX(" + fieldName + ") AS " + fieldName + "_MAX" + i;
                     break;
                 case "最小值":
-                    result = result + "MIN(" + fieldName + ")";
+                    result = result + "MIN(" + fieldName + ") AS " + fieldName + "_MIN" + i;
                     break;
                 default:
                     break;
             }
-            result = result + " AS " + fieldName + ", ";   //注意此处必须为", "，后续处理需要
+            result = result + ", ";   //注意此处必须为", "，后续处理需要
         }
         if (result.endsWith(", "))
             result = result.substring(0, result.length() - 2);
@@ -368,10 +388,10 @@ public class QueryBulider {
                             break;
                     }
                     groupbyString = groupbyString + tmpDimString + ",";
-                    dimColumns = dimColumns + tmpDimString + " AS " + fieldName + ", "; //注意此处必须为", "，后续处理需要
+                    dimColumns = dimColumns + tmpDimString + " AS " + fieldName + "_" + i + ", "; //注意此处必须为", "，后续处理需要
                 } else {
                     groupbyString = groupbyString + fieldName + ",";
-                    dimColumns = dimColumns + fieldName + ", ";  //注意此处必须为", "，后续处理需要
+                    dimColumns = dimColumns + fieldName + "_" + i + ", ";  //注意此处必须为", "，后续处理需要
                 }
             }
             if (groupbyString.endsWith(","))
