@@ -25,4 +25,6 @@ public interface FolderService {
 	
 	public void updateStatus(Integer id, String status, String shareRemarks);
 	
+	public void updateShowMore(Integer id, Boolean showMore);
+	
 }

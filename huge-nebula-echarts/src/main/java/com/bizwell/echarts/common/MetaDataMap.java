@@ -1,7 +1,7 @@
 package com.bizwell.echarts.common;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -22,11 +22,17 @@ public class MetaDataMap implements ApplicationRunner {
 	@Autowired
 	private SheetMetaDataService sheetMetaDataService;
 	
-	private static Map<Integer, SheetMetaData> META_DATA_MAP = new HashMap<Integer, SheetMetaData>();
-
-	public static SheetMetaData get(Integer id) {
+	private static ConcurrentMap<Integer,ConcurrentMap<Integer,SheetMetaData>> META_DATA_MAP = new ConcurrentHashMap<Integer, ConcurrentMap<Integer, SheetMetaData>>();
+	
+	public static SheetMetaData get(Integer userId, Integer id) {
 		
-		return META_DATA_MAP.get(id);		
+		ConcurrentMap<Integer,SheetMetaData> map = META_DATA_MAP.get(userId);
+		return map.get(id);
+	}
+	
+	public static void put(Integer userId, ConcurrentMap<Integer,SheetMetaData> map) {
+		
+		META_DATA_MAP.put(userId, map);
 	}
 	
 	@Override

@@ -2,6 +2,8 @@ package com.bizwell.echarts.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.bizwell.echarts.bean.domain.SheetMetaData;
 
 /**
@@ -23,6 +25,6 @@ public interface SheetMetaDataMapper {
 
     int updateByPrimaryKey(SheetMetaData record);
     
-    public List<SheetMetaData> selectAll();
+    public List<SheetMetaData> selectByUserId(@Param("userId") Integer userId);
     
 }

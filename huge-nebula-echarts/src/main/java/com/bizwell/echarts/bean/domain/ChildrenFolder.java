@@ -11,7 +11,7 @@ public class ChildrenFolder {
 
     private String childFolderName;
     
-    private Boolean showMore = false;
+    private Boolean showMore1;
 
 	public Integer getChildId() {
 		return childId;
@@ -29,18 +29,18 @@ public class ChildrenFolder {
 		this.childFolderName = childFolderName;
 	}
 
-	public Boolean getShowMore() {
-		return showMore;
+	public Boolean getShowMore1() {
+		return showMore1;
 	}
 
-	public void setShowMore(Boolean showMore) {
-		this.showMore = showMore;
+	public void setShowMore1(Boolean showMore1) {
+		this.showMore1 = showMore1;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("ChildrenFolder [childId=%s, childFolderName=%s, showMore=%s]", childId, childFolderName,
-				showMore);
+		return String.format("ChildrenFolder [childId=%s, childFolderName=%s, showMore1=%s]", childId, childFolderName,
+				showMore1);
 	}
 
 }

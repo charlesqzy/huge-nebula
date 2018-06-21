@@ -16,6 +16,7 @@ import com.bizwell.echarts.bean.domain.ChartConfig;
 import com.bizwell.echarts.bean.dto.ChartConfigParam;
 import com.bizwell.echarts.bean.vo.ChartConfigVo;
 import com.bizwell.echarts.bean.vo.ResultData;
+import com.bizwell.echarts.bean.vo.ResultLocation;
 import com.bizwell.echarts.common.JsonUtils;
 import com.bizwell.echarts.common.ReportManager;
 import com.bizwell.echarts.mapper.ChartConfigMapper;
@@ -38,7 +39,7 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 	public void save(ChartConfigParam param) {
 		
 		// 查询出改用户新建的仪表盘条数
-		List<ChartConfig> list = chartConfigMapper.selectChartConfig(param.getUserId(), param.getPanelId());
+		List<ChartConfig> list = chartConfigMapper.selectChartConfig(param.getPanelId());
 		Integer size = list.size();
 		
 		ChartConfig chartConfig = new ChartConfig();
@@ -57,24 +58,37 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 	}
 
 	@Override
-	public List<Object> selectLocation(Integer userId, Integer panelId) {
+	public ResultLocation selectLocation(Integer panelId) {
 
 		List<Object> resultList = new ArrayList<Object>();
-		List<ChartConfig> list = chartConfigMapper.selectChartConfig(userId, panelId);
+		String status = null;
+		String shareRemarks = null;
+		List<ChartConfig> list = chartConfigMapper.selectChartConfig(panelId);
 		for (ChartConfig chartConfig : list) {
-			String sqlConfig = chartConfig.getSqlConfig();
-			String echartType = JsonUtils.getString(sqlConfig, "echartType");
-			String chatData = getData(chartConfig.getSqlConfig());
+			if (StringUtils.isEmpty(status)) {
+				status = chartConfig.getReserved1();
+			}
+			if (StringUtils.isEmpty(shareRemarks)) {
+				shareRemarks = chartConfig.getReserved2();
+			}
 			JSONObject jsonObject = JSONObject.parseObject(chartConfig.getLocation());
-			String chartRemarks = chartConfig.getChartRemarks();
-			String chartName = chartConfig.getChartName();
-			jsonObject.put("chartName", StringUtils.isEmpty(chartName) ? null : chartName);
-			jsonObject.put("chartRemarks", StringUtils.isEmpty(chartRemarks) ? null : chartRemarks);
-			jsonObject.put("chatData", chatData);
-			jsonObject.put("echartType", echartType);
-			resultList.add(jsonObject);
+			if (null != jsonObject) {
+				String sqlConfig = chartConfig.getSqlConfig();
+				String echartType = JsonUtils.getString(sqlConfig, "echartType");
+				String chatData = getData(chartConfig.getSqlConfig(), chartConfig.getUserId());
+				jsonObject.put("chartName", chartConfig.getChartName());
+				jsonObject.put("chartRemarks", chartConfig.getChartRemarks());
+				jsonObject.put("chatData", chatData);
+				jsonObject.put("echartType", echartType);
+				resultList.add(jsonObject);				
+			}
 		}
-		return resultList;
+		
+		ResultLocation resultLocation = new ResultLocation();
+		resultLocation.setStatus(status);
+		resultLocation.setShareRemarks(shareRemarks);
+		resultLocation.setLocations(resultList);
+		return resultLocation;
 	}
 
 	@Override
@@ -117,11 +131,14 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 		chartConfigMapper.deleteByPrimaryKey(id);
 	}
 	
-	private String getData(String json) {
+	private String getData(String json, Integer userId) {
 		
 		String code = JsonUtils.getString(json, "moduleType");
+		if (StringUtils.isEmpty(code)) {
+			return null;
+		}
 		ReportService reportService = ReportManager.getService(code);
-		ResultData resultData = reportService.selectEcharts(json);
+		ResultData resultData = reportService.selectEcharts(json, userId);
 		String jsonString = JSON.toJSONString(resultData);
 		return jsonString;
 	}

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.bizwell.echarts.bean.dto.ChartConfigParam;
 import com.bizwell.echarts.bean.vo.ChartConfigVo;
+import com.bizwell.echarts.bean.vo.ResultLocation;
 
 /**
  * @author zhangjianjun
@@ -14,7 +15,7 @@ public interface ChartConfigService {
 	
 	public void save(ChartConfigParam param);
 	
-	public List<Object> selectLocation(Integer userId, Integer panelId);
+	public ResultLocation selectLocation(Integer panelId);
 	
 	public ChartConfigVo getOne(Integer id);
 	

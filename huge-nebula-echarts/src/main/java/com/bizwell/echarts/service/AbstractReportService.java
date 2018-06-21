@@ -20,15 +20,15 @@ public abstract class AbstractReportService implements ReportService {
 	private EchartsMapper echartsMapper;
 
 	@Override
-	public ResultData selectEcharts(String data) {
+	public ResultData selectEcharts(String data, Integer userId) {
 
-		String sql = QueryBulider.getSql(data);
+		String sql = QueryBulider.getSql(data, userId);
 //		String sql = "SELECT SUBSTR(t.A,1,10) AS A, SUM(t.I) AS I, SUM(t.K) AS K FROM xls_571bebf42840428bb73393264dd4d793_sheet_1 t GROUP BY t.A ORDER BY t.A ASC";
 		
 		List<Map<String,Object>> list = echartsMapper.selectBySql(sql);
-		return this.setupData(list, data);
+		return this.setupData(list, data, userId);
 	}
 	
-	protected abstract ResultData setupData(List<Map<String,Object>> list, String data);
+	protected abstract ResultData setupData(List<Map<String,Object>> list, String data, Integer userId);
 
 }

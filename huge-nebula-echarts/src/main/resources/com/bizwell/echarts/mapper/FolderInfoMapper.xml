@@ -13,15 +13,16 @@
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="reserved1" property="reserved1" jdbcType="VARCHAR" />
     <result column="reserved2" property="reserved2" jdbcType="VARCHAR" />
-    <result column="reserved3" property="reserved3" jdbcType="VARCHAR" />
+    <result column="showMore" property="showMore" jdbcType="BOOLEAN" />
     <collection property="childrenFolder" ofType="com.bizwell.echarts.bean.domain.ChildrenFolder" autoMapping="true">
         <id column="child_id" property="childId" jdbcType="INTEGER" />
 		<result column="child_folder_name" property="childFolderName" jdbcType="VARCHAR" />
+		<result column="showMore1" property="showMore1" jdbcType="BOOLEAN" />
     </collection>
   </resultMap>
   
   <sql id="Base_Column_List" >
-    id, user_id, folder_name, folder_type, parent_id, level, is_del, create_time, update_time, reserved1, reserved2, reserved3
+    id, user_id, folder_name, folder_type, parent_id, level, is_del, create_time, update_time, reserved1, reserved2, showMore
   </sql>
   
   <select id="selectByParam" resultMap="BaseResultMap" parameterType="com.bizwell.echarts.bean.dto.FolderParam">
@@ -43,7 +44,9 @@
   		t1.id,
   		t1.folder_name,
   		t2.id as child_id,
-  		t2.folder_name as child_folder_name
+  		t2.folder_name as child_folder_name,
+  		t1.showMore,
+        t2.showMore as showMore1
   	from gb_folder_info t1
   	left join (SELECT * FROM gb_folder_info t WHERE t.is_del = 0) t2 on t1.id = t2.parent_id
   	<where>
@@ -73,12 +76,12 @@
     insert into gb_folder_info (id, user_id, folder_name, 
       folder_type, parent_id, level, 
       is_del, create_time, update_time, 
-      reserved1, reserved2, reserved3
+      reserved1, reserved2, showMore
       )
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{folderName,jdbcType=VARCHAR}, 
       #{folderType,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER}, #{level,jdbcType=INTEGER}, 
       #{isDel,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{reserved1,jdbcType=VARCHAR}, #{reserved2,jdbcType=VARCHAR}, #{reserved3,jdbcType=VARCHAR}
+      #{reserved1,jdbcType=VARCHAR}, #{reserved2,jdbcType=VARCHAR}, #{showMore,jdbcType=BOOLEAN}
       )
   </insert>
   
@@ -119,8 +122,8 @@
       <if test="reserved2 != null" >
         reserved2,
       </if>
-      <if test="reserved3 != null" >
-        reserved3,
+      <if test="showMore != null" >
+        showMore,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -157,8 +160,8 @@
       <if test="reserved2 != null" >
         #{reserved2,jdbcType=VARCHAR},
       </if>
-      <if test="reserved3 != null" >
-        #{reserved3,jdbcType=VARCHAR},
+      <if test="showMore != null" >
+        #{showMore,jdbcType=BOOLEAN},
       </if>
     </trim>
   </insert>
@@ -196,8 +199,8 @@
       <if test="reserved2 != null" >
         reserved2 = #{reserved2,jdbcType=VARCHAR},
       </if>
-      <if test="reserved3 != null" >
-        reserved3 = #{reserved3,jdbcType=VARCHAR},
+      <if test="showMore != null" >
+        showMore = #{showMore,jdbcType=BOOLEAN},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -215,7 +218,7 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       reserved1 = #{reserved1,jdbcType=VARCHAR},
       reserved2 = #{reserved2,jdbcType=VARCHAR},
-      reserved3 = #{reserved3,jdbcType=VARCHAR}
+      showMore = #{showMore,jdbcType=BOOLEAN}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

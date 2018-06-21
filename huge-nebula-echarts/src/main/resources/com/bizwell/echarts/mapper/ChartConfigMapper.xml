@@ -26,17 +26,25 @@
   
   <select id="selectChartConfig" resultMap="BaseResultMap" parameterType="java.lang.Integer">
   	select 
-    	<include refid="Base_Column_List" />
-    from ws_chart_config_info t
+    	t.id,
+    	t.sheet_id,
+    	t.folder_id,
+    	t.panel_id,
+    	t.user_id,
+    	t.chart_name,
+    	t.chart_remarks,
+    	t.location,
+    	t.sql_config,
+    	t1.reserved1,
+    	t1.reserved2
+    from ws_chart_config_info t right join gb_folder_info t1
+    on t.panel_id = t1.id
     <where>
-    	<if test="userId != null and userId != ''">
-			<trim prefixOverrides="and / or">
-				and t.user_id = #{userId, jdbcType=INTEGER}
-			</trim>
-		</if>
+    	t1.is_del = 0
     	<if test="panelId != null and panelId != ''">
 			<trim prefixOverrides="and / or">
-				and t.panel_id = #{panelId, jdbcType=INTEGER}
+				<!-- and t.panel_id = #{panelId, jdbcType=INTEGER} -->
+				and t1.id = #{panelId, jdbcType=INTEGER}
 			</trim>
 		</if>
     </where>

@@ -9,17 +9,29 @@ import java.util.List;
  */
 public class ResultData {
 	
-	private List<String> names;
+	private List<Object> names;
 	
 	private List<Series> series;
 	
 	private List<String> legend;
+	
+	private String echartType;
+	
+	private Object value;
 
-	public List<String> getNames() {
+	public Object getValue() {
+		return value;
+	}
+
+	public void setValue(Object value) {
+		this.value = value;
+	}
+
+	public List<Object> getNames() {
 		return names;
 	}
 
-	public void setNames(List<String> names) {
+	public void setNames(List<Object> names) {
 		this.names = names;
 	}
 
@@ -39,9 +51,18 @@ public class ResultData {
 		this.legend = legend;
 	}
 
+	public String getEchartType() {
+		return echartType;
+	}
+
+	public void setEchartType(String echartType) {
+		this.echartType = echartType;
+	}
+
 	@Override
 	public String toString() {
-		return String.format("ResultData [names=%s, series=%s, legend=%s]", names, series, legend);
+		return String.format("ResultData [names=%s, series=%s, legend=%s, echartType=%s, value=%s]", names, series,
+				legend, echartType, value);
 	}
 
 }

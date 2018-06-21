@@ -25,6 +25,6 @@ public interface ChartConfigMapper {
 
     int updateByPrimaryKey(ChartConfig record);
     
-    public List<ChartConfig> selectChartConfig(@Param("userId") Integer userId, @Param("panelId") Integer panelId);
+    public List<ChartConfig> selectChartConfig(@Param("panelId") Integer panelId);
     
 }
