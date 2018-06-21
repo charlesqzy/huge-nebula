@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bizwell.echarts.bean.domain.SheetMetaData;
+import com.bizwell.echarts.bean.vo.ChartConfigVo;
 import com.bizwell.echarts.bean.vo.FormHeader;
 import com.bizwell.echarts.bean.vo.ResultData;
 import com.bizwell.echarts.common.JsonUtils;
@@ -20,6 +22,7 @@ import com.bizwell.echarts.common.JsonView;
 import com.bizwell.echarts.common.ReportManager;
 import com.bizwell.echarts.exception.EchartsException;
 import com.bizwell.echarts.exception.ResponseCode;
+import com.bizwell.echarts.service.ChartConfigService;
 import com.bizwell.echarts.service.FormService;
 import com.bizwell.echarts.service.ReportService;
 import com.bizwell.echarts.web.BaseController;
@@ -36,6 +39,9 @@ public class ReportController extends BaseController {
 	
 	@Autowired
 	private FormService formService;
+	
+	@Autowired
+	private ChartConfigService chartConfigService;
 	
 	@RequestMapping(value = "/getData", method = RequestMethod.POST)
 	@ResponseBody
@@ -63,7 +69,8 @@ public class ReportController extends BaseController {
 	
 	@RequestMapping(value = "/page/getData", method = RequestMethod.POST)
 	@ResponseBody
-	public JsonView getPage(@RequestParam(value = "param", required = true) String param, 
+	public JsonView getPage(@RequestParam(value = "param", required = true) String param,
+			@RequestParam(value = "id", required = true) Integer id, 
 			@RequestParam(value = "userId", required = true) Integer userId, 
 			@RequestParam(value = "curPage" , required = true) Integer curPage,
 			@RequestParam(value = "pageSize", defaultValue = "3") Integer pageSize) {
@@ -71,8 +78,13 @@ public class ReportController extends BaseController {
 		JsonView jsonView = new JsonView();
 		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 		Integer cnt = 0;
-		PageHelper.startPage(curPage, pageSize);
 		try {
+			if (StringUtils.isEmpty(param) && id != null) {
+				ChartConfigVo chartConfigVo = chartConfigService.getOne(id);
+				param = chartConfigVo.getSqlConfig();				
+			}
+			
+			PageHelper.startPage(curPage, pageSize);
 			String code = JsonUtils.getString(param, "moduleType");
 			if (!ReportManager.isSupport(code)) {
 				throw new EchartsException(ResponseCode.ECHARTS_FAIL06.getCode(), ResponseCode.ECHARTS_FAIL06.getMessage());
