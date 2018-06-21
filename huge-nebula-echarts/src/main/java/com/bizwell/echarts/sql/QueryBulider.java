@@ -93,19 +93,10 @@ public class QueryBulider {
 
         String[] dimAndGroupByStrings = getDimColString(jsonObject.getJSONArray("dimension"));
         String dimString = dimAndGroupByStrings[0];
-        String groupbyString = dimAndGroupByStrings[1];
+        String groupByString = dimAndGroupByStrings[1];
 
         String tableName = getTableName(dimension, measure);
-
-//        String measureString1 = getMeasureString(jsonObject.getJSONArray("measure1"));
-//        String measureString2 = getMeasureString(jsonObject.getJSONArray("measure2"));
         String measureString = getMeasureString(measure);
-//        if (measureString1.equals(""))
-//            measureString += measureString2;
-//        else if (measureString2.equals(""))
-//            measureString += measureString1;
-//        else
-//            measureString = measureString + measureString1 + ", " + measureString2;  // 此处必须为", "，后续处理需要
 
         String filterString = getFilterString(jsonObject.getJSONArray("filter"));
 
@@ -121,9 +112,9 @@ public class QueryBulider {
             sqlStringBuffer.append(tableName);
             if (!filterString.equals(""))
                 sqlStringBuffer.append(" WHERE " + filterString);
-            if (!groupbyString.equals("")) {
-                sqlStringBuffer.append(" GROUP BY " + groupbyString);
-                sqlStringBuffer.append(" ORDER BY " + groupbyString);
+            if (!groupByString.equals("")) {
+                sqlStringBuffer.append(" GROUP BY " + groupByString);
+                sqlStringBuffer.append(" ORDER BY " + groupByString);
             }
 
         }
