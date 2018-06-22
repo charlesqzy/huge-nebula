@@ -17,6 +17,7 @@ import com.bizwell.echarts.service.AbstractReportService;
  * @date 2018年6月12日
  *
  */
+// 计量图模板,用于封装数据
 @Service("03Service")
 public class GaugeServiceImpl extends AbstractReportService {
 
@@ -29,6 +30,7 @@ public class GaugeServiceImpl extends AbstractReportService {
 		List<SheetMetaData> measures = JsonUtils.getFields(data, "measure1", "metadataId", userId);
 		String echartType = JsonUtils.getString(data, "echartType");
 		
+		// 只支持一个数值
 		if(measures.size() == 1) {
 			SheetMetaData sheetMetaData = measures.get(0);
 			Object value = new Object();

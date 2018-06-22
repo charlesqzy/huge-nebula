@@ -7,6 +7,7 @@ import java.util.List;
  * @date 2018年5月22日
  *
  */
+// 封装图表结构的类,用于前端echarts中数据展示
 public class ResultData {
 	
 	private List<Object> names;

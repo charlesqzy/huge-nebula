@@ -5,6 +5,7 @@ package com.bizwell.echarts.bean.vo;
  * @date 2018年5月24日
  *
  */
+// 封装ChartConfig,用于给前端展示
 public class ChartConfigVo {
 	
 	private Integer id;

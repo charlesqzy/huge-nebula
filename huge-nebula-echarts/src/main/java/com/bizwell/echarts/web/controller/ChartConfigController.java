@@ -22,6 +22,7 @@ import com.bizwell.echarts.web.BaseController;
  * @date 2018年5月24日
  *
  */
+// 操作配置信息所走controller
 @Controller
 @RequestMapping(value="/echarts/chart")
 public class ChartConfigController extends BaseController {
@@ -29,6 +30,7 @@ public class ChartConfigController extends BaseController {
 	@Autowired
 	private ChartConfigService chartConfigService;
 	
+	// 编辑或者保存图表时,保存其各类配置信息
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonView save(ChartConfigParam param) {
@@ -36,6 +38,7 @@ public class ChartConfigController extends BaseController {
 		JsonView jsonView = new JsonView();
 		try {
 			String echartType = JsonUtils.getString(param.getSqlConfig(), "echartType");
+			// "01"表示用户没有添加维度或者数值,不需要保存
 			if (!"01".equals(echartType)) {
 				chartConfigService.save(param);
 			}
@@ -49,6 +52,7 @@ public class ChartConfigController extends BaseController {
 		return jsonView;
 	}
 	
+	// 点击仪表盘下文件,获取所有图表的位置信息以及相关数据
 	@RequestMapping(value = "/get", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonView get(@RequestParam(value = "panelId", required = true) Integer panelId) {
@@ -56,10 +60,10 @@ public class ChartConfigController extends BaseController {
 		JsonView jsonView = new JsonView();
 		try {
 			ResultLocation resultLocation = new ResultLocation();
+			// 仪表盘id为空时,不查询
 			if (null != panelId) {
 				resultLocation = chartConfigService.selectLocation(panelId);				
 			}
-			
 			jsonView = result(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), resultLocation);
 		} catch (EchartsException e) {
 			jsonView = result(e.getCode(), e.getMessage(), null);
@@ -70,6 +74,7 @@ public class ChartConfigController extends BaseController {
 		return jsonView;
 	}
 	
+	// 通过id,获取单条配置信息
 	@RequestMapping(value = "/getOne", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonView getOne(@RequestParam(value = "id", required = true) Integer id) {
@@ -91,13 +96,13 @@ public class ChartConfigController extends BaseController {
 		return jsonView;
 	}
 	
+	// 更新配置信息
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonView update(ChartConfigParam param) {
 		
 		JsonView jsonView = new JsonView();
 		try {
-			
 			chartConfigService.update(param);
 			jsonView = result(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
 		} catch (EchartsException e) {
@@ -109,6 +114,7 @@ public class ChartConfigController extends BaseController {
 		return jsonView;
 	}
 	
+	// 更新位置信息
 	@RequestMapping(value = "/updateLocation", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonView updateLocation(ChartConfigParam param) {
@@ -126,6 +132,7 @@ public class ChartConfigController extends BaseController {
 		return jsonView;
 	}
 	
+	// 删除图表
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonView delete(@RequestParam(value = "id", required = true) Integer id) {

@@ -8,6 +8,7 @@ import java.util.List;
  * @date 2018年5月30日
  *
  */
+// 用于封装仪表盘展示页中各图表的位置信息与所需数据
 public class ResultLocation {
 	
 	private String status;

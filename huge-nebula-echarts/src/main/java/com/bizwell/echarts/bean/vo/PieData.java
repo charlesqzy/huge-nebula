@@ -5,6 +5,7 @@ package com.bizwell.echarts.bean.vo;
  * @date 2018年6月12日
  *
  */
+// 用于封装饼图数据
 public class PieData extends Object {
 	
 	private String name;

@@ -9,8 +9,10 @@ import com.github.pagehelper.PageHelper;
  * @date 2018年5月14日
  *
  */
+// Mybatis工具类
 public class MybatisHelp {
 
+	// 配置分页插件
 	public static PageHelper getPageHelper() {
 		
 		//分页插件

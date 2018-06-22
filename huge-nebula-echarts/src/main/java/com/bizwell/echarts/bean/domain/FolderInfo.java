@@ -9,6 +9,7 @@ import java.util.List;
  * @date 2018年5月14日
  *
  */
+// 表gb_folder_info对应的实体类,用于仪表盘下面的文件夹
 public class FolderInfo {
 	
     private Integer id;

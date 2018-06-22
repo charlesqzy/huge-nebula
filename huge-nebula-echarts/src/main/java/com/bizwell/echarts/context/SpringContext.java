@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
  * @date 2018年5月18日
  *
  */
+// 通过名称获取对应的bean
 @Component
 public class SpringContext implements ApplicationContextAware {
 	

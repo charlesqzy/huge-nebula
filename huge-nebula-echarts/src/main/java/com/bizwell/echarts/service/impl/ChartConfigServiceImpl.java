@@ -28,12 +28,14 @@ import com.bizwell.echarts.service.ReportService;
  * @date 2018年5月24日
  *
  */
+// 图表配置信息service
 @Service
 public class ChartConfigServiceImpl implements ChartConfigService {
 	
 	@Autowired
 	private ChartConfigMapper chartConfigMapper;
 
+	// 保存图表信息
 	@Transactional
 	@Override
 	public void save(ChartConfigParam param) {
@@ -48,8 +50,8 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 		chartConfig.setUpdateTime(new Date());
 		chartConfigMapper.insertSelective(chartConfig);
 		
-		// 设置位置信息
 		Integer id = chartConfig.getId();
+		// 设置位置信息		
 		String location = getLocation(size, id);
 		ChartConfig chartConfig1 = new ChartConfig();
 		chartConfig1.setId(id);
@@ -57,12 +59,14 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 		chartConfigMapper.updateByPrimaryKeySelective(chartConfig1);
 	}
 
+	// 查询位置信息
 	@Override
 	public ResultLocation selectLocation(Integer panelId) {
 
 		List<Object> resultList = new ArrayList<Object>();
 		String status = null;
 		String shareRemarks = null;
+		// 查询出改仪表盘下面所有配置信息
 		List<ChartConfig> list = chartConfigMapper.selectChartConfig(panelId);
 		for (ChartConfig chartConfig : list) {
 			if (StringUtils.isEmpty(status)) {
@@ -91,6 +95,7 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 		return resultLocation;
 	}
 
+	// 获取单条配置信息
 	@Override
 	public ChartConfigVo getOne(Integer id) {
 
@@ -101,6 +106,7 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 		return chartConfigVo;
 	}
 
+	// 更新配置信息
 	@Transactional
 	@Override
 	public void update(ChartConfigParam param) {
@@ -111,6 +117,7 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 		chartConfigMapper.updateByPrimaryKeySelective(chartConfig);
 	}
 	
+	// 更新位置信息
 	@Transactional
 	@Override
 	public void updateLocation(List<String> locations) {
@@ -125,12 +132,14 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 		}
 	}
 	
+	// 删除配置信息
 	@Override
 	public void delete(Integer id) {
 		
 		chartConfigMapper.deleteByPrimaryKey(id);
 	}
 	
+	// 获取数据
 	private String getData(String json, Integer userId) {
 		
 		String code = JsonUtils.getString(json, "moduleType");

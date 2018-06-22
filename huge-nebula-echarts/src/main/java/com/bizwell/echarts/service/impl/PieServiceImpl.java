@@ -21,6 +21,7 @@ import com.bizwell.echarts.service.AbstractReportService;
  * @date 2018年6月11日
  *
  */
+// 饼图模板,用于封装数据
 @Service("05Service")
 public class PieServiceImpl extends AbstractReportService {
 

@@ -33,6 +33,7 @@ import com.github.pagehelper.PageHelper;
  * @date 2018年4月26日
  *
  */
+// 编辑图表或者创建图表所走controller
 @Controller
 @RequestMapping(value="/echarts/report")
 public class ReportController extends BaseController {
@@ -43,18 +44,22 @@ public class ReportController extends BaseController {
 	@Autowired
 	private ChartConfigService chartConfigService;
 	
+	// 获取图表需要数据
 	@RequestMapping(value = "/getData", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonView getReport(String param, Integer userId) {
 		
 		JsonView jsonView = new JsonView();
 		try {
+			// 通过moduleType获取出code,判断是否是系统支持的图表
 			String code = JsonUtils.getString(param, "moduleType");
 			if (!ReportManager.isSupport(code)) {
 				throw new EchartsException(ResponseCode.ECHARTS_FAIL06.getCode(), ResponseCode.ECHARTS_FAIL06.getMessage());
 			}
 			
+			//通过code获取对应的service
 			ReportService reportService = ReportManager.getService(code);
+			// 查询出图表数据
 			ResultData resultData = reportService.selectEcharts(param, userId);
 			jsonView = result(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), resultData);
 		} catch (EchartsException e) {
@@ -63,10 +68,10 @@ public class ReportController extends BaseController {
 			jsonView = result(ResponseCode.ERROR.getCode(), ResponseCode.ERROR.getMessage(), null);
 			e.printStackTrace();
 		}
-		
 		return jsonView;
 	}
 	
+	// 分页查询出表格的数据
 	@RequestMapping(value = "/page/getData", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonView getPage(@RequestParam(value = "param", required = true) String param,
@@ -79,26 +84,33 @@ public class ReportController extends BaseController {
 		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 		Integer cnt = 0;
 		try {
+			// 判断有没有param,假如没有的话通过id在表中查询出param
 			if (StringUtils.isEmpty(param) && id != null) {
 				ChartConfigVo chartConfigVo = chartConfigService.getOne(id);
 				param = chartConfigVo.getSqlConfig();				
 			}
 			
+			// 开启分页查询
 			PageHelper.startPage(curPage, pageSize);
+			// 通过moduleType获取出code,判断是否是系统支持的图表
 			String code = JsonUtils.getString(param, "moduleType");
 			if (!ReportManager.isSupport(code)) {
 				throw new EchartsException(ResponseCode.ECHARTS_FAIL06.getCode(), ResponseCode.ECHARTS_FAIL06.getMessage());
 			}
 			
 			List<FormHeader> headerList = new ArrayList<FormHeader>();
+			// 获取用户选中的所有维度与数值,用于组装成表头
 			List<SheetMetaData> list2 = getMetaData(param, userId);
 			if (list2.size() >= 1) {
+				// 将数值组装进表头
 				getHeader(headerList, list2);
 			}
 			
+			// 分页查询出表格数据
 			list = formService.selectList(param, userId);
+			// 查询出数据的总条数
 			cnt = formService.selectCnt(param, userId);
-			
+			// 将表头,数据,总条数封装进map中
 			Map<String, Object> map = new HashMap<>();
 			map.put("header", headerList);
 			map.put("list", list);
@@ -114,6 +126,7 @@ public class ReportController extends BaseController {
 		return jsonView;
 	}
 	
+	// 获取用户选中的所有维度与数值,用于组装成表头
 	private List<SheetMetaData> getMetaData(String data, Integer userId) {
 		
 		List<SheetMetaData> list = new ArrayList<SheetMetaData>();
@@ -131,6 +144,7 @@ public class ReportController extends BaseController {
 		return list;
 	}
 	
+	// 将数值组装进表头
 	private void getHeader(List<FormHeader> headerList, List<SheetMetaData> list) {
 		
 		for (SheetMetaData sheetMetaData : list) {

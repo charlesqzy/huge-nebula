@@ -14,6 +14,7 @@ import com.bizwell.echarts.mapper.EchartsMapper;
  * @date 2018年5月23日
  *
  */
+// 抽象类,抽象出图表的执行流程
 public abstract class AbstractReportService implements ReportService {
 	
 	@Autowired
@@ -22,10 +23,11 @@ public abstract class AbstractReportService implements ReportService {
 	@Override
 	public ResultData selectEcharts(String data, Integer userId) {
 
+		// 创建sql
 		String sql = QueryBulider.getSql(data, userId);
-//		String sql = "SELECT SUBSTR(t.A,1,10) AS A, SUM(t.I) AS I, SUM(t.K) AS K FROM xls_571bebf42840428bb73393264dd4d793_sheet_1 t GROUP BY t.A ORDER BY t.A ASC";
-		
+		// 查询出数据
 		List<Map<String,Object>> list = echartsMapper.selectBySql(sql);
+		// 封装各图表所需数据,为抽象方法,需要各个模板类自己实现,封装各自所需的数据格式
 		return this.setupData(list, data, userId);
 	}
 	

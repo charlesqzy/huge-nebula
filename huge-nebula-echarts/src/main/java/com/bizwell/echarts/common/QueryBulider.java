@@ -5,6 +5,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bizwell.echarts.bean.domain.SheetMetaData;
 
+/**
+ * @author zhangjianjun
+ * @date 2018年6月22日
+ *
+ */
+// 构建sql语句
 public class QueryBulider {
 
     public static String getSql(String data, Integer userId) {

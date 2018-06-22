@@ -19,15 +19,16 @@ import com.bizwell.echarts.service.SheetMetaDataService;
  * @date 2018年5月21日
  *
  */
+// 表格源数据service
 @Service
 public class SheetMetaDataServiceImpl implements SheetMetaDataService {
 
 	@Autowired
 	private SheetMetaDataMapper sheetMetaDataMapper;
 	
+	// 加载数据
 	@Override
 	public ConcurrentMap<Integer,ConcurrentMap<Integer,SheetMetaData>> loadProperty() {
-		
 		
 		ConcurrentMap<Integer,ConcurrentMap<Integer,SheetMetaData>> resulthMap = new ConcurrentHashMap<Integer, ConcurrentMap<Integer, SheetMetaData>>();
 		
@@ -54,6 +55,7 @@ public class SheetMetaDataServiceImpl implements SheetMetaDataService {
 		return resulthMap;
 	}
 
+	// 刷新数据
 	@Override
 	public void refresh(Integer userId) {
 

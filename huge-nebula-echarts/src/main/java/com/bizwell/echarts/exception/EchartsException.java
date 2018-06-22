@@ -5,6 +5,7 @@ package com.bizwell.echarts.exception;
  * @date 2018年5月15日
  *
  */
+// 自定义异常类
 public class EchartsException extends RuntimeException {
 
 	private static final long serialVersionUID = -3083072543662560696L;

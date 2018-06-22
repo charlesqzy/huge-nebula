@@ -5,6 +5,7 @@ package com.bizwell.echarts.bean.domain;
  * @date 2018年5月31日
  *
  */
+// 表ds_sheet_metadata对应的实体类
 public class SheetMetaData {
     
 	private Integer id;

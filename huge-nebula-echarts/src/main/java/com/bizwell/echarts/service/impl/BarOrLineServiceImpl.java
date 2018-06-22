@@ -17,6 +17,7 @@ import com.bizwell.echarts.service.AbstractReportService;
  * @date 2018年5月21日
  *
  */
+// 柱形图或者折线图模板,用于封装数据
 @Service("04Service")
 public class BarOrLineServiceImpl extends AbstractReportService {
 
@@ -25,7 +26,7 @@ public class BarOrLineServiceImpl extends AbstractReportService {
 
 		// 获取维度字段名称
 		List<SheetMetaData> dimensions = JsonUtils.getFields(data, "dimension", "metadataId", userId);
-		// 组装维度
+		// 组装维度,假如有多个维度通过 "|"分隔
 		List<Object> names = new ArrayList<Object>();
 		for (Map<String, Object> map : list) {
 			String name = new String();
@@ -38,6 +39,7 @@ public class BarOrLineServiceImpl extends AbstractReportService {
 			names.add(name);
 		}
 		
+		// 通过json中的字段名称获取对应的值
 		String type = JsonUtils.getString(data, "type");
 		String stack = JsonUtils.getString(data, "stack");
 		String echartType = JsonUtils.getString(data, "echartType");
@@ -56,6 +58,7 @@ public class BarOrLineServiceImpl extends AbstractReportService {
 			
 			String fieldName = sheetMetaData.getFieldNameNew();
 			legend.add(fieldName);
+			// 封装series
 			Series series = new Series();
 			series.setName(fieldName);
 			series.setStack(stack);
@@ -75,6 +78,7 @@ public class BarOrLineServiceImpl extends AbstractReportService {
 			seriesList.add(series);
 		}
 		
+		// 封装结果数据
 		ResultData resultData = new ResultData();
 		resultData.setNames(names);
 		resultData.setSeries(seriesList);

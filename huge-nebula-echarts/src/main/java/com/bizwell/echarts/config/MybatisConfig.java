@@ -28,6 +28,7 @@ import com.github.pagehelper.PageHelper;
  * @date 2018年5月14日
  *
  */
+// 配置Mybatis
 @Configuration
 @EnableConfigurationProperties(DruidProperties.class)
 @MapperScan(basePackages = Constants.MAPPER_PATH, sqlSessionFactoryRef = "sqlSessionFactory")

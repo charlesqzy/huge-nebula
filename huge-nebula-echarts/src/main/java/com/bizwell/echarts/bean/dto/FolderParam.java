@@ -5,6 +5,7 @@ package com.bizwell.echarts.bean.dto;
  * @date 2018年5月16日
  *
  */
+// 封装FolderInfo中所需参数
 public class FolderParam {
 	
 	private Integer id;

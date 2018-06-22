@@ -21,6 +21,7 @@ import com.github.pagehelper.PageHelper;
  * @date 2018年6月21日
  *
  */
+// 表格模板,仅在仪表盘加载数据时调用一次,用于查询第一页数据
 @Service("01Service")
 public class TableServiceImpl implements ReportService {
 	
@@ -33,16 +34,21 @@ public class TableServiceImpl implements ReportService {
 		ResultData resultData = new ResultData();
 		String echartType = JsonUtils.getString(data, "echartType");
 		
+		// 开启分页查询
 		PageHelper.startPage(1, 30);
 		List<FormHeader> headerList = new ArrayList<FormHeader>();
+		// 获取用户选中的所有维度与数值,用于组装成表头
 		List<SheetMetaData> list2 = getMetaData(data, userId);
 		if (list2.size() >= 1) {
+			// 将数值组装进表头
 			getHeader(headerList, list2);
 		}
 		
+		// 分页查询出表格数据
 		List<Map<String,Object>> list = formService.selectList(data, userId);
+		// 查询出数据的总条数
 		Integer cnt = formService.selectCnt(data, userId);
-		
+		// 将表头,数据,总条数封装进map中
 		Map<String, Object> map = new HashMap<>();
 		map.put("header", headerList);
 		map.put("list", list);
@@ -53,7 +59,7 @@ public class TableServiceImpl implements ReportService {
 		return resultData;
 	}
 	
-	
+	// 获取用户选中的所有维度与数值,用于组装成表头
 	private List<SheetMetaData> getMetaData(String data, Integer userId) {
 		
 		List<SheetMetaData> list = new ArrayList<SheetMetaData>();
@@ -71,6 +77,7 @@ public class TableServiceImpl implements ReportService {
 		return list;
 	}
 	
+	// 将数值组装进表头
 	private void getHeader(List<FormHeader> headerList, List<SheetMetaData> list) {
 		
 		for (SheetMetaData sheetMetaData : list) {

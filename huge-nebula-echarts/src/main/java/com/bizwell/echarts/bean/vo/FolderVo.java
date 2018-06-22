@@ -10,6 +10,7 @@ import com.bizwell.echarts.bean.domain.ChildrenFolder;
  * @date 2018年5月15日
  *
  */
+// 封装FolderInfo,用于给前端展示
 public class FolderVo {
 	
 	private Integer id;

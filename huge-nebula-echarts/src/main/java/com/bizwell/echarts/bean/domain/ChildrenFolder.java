@@ -5,6 +5,7 @@ package com.bizwell.echarts.bean.domain;
  * @date 2018年5月14日
  *
  */
+// 用于仪表盘下面的文件夹里面的文件,属于二级目录
 public class ChildrenFolder {
 	
 	private Integer childId;

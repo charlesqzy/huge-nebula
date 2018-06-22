@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @date 2018年4月26日
  *
  */
+// Druid连接池配置所需参数
 @ConfigurationProperties(prefix = "druid.report")
 public class DruidProperties {
 	

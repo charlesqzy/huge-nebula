@@ -15,12 +15,14 @@ import com.bizwell.echarts.service.FormService;
  * @date 2018年6月13日
  *
  */
+// 表格service
 @Service
 public class FormServiceImpl implements FormService {
 	
 	@Autowired
 	private EchartsMapper echartsMapper;
 
+	// 查询出数据
 	@Override
 	public List<Map<String, Object>> selectList(String data, Integer userId) {
 		
@@ -29,6 +31,7 @@ public class FormServiceImpl implements FormService {
 		return list;
 	}
 
+	// 查询总条数
 	@Override
 	public Integer selectCnt(String data, Integer userId) {
 		
@@ -37,6 +40,7 @@ public class FormServiceImpl implements FormService {
 		return cnt;
 	}
 	
+	// 解析sql
 	private String parseSql(String sql) {
 		
 //		String sql = "SELECT DATE_FORMAT(C,'%Y-%m-%d') AS C, B, D, SUM(D) AS D, SUM(A) AS A "

@@ -3,9 +3,9 @@ package com.bizwell.echarts.exception;
 /**
  * @author zhangjianjun
  * @date 2018年2月2日
- * 错误信息
  *
  */
+// 错误信息
 public enum ResponseCode {
 	
 	SUCCESS(1000, "成功"),
@@ -22,6 +22,7 @@ public enum ResponseCode {
 	
 	// 编码
     private Integer code;
+    
     // 描述
     private String message;
     

@@ -20,12 +20,14 @@ import com.bizwell.echarts.service.FolderService;
  * @date 2018年5月15日
  *
  */
+// 文件或文件夹service
 @Service
 public class FolderServiceImpl implements FolderService {
 
 	@Autowired
 	private FolderInfoMapper folderInfoMapper;
 	
+	// 查询所有文件夹及其子文件
 	@Override
 	public List<FolderVo> selectFolder(Integer userId) {
 
@@ -39,6 +41,7 @@ public class FolderServiceImpl implements FolderService {
 		return resultList;
 	}
 
+	// 删除文件
 	@Transactional
 	@Override
 	public void deleteFolder(Integer id) {
@@ -50,6 +53,7 @@ public class FolderServiceImpl implements FolderService {
 		folderInfoMapper.updateByPrimaryKeySelective(folderInfo);
 	}
 
+	// 更新文件
 	@Transactional
 	@Override
 	public void updateFolder(Integer id, Integer childId) {
@@ -61,6 +65,7 @@ public class FolderServiceImpl implements FolderService {
 		folderInfoMapper.updateByPrimaryKeySelective(folderInfo);
 	}
 
+	// 保存文件
 	@Transactional
 	@Override
 	public FolderVo saveFolder(Integer userId, String folderName, Integer parentId, Integer level) {
@@ -78,6 +83,7 @@ public class FolderServiceImpl implements FolderService {
 		return folderVo;
 	}
 
+	// 通过参数查询文件
 	@Override
 	public List<FolderInfo> selectByParam(FolderParam folderParam) {
 
@@ -85,6 +91,7 @@ public class FolderServiceImpl implements FolderService {
 		return list;
 	}
 
+	// 更新分享状态
 	@Transactional
 	@Override
 	public void updateStatus(Integer id, String status, String shareRemarks) {
@@ -96,6 +103,7 @@ public class FolderServiceImpl implements FolderService {
 		folderInfoMapper.updateByPrimaryKeySelective(folderInfo);
 	}
 
+	// 更新ShowMore,用于前端高亮显示
 	@Override
 	public void updateShowMore(Integer id, Boolean showMore) {
 

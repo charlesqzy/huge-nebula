@@ -5,6 +5,7 @@ package com.bizwell.echarts.common;
  * @date 2018年5月14日
  *
  */
+// 用于配置系统中常量
 public interface Constants {
 	
 	/** mapper路径 */

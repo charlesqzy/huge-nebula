@@ -14,6 +14,7 @@ import com.bizwell.echarts.bean.domain.SheetMetaData;
  * @date 2018年4月26日
  *
  */
+// json工具类
 public class JsonUtils {
 	
 	public static List<SheetMetaData> getFields(String data, String field, String metadataId, Integer userId) {
@@ -69,14 +70,12 @@ public class JsonUtils {
 		System.out.println(JSONObject.toJSON(jsonObject));
 		Object json = JSONObject.toJSON(jsonObject);
 		
-		
 			{"x":0,"y":0,"w":4,"h":2},   0
 			{"x":4,"y":0,"w":4,"h":2},   1
 			{"x":0,"y":2,"w":4,"h":2},   2
 			{"x":4,"y":2,"w":4,"h":2},   3
 			{"x":0,"y":4,"w":4,"h":2},   4
 			{"x":4,"y":4,"w":4,"h":2},   5
-		
 		
 		Integer[] arr = {0, 1, 2, 3, 4, 5, 6, 7};
 		for (int i = 0; i < arr.length; i++) {
@@ -104,9 +103,7 @@ public class JsonUtils {
 			sb.append(2);
 			sb.append("}");
 			System.out.println(sb);
-			
 		}
-		
 	}*/
 	
 }

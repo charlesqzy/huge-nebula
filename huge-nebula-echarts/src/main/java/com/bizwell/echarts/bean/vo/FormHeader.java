@@ -5,6 +5,7 @@ package com.bizwell.echarts.bean.vo;
  * @date 2018年6月14日
  *
  */
+// 表格的头文件,用于封装表头信息
 public class FormHeader {
 	
 	private String prop;

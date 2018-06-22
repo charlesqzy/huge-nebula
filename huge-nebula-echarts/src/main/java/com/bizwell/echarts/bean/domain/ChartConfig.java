@@ -7,6 +7,7 @@ import java.util.Date;
  * @date 2018年5月24日
  *
  */
+// 表ws_chart_config_info对应的实体类
 public class ChartConfig {
 	
     private Integer id;

@@ -20,6 +20,7 @@ import com.bizwell.echarts.service.AbstractReportService;
  * @date 2018年6月12日
  *
  */
+// 指标卡模板,用于封装数据
 @Service("02Service")
 public class CardServiceImpl extends AbstractReportService {
 

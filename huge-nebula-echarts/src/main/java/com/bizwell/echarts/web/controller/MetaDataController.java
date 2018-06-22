@@ -17,6 +17,7 @@ import com.bizwell.echarts.web.BaseController;
  * @date 2018年5月31日
  *
  */
+// 刷新缓存再map中的数据,用户添加表格或者追加数据时调用
 @Controller
 @RequestMapping(value="/echarts/metadata")
 public class MetaDataController extends BaseController {
@@ -24,6 +25,7 @@ public class MetaDataController extends BaseController {
 	@Autowired
 	private SheetMetaDataService sheetMetaDataService;
 	
+	// 刷新数据
 	@RequestMapping(value = "/refresh", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonView refresh(Integer userId) {

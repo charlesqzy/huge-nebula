@@ -7,6 +7,7 @@ import java.util.List;
  * @date 2018年5月22日
  *
  */
+// 图表中series中所需的数据
 public class Series {
 	
 	private Object name;

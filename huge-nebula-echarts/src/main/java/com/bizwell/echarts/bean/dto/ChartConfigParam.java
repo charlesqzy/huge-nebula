@@ -7,6 +7,7 @@ import java.util.List;
  * @date 2018年5月24日
  *
  */
+// 封装ChartConfig中所需参数
 public class ChartConfigParam {
 	
 	private Integer id;
