@@ -7,6 +7,7 @@ import java.io.Serializable;
  * @date 2018年4月26日
  *
  */
+// 生成的ticket实体类
 public class Ticket implements Serializable {
 	
 	private static final long serialVersionUID = -5554497147788660390L;

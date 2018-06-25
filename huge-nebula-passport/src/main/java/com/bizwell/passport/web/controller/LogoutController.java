@@ -23,8 +23,9 @@ import com.bizwell.passport.web.BaseController;
  * @date 2018年4月26日
  *
  */
+// 登出系统所走controller
 @Controller
-@RequestMapping(value="/logout")
+@RequestMapping(value="/passport/logout")
 public class LogoutController extends BaseController {
 	
 	@Autowired

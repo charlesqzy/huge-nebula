@@ -9,6 +9,7 @@ import com.github.pagehelper.PageHelper;
  * @date 2018年4月26日
  *
  */
+// Mybatis工具类
 public class MybatisHelp {
 
 	public static PageHelper getPageHelper() {

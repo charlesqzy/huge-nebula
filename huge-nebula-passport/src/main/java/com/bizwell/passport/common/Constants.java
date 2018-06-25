@@ -5,6 +5,7 @@ package com.bizwell.passport.common;
  * @date 2018年4月26日
  *
  */
+// 配置常量信息
 public interface Constants {
 	
 	/** AES加密算法KEY */
@@ -16,8 +17,12 @@ public interface Constants {
 	/** ticket前缀 */
 	public final static String STORED_PREFIX = "passport_ticket:";
 	
-	/** ticket失效时间 */
-	public final static Long TICKET_EXPIRED_TIME = (long)1800;
+	/** ticket失效时间(单位秒) */
+	// 半小时,正常时可用
+//	public final static Long TICKET_EXPIRED_TIME = (long)1800;
+	// 调长时间,方便黄越测试用(12小时)
+	public final static Long TICKET_EXPIRED_TIME = (long)43200;
+	// 1分钟
 //	public final static Long TICKET_EXPIRED_TIME = (long)60;
 	
 	/** mapper路径 */

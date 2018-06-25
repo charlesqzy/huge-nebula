@@ -23,6 +23,7 @@ public class RedisServiceImpl implements RedisService {
 	@Autowired
 	private RedisTemplate<String, Object> redisTemplate;
 	
+	// 获取数据
 	@Override
 	public Object getValue(String key) {
 		
@@ -30,18 +31,21 @@ public class RedisServiceImpl implements RedisService {
 		return value;
 	}
 
+	// 保存数据
 	@Override
 	public void setValue(String key, Object value) {
 		
 		valueOperations.set(key, value);
 	}
 
+	// 保存数据,设置超时时间
 	@Override
 	public void setValue(String key, Object value, Long expiredTime) {
 
 		valueOperations.set(key, value, expiredTime, TimeUnit.SECONDS);
 	}
 
+	// 删除数据
 	@Override
 	public void removeKey(String key) {
 		

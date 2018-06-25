@@ -6,6 +6,7 @@ package com.bizwell.passport.exception;
  * 错误信息
  *
  */
+// 异常信息
 public enum ResponseCode {
 	
 	SUCCESS(1000, "成功"),

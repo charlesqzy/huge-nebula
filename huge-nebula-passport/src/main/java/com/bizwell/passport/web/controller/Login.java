@@ -28,8 +28,9 @@ import com.bizwell.passport.web.BaseController;
  * @date 2018年4月26日
  *
  */
+// 登录系统所走controller
 @Controller
-@RequestMapping(value="/login")
+@RequestMapping(value="/passport/login")
 public class Login extends BaseController {
 	
 	@Autowired
@@ -82,6 +83,7 @@ public class Login extends BaseController {
 			if (StringUtils.isEmpty(ticketCode)) {
 				throw new PassportException(ResponseCode.PASSPORT_FAIL10.getCode(), ResponseCode.PASSPORT_FAIL10.getMessage());
 			} else {
+				// 校验ticket
 				Ticket ticket = ticketService.validateTicket(ticketCode);
 				if (ticket != null) {
 					jsonView = result(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
@@ -106,6 +108,7 @@ public class Login extends BaseController {
 		ticket.setUserId(userVo.getId());
 		ticket.setUserName(userVo.getUserName());
 		ticket.setGenteateTime(System.currentTimeMillis());
+		// 存储ticket
 		String storeTicke = ticketService.storeTicke(ticket);
 		return storeTicke;
 	}

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
  * @date 2018年4月26日
  *
  */
+// 处理跨域请求
 @Component
 public class HttpHeaderFilter implements Filter {
 	

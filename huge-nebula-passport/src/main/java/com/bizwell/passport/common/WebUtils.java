@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
  * @date 2018年4月26日
  *
  */
+// web工具类
 public class WebUtils {
 
 	private static String GET_METHOD = "GET";
@@ -22,6 +23,7 @@ public class WebUtils {
 
 	private static String HTTP_REQUEST_TYPE_AJAX = "XMLHttpRequest";
 
+	// 判断请求是否是ajax请求
 	public static boolean isAjaxRequest(HttpServletRequest request) {
 		
 		String requestType = request.getHeader(HTTP_HEADER_AJAX);
@@ -31,6 +33,7 @@ public class WebUtils {
 		return false;
 	}
 
+	// 判断是否是get请求
 	public static boolean isGetMethod(HttpServletRequest request) {
 		
 		String method = request.getMethod();
@@ -40,6 +43,7 @@ public class WebUtils {
 		return false;
 	}
 
+	// 判断是否是post请求
 	public static boolean isPostMethod(HttpServletRequest request) {
 		
 		String method = request.getMethod();
@@ -49,6 +53,7 @@ public class WebUtils {
 		return false;
 	}
 
+	// 解码url
 	public static String decodeUrl(String url, String charset) {
 		
 		String decodeURL = url;
