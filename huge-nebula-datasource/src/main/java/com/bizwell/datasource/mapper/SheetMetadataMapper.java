@@ -19,4 +19,10 @@ public interface SheetMetadataMapper {
     List<SheetMetadata> select(SheetMetadata entity);
     
     List<Map> getXlsDataByFilter(@Param("tableName") String tableName,@Param("fieldColumn") String fieldColumn);
+
+	List<Map> getXlsDataByDateFilter(@Param("tableName") String tableName,@Param("fieldColumn") String fieldColumn,@Param("option") String option);
+
+	List<Map> getXlsDataByNumberFilter(@Param("tableName") String tableName,@Param("fieldColumn") String fieldColumn);
+
+	List<Map> getXlsDataByConvergeFilter(@Param("tableName") String tableName,@Param("fieldColumn") String fieldColumn, @Param("option")String option);
 }

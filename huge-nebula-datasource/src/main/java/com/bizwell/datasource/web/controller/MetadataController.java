@@ -85,4 +85,63 @@ public class MetadataController {
     	return new ResponseJson(200l,"success",result);
     }
 
+    
+    
+    /**
+     * 根据fieldColumn获取xls表中的数据
+     * @param tableName
+     * @param fieldColumn
+     * @return
+     */
+    @RequestMapping(value = "/datasource/getXlsDataByDateFilter")
+    @ResponseBody
+    public ResponseJson getXlsDataByDateFilter(
+    		@RequestParam(required=true) String tableName,
+    		@RequestParam(required=true) String fieldColumn,
+    		@RequestParam(required=true) String option) {
+    	
+    	logger.info("getXlsDataByDateFilter tableName=" + tableName + "  fieldColumn="+fieldColumn + "  option="+option);
+    	
+    	List<Map> data = sheetMetadataService.getXlsDataByDateFilter(tableName, fieldColumn,option);
+    	
+    	Map result = new HashMap<>();
+    	result.put("data", data);
+    	return new ResponseJson(200l,"success",result);
+    }
+    
+    
+    @RequestMapping(value = "/datasource/getXlsDataByNumberFilter")
+    @ResponseBody
+    public ResponseJson getXlsDataByNumberFilter(
+    		@RequestParam(required=true) String tableName,
+    		@RequestParam(required=true) String fieldColumn) {
+    	
+    	logger.info("getXlsDataByNumberFilter tableName=" + tableName + "  fieldColumn="+fieldColumn);
+    	
+    	List<Map> data = sheetMetadataService.getXlsDataByNumberFilter(tableName, fieldColumn);
+    	
+    	Map result = new HashMap<>();
+    	result.put("data", data);
+    	return new ResponseJson(200l,"success",result);
+    }
+    
+    
+    
+    
+    @RequestMapping(value = "/datasource/getXlsDataByConvergeFilter")
+    @ResponseBody
+    public ResponseJson getXlsDataByConvergeFilter(
+    		@RequestParam(required=true) String tableName,
+    		@RequestParam(required=true) String fieldColumn,
+    		@RequestParam(required=true) String option) {
+    	
+    	logger.info("getXlsDataByConvergeFilter tableName=" + tableName + "  fieldColumn="+fieldColumn + "  option="+option);
+    	
+    	List<Map> data = sheetMetadataService.getXlsDataByConvergeFilter(tableName, fieldColumn,option);
+    	
+    	Map result = new HashMap<>();
+    	result.put("data", data);
+    	return new ResponseJson(200l,"success",result);
+    }
+    
 }

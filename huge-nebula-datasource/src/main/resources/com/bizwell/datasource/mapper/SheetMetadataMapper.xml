@@ -77,5 +77,52 @@
 		resultType="java.util.Map">
 		SELECT DISTINCT ${fieldColumn} AS content FROM ${tableName}
 	</select>
+
+	<select id="getXlsDataByDateFilter" parameterType="java.lang.String"
+		resultType="java.util.Map">
+		<if test='option == "byDay"'>
+    		SELECT DISTINCT DATE_FORMAT(${fieldColumn},'%Y-%m-%d') AS DAY FROM ${tableName} ORDER BY ${fieldColumn} DESC
+		</if>
+		
+		<if test='option == "byMonth"'>
+    		SELECT DISTINCT DATE_FORMAT(${fieldColumn},'%Y-%m') AS DAY FROM ${tableName} ORDER BY ${fieldColumn} DESC
+		</if>
+		
+		<if test='option == "byQuarter"'>
+		SELECT CONCAT(DATE_FORMAT(${fieldColumn},'%Y'),FLOOR((DATE_FORMAT(${fieldColumn}, '%m')+2)/3)) quarters FROM ${tableName} tv 
+		GROUP BY quarters ORDER BY quarters DESC 
+		</if>
+		
+		<if test='option == "byYear"'>
+    		SELECT DISTINCT DATE_FORMAT(${fieldColumn},'%Y') AS DAY FROM ${tableName} ORDER BY ${fieldColumn} DESC
+		</if>
+	</select>
+	
+	<select id="getXlsDataByNumberFilter" parameterType="java.lang.String"
+		resultType="java.util.Map">
+		SELECT MAX(${fieldColumn}) AS MAX,MIN(${fieldColumn}) AS MIN FROM ${tableName}
+	</select>
+	
+	
+	<select id="getXlsDataByConvergeFilter" parameterType="java.lang.String" resultType="java.util.Map">
+		<if test='option == "sum"'>
+    		SELECT 0 AS MIN,SUM(${fieldColumn}) AS MAX FROM ${tableName} 
+		</if>
+		<if test='option == "count"'>
+    		SELECT 0 AS MIN,count(${fieldColumn}) AS MAX FROM ${tableName} 
+		</if>
+		<if test='option == "countDistinct"'>
+    		SELECT 0 AS MIN,count(distinct ${fieldColumn}) AS MAX FROM ${tableName} 
+		</if>
+		<if test='option == "avg"'>
+    		SELECT 0 AS MIN,avg(${fieldColumn}) AS MAX FROM ${tableName} 
+		</if>
+		<if test='option == "max"'>
+    		SELECT max(${fieldColumn}) AS MAX FROM ${tableName} 
+		</if>
+		<if test='option == "min"'>
+    		SELECT min(${fieldColumn}) AS MAX FROM ${tableName} 
+		</if>
+	</select>
 	
 </mapper>

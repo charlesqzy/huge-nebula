@@ -29,4 +29,19 @@ public class SheetMetadataService {
 	public List<Map> getXlsDataByFilter(String tableName,String fieldColumn){
 		return sheetMetadataMapper.getXlsDataByFilter(tableName, fieldColumn);
 	}
+
+
+	public List<Map> getXlsDataByDateFilter(String tableName, String fieldColumn, String option) {
+		return sheetMetadataMapper.getXlsDataByDateFilter(tableName, fieldColumn,option);
+	}
+
+
+	public List<Map> getXlsDataByNumberFilter(String tableName, String fieldColumn) {
+		return sheetMetadataMapper.getXlsDataByNumberFilter(tableName, fieldColumn);
+	}
+
+
+	public List<Map> getXlsDataByConvergeFilter(String tableName, String fieldColumn, String option) {
+		return sheetMetadataMapper.getXlsDataByConvergeFilter(tableName,fieldColumn,option);
+	}
 }
