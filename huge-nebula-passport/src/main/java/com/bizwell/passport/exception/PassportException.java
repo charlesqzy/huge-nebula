@@ -5,6 +5,7 @@ package com.bizwell.passport.exception;
  * @date 2018年2月2日
  *
  */
+// 自定义异常
 public class PassportException extends RuntimeException {
 
 	private static final long serialVersionUID = -5929924385474786461L;

@@ -21,14 +21,15 @@ import com.bizwell.passport.web.BaseController;
  * @date 2018年4月26日
  *
  */
+// 注册用户所走controller
 @Controller
-@RequestMapping(value="/register")
+@RequestMapping(value="/passport/register")
 public class RegisterController extends BaseController {
 	
 	@Autowired
 	private UserService userService;
 	
-	// 校验登录名是否重复
+	// 校验注册用户名是否重复
 	@RequestMapping(value = "/check/userName", method = RequestMethod.POST)
 	@ResponseBody
 	public String checkLoginName(@RequestParam(value = "userName", required = true) String userName) {
@@ -54,7 +55,7 @@ public class RegisterController extends BaseController {
 		return JsonUtils.toJson(jsonView);
 	}
 	
-	// 校验登录名是否重复
+	// 注册新用户
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
 	@ResponseBody
 	public String register(@RequestParam(value = "userName", required = true) String userName,
@@ -92,6 +93,4 @@ public class RegisterController extends BaseController {
 		return JsonUtils.toJson(jsonView);
 	}
 	
-	
-
 }

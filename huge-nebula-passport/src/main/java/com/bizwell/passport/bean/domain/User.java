@@ -7,6 +7,7 @@ import java.util.Date;
  * @date 2018年4月26日
  *
  */
+// 用户信息实体类
 public class User {
 	
     private Integer id;

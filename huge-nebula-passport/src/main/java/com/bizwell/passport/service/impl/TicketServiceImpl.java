@@ -30,6 +30,7 @@ public class TicketServiceImpl implements TicketService {
 		return Constants.STORED_PREFIX + ticketCode;
 	}
 	
+	// 存储ticket
 	@Override
 	public String storeTicke(Ticket ticket) {
 		
@@ -39,6 +40,7 @@ public class TicketServiceImpl implements TicketService {
 		return ticketCode;
 	}
 	
+	// 校验ticket
 	@Override
 	public Ticket validateTicket(String ticketCode) {
 
@@ -55,6 +57,7 @@ public class TicketServiceImpl implements TicketService {
 		}
 	}
 	
+	// 删除ticket
 	@Override
 	public void removeTicket(String ticketCode) {
 
@@ -66,6 +69,7 @@ public class TicketServiceImpl implements TicketService {
 		}
 	}
 	
+	// 生成ticket
 	private String generate(Ticket ticket) {
 		
 		try {

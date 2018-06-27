@@ -7,6 +7,7 @@ import com.google.gson.Gson;
  * @date 2018年4月26日
  *
  */
+// json工具类
 public class JsonUtils {
 
 	public static String toJson(Object obj) {

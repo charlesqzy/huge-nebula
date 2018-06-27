@@ -25,14 +25,17 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserMapper userMapper;
 
+	// 登录
 	@Override
 	public UserVo login(String userName, String password) throws Exception {
 
+		// 通过用户名查询用户,判断用户是否存在
 		User user = userMapper.selectByUserName(userName);
 		if (user == null) {
 			throw new PassportException(ResponseCode.PASSPORT_FAIL03.getCode(), ResponseCode.PASSPORT_FAIL03.getMessage());
 		}
 		
+		// 解密用户密码
 		String pwd = AESCodec.decrypt(user.getPassword(), Constants.AES_KEY);
 		if (!password.equals(pwd)) {
 			throw new PassportException(ResponseCode.PASSPORT_FAIL04.getCode(), ResponseCode.PASSPORT_FAIL04.getMessage());
@@ -43,6 +46,7 @@ public class UserServiceImpl implements UserService {
 		return userVo;
 	}
 
+	// 通过用户名查询用户
 	@Override
 	public User getUser(String userName) {
 		
@@ -50,10 +54,12 @@ public class UserServiceImpl implements UserService {
 		return user;
 	}
 
+	// 插入用户
 	@Transactional
 	@Override
 	public void insertSelective(String userName, String password, String companyName, String telephone) throws Exception {
 
+		// 将用户密码加密
 		String pwd = AESCodec.encrypt(password, Constants.AES_KEY);
 		User user = new User();
 		user.setUserName(userName);
@@ -61,7 +67,6 @@ public class UserServiceImpl implements UserService {
 		user.setCompanyName(companyName);
 		user.setTelephone(telephone);
 		userMapper.insertSelective(user);
-		
 	}
 	
 }

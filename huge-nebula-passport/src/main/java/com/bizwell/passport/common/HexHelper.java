@@ -7,6 +7,7 @@ import org.springframework.util.Assert;
  * @date 2018年4月26日
  *
  */
+// 十六进制工具类
 public class HexHelper {
 	
 	private static final char UPPER_HEXS[] = { '0', '1', '2', '3', '4', '5',

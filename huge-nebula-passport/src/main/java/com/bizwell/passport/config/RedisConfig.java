@@ -19,11 +19,13 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  *
  */
 @Configuration
+// redis配置类
 public class RedisConfig {
 	
 	@Autowired
 	private RedisConnectionFactory redisConnectionFactory;
 	
+	// redis模板
 	@Bean
 	public RedisTemplate<String, Object> redisTemplate() {
 		

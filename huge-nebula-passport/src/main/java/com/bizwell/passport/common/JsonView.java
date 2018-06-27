@@ -7,6 +7,7 @@ import java.io.Serializable;
  * @date 2018年4月26日
  *
  */
+// 封装json数据,用于前端展示
 public class JsonView implements Serializable {
 
 	private static final long serialVersionUID = 5871280836186582960L;

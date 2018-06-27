@@ -7,6 +7,7 @@ import java.util.Date;
  * @date 2018年4月26日
  *
  */
+// 封装用户信息,用于前端展示
 public class UserVo {
 	
 	private Integer id;

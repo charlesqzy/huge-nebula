@@ -12,6 +12,7 @@ import javax.crypto.spec.SecretKeySpec;
  * @date 2018年4月26日
  *
  */
+// AES加解密工具
 public class AESCodec {
 	
     //密钥算法

@@ -11,6 +11,7 @@ import com.alibaba.druid.pool.DruidDataSource;
  * @date 2018年4月26日
  *
  */
+// 生成连接池
 public class DataSourceHelp {
 	
 	//获取连接池

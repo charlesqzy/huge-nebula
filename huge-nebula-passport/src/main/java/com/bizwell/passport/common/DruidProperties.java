@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @date 2018年4月26日
  *
  */
+// druid字段实体类
 @ConfigurationProperties(prefix = "druid.report")
 public class DruidProperties {
 	
