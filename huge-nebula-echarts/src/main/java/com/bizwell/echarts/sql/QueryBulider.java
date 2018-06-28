@@ -6,7 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 
 public class QueryBulider {
 
-    static String jsonString2 = "{ \"echartType\": \"00\", \"moduleType\": \"01\", \"dimension\": [ { \"metadataId\": 162, \"name\": \"billdate\", \"aggregate\": \"计数\", \"dateLevel\": \"按日\", \"fieldType\": 2, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"C\" } ], \"measure1\": [ { \"metadataId\": 163, \"name\": \"餐段数\", \"aggregate\": \"计数\", \"dateLevel\": \"按日\", \"fieldType\": 1, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"D\" }, { \"metadataId\": 163, \"name\": \"餐段数\", \"aggregate\": \"计数\", \"dateLevel\": \"按日\", \"fieldType\": 1, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"D\" } ], \"measure2\": [], \"filter\": [], \"type\": \"\", \"stack\": \"\", \"inChartFilter\": [] }";
+    static String jsonString2 = "{ \"echartType\": \"00\", \"moduleType\": \"01\", \"dimension\": [ { \"metadataId\": 162, \"name\": \"billdate\", \"aggregate\": \"计数\", \"dateLevel\": \"按日\", \"fieldType\": 3, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"C\" } ], \"measure1\": [ { \"metadataId\": 161, \"name\": \"hotelname\", \"aggregate\": \"计数\", \"dateLevel\": \"按日\", \"fieldType\": 2, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"B\" }, { \"metadataId\": 161, \"name\": \"hotelname\", \"aggregate\": \"去重计数\", \"dateLevel\": \"按日\", \"fieldType\": 2, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"B\" }, { \"metadataId\": 163, \"name\": \"餐段数\", \"aggregate\": \"求和\", \"dateLevel\": \"按日\", \"fieldType\": 1, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"D\" } ], \"measure2\": [], \"filter\": [], \"type\": \"\", \"stack\": \"\", \"inChartFilter\": [ { \"name\": \"hotelname\", \"metadataId\": 161, \"level\": 1, \"fieldType\": 1, \"aggregate\": \"计数\", \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"B\", \"condition\": { \"type\": \"全部\", \"value\": [] } }, { \"name\": \"餐段数\", \"metadataId\": 163, \"level\": 1, \"fieldType\": 1, \"aggregate\": \"求和\", \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"D\", \"condition\": { \"type\": \"等于\", \"value\": [ 11 ] } } ] }";
 
 
     public static void main(String[] args) {
@@ -373,39 +373,41 @@ public class QueryBulider {
      * @return
      */
     private static String getMeasureString(JSONArray measure) {
-        String result = "";
-        if (measure == null || measure.isEmpty()) return result;
+        StringBuffer result = new StringBuffer();
+        if (measure == null || measure.isEmpty()) return result.toString();
         for (int i = 0; i < measure.size(); i++) {
             JSONObject dataObj = measure.getJSONObject(i);
             String fieldColumn = dataObj.getString("fieldColumn");
             String aggregate = dataObj.getString("aggregate");
             switch (aggregate) {
                 case "求和":
-                    result = result + "SUM(" + fieldColumn + ") AS " + fieldColumn + "_SUM" + i;
+                    result.append("SUM(" + fieldColumn + ") AS " + fieldColumn + "_SUM" + i);
                     break;
                 case "计数":
-                    result = result + "COUNT(" + fieldColumn + ") AS " + fieldColumn + "_COUNT" + i;
+                    result.append("COUNT(" + fieldColumn + ") AS " + fieldColumn + "_COUNT" + i);
                     break;
                 case "去重计数":
-                    result = result + "COUNT(DISTINCT " + fieldColumn + ") AS " + fieldColumn + "_DISCOUNT" + i;
+                    result.append("COUNT(DISTINCT " + fieldColumn + ") AS " + fieldColumn + "_DISCOUNT" + i);
                     break;
                 case "平均值":
-                    result = result + "AVG(" + fieldColumn + ") AS " + fieldColumn + "_AVG" + i;
+                    result.append("AVG(" + fieldColumn + ") AS " + fieldColumn + "_AVG" + i);
                     break;
                 case "最大值":
-                    result = result + "MAX(" + fieldColumn + ") AS " + fieldColumn + "_MAX" + i;
+                    result.append("MAX(" + fieldColumn + ") AS " + fieldColumn + "_MAX" + i);
                     break;
                 case "最小值":
-                    result = result + "MIN(" + fieldColumn + ") AS " + fieldColumn + "_MIN" + i;
+                    result.append("MIN(" + fieldColumn + ") AS " + fieldColumn + "_MIN" + i);
                     break;
                 default:
                     break;
             }
-            result = result + ", ";   //注意此处必须为", "，后续处理需要
+            result.append("_M");   //_M表示该字段为度量，后续处理需要
+            result.append(", ");   //注意此处必须为", "，后续处理需要
         }
-        if (result.endsWith(", "))
-            result = result.substring(0, result.length() - 2);
-        return result;
+        String resultString = result.toString();
+        if (resultString.endsWith(", "))
+            resultString = resultString.substring(0, resultString.length() - 2);
+        return resultString;
     }
 
     /**
@@ -449,9 +451,9 @@ public class QueryBulider {
                             break;
                     }
                     groupbyString = groupbyString + tmpDimString + ",";
-                    dimColumns = dimColumns + tmpDimString + " AS " + fieldColumn + "_" + i + ", "; //注意此处必须为", "，后续处理需要
+                    dimColumns = dimColumns + tmpDimString + " AS " + fieldColumn + "_" + i + "_D, "; //注意此处必须为", "，_D表示该字段是维度，后续处理需要
                 } else {
-                    dimColumns = dimColumns + fieldColumn + " AS " + fieldColumn + "_" + i + ", ";  //注意此处必须为", "，后续处理需要
+                    dimColumns = dimColumns + fieldColumn + " AS " + fieldColumn + "_" + i + "_D, ";  //注意此处必须为", "，_D表示该字段是维度，后续处理需要
                     groupbyString = groupbyString + fieldColumn + ",";
                 }
             }
