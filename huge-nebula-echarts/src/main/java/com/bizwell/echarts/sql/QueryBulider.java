@@ -54,9 +54,12 @@ public class QueryBulider {
                 sqlStringBuffer.append(" WHERE " + allFilterString);
             if (!groupByString.equals("")) {
                 sqlStringBuffer.append(" GROUP BY " + groupByString);
+                if (!havingString.equals("")) sqlStringBuffer.append(" HAVING " + havingString);
                 sqlStringBuffer.append(" ORDER BY " + groupByString);
+            } else {
+                if (!havingString.equals("")) sqlStringBuffer.append(" HAVING " + havingString);
             }
-            if (!havingString.equals("")) sqlStringBuffer.append(" HAVING " + havingString);
+
 
         }
         return sqlStringBuffer.toString();
@@ -226,12 +229,12 @@ public class QueryBulider {
                     break;
             }
             if (tmpWhereBuffer.length() > 0) whereBuffer.append(tmpWhereBuffer + " AND ");
-            if (tmpHavingBuffer.length() >0) havingBuffer.append(tmpHavingBuffer + " AND ");
+            if (tmpHavingBuffer.length() > 0) havingBuffer.append(tmpHavingBuffer + " AND ");
         }
         String whereString = whereBuffer.toString();
         String havingString = havingBuffer.toString();
-        if (whereString.endsWith(" AND ")) whereString = whereString.substring(0,whereString.lastIndexOf(" AND "));
-        if (havingString.endsWith(" AND ")) havingString = havingString.substring(0,havingString.lastIndexOf(" AND "));
+        if (whereString.endsWith(" AND ")) whereString = whereString.substring(0, whereString.lastIndexOf(" AND "));
+        if (havingString.endsWith(" AND ")) havingString = havingString.substring(0, havingString.lastIndexOf(" AND "));
         result[0] = whereString;
         result[1] = havingString;
         return result;
