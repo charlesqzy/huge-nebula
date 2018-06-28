@@ -6,7 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 
 public class QueryBulider {
 
-    static String jsonString2 = "{ \"echartType\": \"00\", \"moduleType\": \"01\", \"dimension\": [], \"measure1\": [ { \"metadataId\": 161, \"name\": \"hotelname\", \"aggregate\": \"计数\", \"dateLevel\": \"按日\", \"fieldType\": 2, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"B\" } ], \"measure2\": [], \"filter\": [ { \"metadataId\": 160, \"name\": \"hotelid\", \"type\": \"number\", \"subType\": \"条件筛选\", \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"A\", \"isshow\": true, \"condition\": { \"type\": \"区间\", \"value\": [ 2, 1 ] } } ], \"type\": \"\", \"stack\": \"\", \"inChartFilter\": [ { \"name\": \"hotelname\", \"metadataId\": 161, \"level\": 1, \"fieldType\": 2, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"B\", \"selected\": [ \"香格里拉酒店\" ] }, { \"name\": \"hotelname\", \"metadataId\": 161, \"level\": 1, \"fieldType\": 1, \"aggregate\": \"计数\", \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"B\", \"condition\": { \"type\": \"大于\", \"value\": [ 66 ] } } ] }";
+    static String jsonString2 = "{ \"echartType\": \"00\", \"moduleType\": \"01\", \"dimension\": [ { \"metadataId\": 162, \"name\": \"billdate\", \"aggregate\": \"计数\", \"dateLevel\": \"按日\", \"fieldType\": 2, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"C\" } ], \"measure1\": [ { \"metadataId\": 163, \"name\": \"餐段数\", \"aggregate\": \"计数\", \"dateLevel\": \"按日\", \"fieldType\": 1, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"D\" }, { \"metadataId\": 163, \"name\": \"餐段数\", \"aggregate\": \"计数\", \"dateLevel\": \"按日\", \"fieldType\": 1, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"D\" } ], \"measure2\": [], \"filter\": [], \"type\": \"\", \"stack\": \"\", \"inChartFilter\": [] }";
+
 
     public static void main(String[] args) {
         System.out.println(jsonString2);
@@ -447,8 +448,8 @@ public class QueryBulider {
                     groupbyString = groupbyString + tmpDimString + ",";
                     dimColumns = dimColumns + tmpDimString + " AS " + fieldColumn + "_" + i + ", "; //注意此处必须为", "，后续处理需要
                 } else {
+                    dimColumns = dimColumns + fieldColumn + " AS " + fieldColumn + "_" + i + ", ";  //注意此处必须为", "，后续处理需要
                     groupbyString = groupbyString + fieldColumn + ",";
-                    dimColumns = dimColumns + fieldColumn + "_" + i + ", ";  //注意此处必须为", "，后续处理需要
                 }
             }
             if (groupbyString.endsWith(","))
