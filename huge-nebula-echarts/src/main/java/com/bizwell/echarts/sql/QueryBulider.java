@@ -1,79 +1,16 @@
 package com.bizwell.echarts.sql;
 
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.bizwell.echarts.bean.domain.SheetMetaData;
 
 public class QueryBulider {
 
-    private static final Map<Integer, SheetMetaData> metaDataMap = new HashMap<>();
-
-    static {
-        SheetMetaData metaData1 = new SheetMetaData();
-        metaData1.setId(804);
-        metaData1.setTableName("xls_571bebf42840428bb73393264dd4d793_sheet_1");
-        metaData1.setFieldType(3); //日期类型
-        metaData1.setFieldColumn("A"); //数据库的字段名称
-        metaDataMap.put(804, metaData1);
-
-        SheetMetaData metaData2 = new SheetMetaData();
-        metaData2.setId(805);
-        metaData2.setTableName("xls_571bebf42840428bb73393264dd4d793_sheet_1");
-        metaData2.setFieldType(2); //text类型
-        metaData2.setFieldColumn("B");
-        metaDataMap.put(805, metaData2);
-
-        SheetMetaData metaData3 = new SheetMetaData();
-        metaData3.setId(806);
-        metaData3.setTableName("xls_571bebf42840428bb73393264dd4d793_sheet_1");
-        metaData3.setFieldType(2); //text类型
-        metaData3.setFieldColumn("C");
-        metaDataMap.put(806, metaData3);
-
-        SheetMetaData metaData4 = new SheetMetaData();
-        metaData4.setId(810);
-        metaData4.setTableName("xls_571bebf42840428bb73393264dd4d793_sheet_1");
-        metaData4.setFieldType(1); //数字类型
-        metaData4.setFieldColumn("G");
-        metaDataMap.put(810, metaData4);
-
-        SheetMetaData metaData5 = new SheetMetaData();
-        metaData5.setId(809);
-        metaData5.setTableName("xls_571bebf42840428bb73393264dd4d793_sheet_1");
-        metaData5.setFieldType(2); //text类型
-        metaData5.setFieldColumn("F");
-        metaDataMap.put(809, metaData5);
-
-    }
-
-    static String jsonString1 = "{\"echartType\":\"09\",\"moduleType\":\"04\",\"dimension\":[{\"metadataId\":1,\"name\":\"日期\",\"aggregate\":\"求和\",\"dateLevel\":\"按月\"}],\"measure1\":[{\"metadataId\":8,\"name\":\"人数\",\"aggregate\":\"求和\",\"dateLevel\":\"按日\"},{\"metadataId\":7,\"name\":\"账单数\",\"aggregate\":\"求和\",\"dateLevel\":\"按日\"}],\"measure2\":[],\"filter\":[],\"type\":\"bar\",\"stack\":\"\"}";
-
-    static String jsonString2 = "{" +
-            "\"echartType\": 2," +
-            "\"dimension\": [{\"metadataId\": 804,\"dateLevel\": \"按日\"}]," +
-            "\"measure1\": [{\"metadataId\": 810,\"aggregate\": \"求和\"}, " +
-            "{\"metadataId\": 809,\"aggregate\": \"计数\"}]," +
-            "\"measure2\": []," +
-            "\"filter\": [{\"metadataId\":804,\"name\":\"billdate\",\"type\":\"date\",\"selectIndex\":1,\"isshow\":true,\"condition\":{\"startTime\":\"2018-06-01 00:00:00\",\"endTime\":\"\"}}," +
-            "{\"metadataId\": 810, \"name\": \"hotelid\", \"type\": \"number\", \"subType\": \"条件筛选\", \"isshow\": true, \"condition\": { \"type\": \"不为空\", \"value\": [ 9.98 ] } }," +
-            "{\"metadataId\":806,\"type\":\"text\",\"subType\":\"精确筛选\",\"condition\":[\"Andriod\",\"IOS\"], \"invertSelection\":true }," +
-            "{\"metadataId\": 804,\"name\": \"billdate\", \"type\": \"date\", \"selectIndex\": 7, \"isshow\": true, \"condition\": { \"startTime\": \"\", \"endTime\": \"\" } }" +
-            "{\"metadataId\": 809, \"type\": \"text\", \"name\": \"hotelname\", \"subType\": \"精确筛选\", \"isshow\": true, \"invertSelection\": true, \"condition\": [ \"海腾名苑店\",\"汤臣豪园\" ] } ," +
-            "{\"metadataId\": 805, \"type\": \"text\", \"name\": \"hotelname\", \"subType\": \"条件筛选\", \"isshow\": true, \"condition\": { \"logic\": \"OR\", \"fields\": [ { \"operator\": \"等于\", \"value\": \"11\" }, { \"operator\": \"结尾包含\", \"value\": \"11\" } ] } }  ]}";
-
-    static String jsonString3 = "{\"echartType\":\"09\",\"moduleType\":\"04\",\"dimension\":[{\"metadataId\":804,\"name\":\"billdate\",\"aggregate\":\"求和\",\"dateLevel\":\"按日\"}],\"measure1\":[{\"metadataId\":810,\"name\":\"餐段数\",\"aggregate\":\"求和\"}],\"measure2\":[],\"filter\":[{\"metadataId\":810,\"name\":\"餐段数\",\"type\":\"number\",\"subType\":\"条件筛选\",\"isshow\":true,\"condition\":{\"type\":\"大于\",\"value\":[55]}},{\"metadataId\":809,\"type\":\"text\",\"name\":\"billdate\",\"subType\":\"精确筛选\",\"isshow\":true,\"invertSelection\":false,\"condition\":[\"海腾名苑店\"]}],\"type\":\"bar\",\"stack\":\"\"}";
-
+    static String jsonString2 = "{ \"echartType\": \"00\", \"moduleType\": \"01\", \"dimension\": [], \"measure1\": [ { \"metadataId\": 161, \"name\": \"hotelname\", \"aggregate\": \"计数\", \"dateLevel\": \"按日\", \"fieldType\": 2, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"B\" } ], \"measure2\": [], \"filter\": [ { \"metadataId\": 160, \"name\": \"hotelid\", \"type\": \"number\", \"subType\": \"条件筛选\", \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"A\", \"isshow\": true, \"condition\": { \"type\": \"区间\", \"value\": [ 2, 1 ] } } ], \"type\": \"\", \"stack\": \"\", \"inChartFilter\": [ { \"name\": \"hotelname\", \"metadataId\": 161, \"level\": 1, \"fieldType\": 2, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"B\", \"selected\": [ \"香格里拉酒店\" ] }, { \"name\": \"hotelname\", \"metadataId\": 161, \"level\": 1, \"fieldType\": 1, \"aggregate\": \"计数\", \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"B\", \"condition\": { \"type\": \"大于\", \"value\": [ 66 ] } } ] }";
 
     public static void main(String[] args) {
-
         System.out.println(jsonString2);
-
         String sql = getQueryString(jsonString2);
-
         System.out.println("sql : \n" + sql);
     }
 
@@ -89,31 +26,19 @@ public class QueryBulider {
         JSONArray dimension = jsonObject.getJSONArray("dimension");
         JSONArray measure1 = jsonObject.getJSONArray("measure1");
         JSONArray measure2 = jsonObject.getJSONArray("measure2");
+        JSONArray measure = combineJSONArray(measure1, measure2);
 
         String[] dimAndGroupByStrings = getDimColString(jsonObject.getJSONArray("dimension"));
         String dimString = dimAndGroupByStrings[0];
-        String groupbyString = dimAndGroupByStrings[1];
+        String groupByString = dimAndGroupByStrings[1];
 
-        String tableName = "";
-        if (dimension != null && !dimension.isEmpty())
-            tableName = getTargetTable(dimension);
-        else if (measure1 != null && !measure1.isEmpty())
-            tableName = getTargetTable(measure1);
-        else
-            tableName = getTargetTable(measure2);
-
-        String measureString1 = getMeasureString(jsonObject.getJSONArray("measure1"));
-        String measureString2 = getMeasureString(jsonObject.getJSONArray("measure2"));
-        String measureString = "";
-        if (measureString1.equals(""))
-            measureString += measureString2;
-        else if (measureString2.equals(""))
-            measureString += measureString1;
-        else
-            measureString = measureString + measureString1 + ", " + measureString2;  // 此处必须为", "，后续处理需要
+        String tableName = getTableName(dimension, measure);
+        String measureString = getMeasureString(measure);
 
         String filterString = getFilterString(jsonObject.getJSONArray("filter"));
-
+        String[] inChartFilterString = getInChartFilterString(jsonObject.getJSONArray("inChartFilter"));
+        String allFilterString = combineFilterString(filterString, inChartFilterString[0]);
+        String havingString = inChartFilterString[1];
         StringBuffer sqlStringBuffer = new StringBuffer();
 
         if (!(dimString.equals("") && measureString.equals(""))) {
@@ -124,30 +49,191 @@ public class QueryBulider {
             sqlStringBuffer.append(measureString);
             sqlStringBuffer.append(" FROM ");
             sqlStringBuffer.append(tableName);
-            if (!filterString.equals(""))
-                sqlStringBuffer.append(" WHERE " + filterString);
-            if (!groupbyString.equals("")) {
-                sqlStringBuffer.append(" GROUP BY " + groupbyString);
-                sqlStringBuffer.append(" ORDER BY " + groupbyString);
+            if (!allFilterString.equals(""))
+                sqlStringBuffer.append(" WHERE " + allFilterString);
+            if (!groupByString.equals("")) {
+                sqlStringBuffer.append(" GROUP BY " + groupByString);
+                sqlStringBuffer.append(" ORDER BY " + groupByString);
             }
+            if (!havingString.equals("")) sqlStringBuffer.append(" HAVING " + havingString);
 
         }
         return sqlStringBuffer.toString();
     }
 
-
     /**
-     * 用于确定查询目标表的表名
+     * 将两个filterString合并
      *
-     * @param jsonArray
+     * @param filterString
+     * @param inChartFilterString
      * @return
      */
-    private static String getTargetTable(JSONArray jsonArray) {
-        if (jsonArray == null || jsonArray.isEmpty()) return "";
-        JSONObject dimJsonObj = jsonArray.getJSONObject(0);
-        int metadataId = dimJsonObj.getIntValue("metadataId");
-        SheetMetaData sheetMetaData = metaDataMap.get(metadataId);
-        return sheetMetaData.getTableName();
+    private static String combineFilterString(String filterString, String inChartFilterString) {
+        StringBuffer result = new StringBuffer();
+        if ((filterString == null || filterString.equals("")) &&
+                (inChartFilterString == null || inChartFilterString.equals(""))) return result.toString();
+        else if (filterString == null || filterString.equals(""))
+            result.append(inChartFilterString);
+        else if (inChartFilterString == null || inChartFilterString.equals(""))
+            result.append(filterString);
+        else {
+            result.append(filterString);
+            result.append(" AND ");
+            result.append(inChartFilterString);
+        }
+        return result.toString();
+    }
+
+
+    /**
+     * 获取对应的表名
+     *
+     * @param dimension
+     * @param measure
+     * @return
+     */
+    private static String getTableName(JSONArray dimension, JSONArray measure) {
+        String tableName = null;
+        if (dimension != null && !dimension.isEmpty()) {
+            JSONObject dm = dimension.getJSONObject(0);
+            tableName = dm.getString("tableName");
+        } else if (measure != null && !measure.isEmpty()) {
+            JSONObject ms = measure.getJSONObject(0);
+            tableName = ms.getString("tableName");
+        }
+        return tableName;
+    }
+
+    /**
+     * 将两个JSONArray合并成一个JSONArray
+     *
+     * @param array1
+     * @param array2
+     * @return
+     */
+    private static JSONArray combineJSONArray(JSONArray array1, JSONArray array2) {
+        if (array1 == null && array2 == null) return null;
+        else if (array1 == null) return array2;
+        else if (array2 == null) return array1;
+        else {
+            for (int i = 0; i < array2.size(); i++)
+                array1.add(array2.getJSONObject(i));
+            return array1;
+        }
+    }
+
+    /**
+     * 图内筛选器，解析为SQL
+     *
+     * @param inChartFilter
+     * @return
+     */
+    private static String[] getInChartFilterString(JSONArray inChartFilter) {
+        StringBuffer whereBuffer = new StringBuffer();
+        StringBuffer havingBuffer = new StringBuffer();
+        String[] result = new String[2];
+
+        if (inChartFilter == null) {
+            result[0] = whereBuffer.toString();
+            result[1] = havingBuffer.toString();
+            return result;
+        }
+        for (int i = 0; i < inChartFilter.size(); i++) {
+            JSONObject obj = inChartFilter.getJSONObject(i);
+            int fieldType = obj.getIntValue("fieldType");
+            String tableName = obj.getString("tableName");
+            String fieldColumn = obj.getString("fieldColumn");
+
+            StringBuffer tmpWhereBuffer = new StringBuffer();
+            StringBuffer tmpHavingBuffer = new StringBuffer();
+            switch (fieldType) {
+                case 1:  // 数字
+                    String aggregate = obj.getString("aggregate");
+                    String havingField = "";
+                    switch (aggregate) {
+                        case "求和":
+                            havingField = "SUM(" + fieldColumn + ")";
+                            break;
+                        case "计数":
+                            havingField = "COUNT(" + fieldColumn + ")";
+                            break;
+                        case "去重计数":
+                            havingField = "COUNT(DISTINCT " + fieldColumn + ")";
+                            break;
+                        case "平均值":
+                            havingField = "AVG(" + fieldColumn + ")";
+                            break;
+                        case "最大值":
+                            havingField = "MAX(" + fieldColumn + ")";
+                            break;
+                        case "最小值":
+                            havingField = "MIN(" + fieldColumn + ")";
+                            break;
+                        default:
+                            break;
+                    }
+                    JSONObject condition = obj.getJSONObject("condition");
+                    String type = condition.getString("type");
+                    JSONArray value = condition.getJSONArray("value");
+                    switch (type) {
+                        case "全部":
+                            break;
+                        case "等于":
+                            tmpHavingBuffer.append(havingField + " = " + value.getDouble(0));
+                            break;
+                        case "不等于":
+                            tmpHavingBuffer.append(havingField + " != " + value.getDouble(0));
+                            break;
+                        case "大于":
+                            tmpHavingBuffer.append(havingField + " > " + value.getDouble(0));
+                            break;
+                        case "小于":
+                            tmpHavingBuffer.append(havingField + " < " + value.getDouble(0));
+                            break;
+                        case "大于等于":
+                            tmpHavingBuffer.append(havingField + " >= " + value.getDouble(0));
+                            break;
+                        case "小于等于":
+                            tmpHavingBuffer.append(havingField + " <= " + value.getDouble(0));
+                            break;
+                        case "区间":
+                            tmpHavingBuffer.append(havingField + " BETWEEN " + value.getDouble(0) + " AND " + value.getDouble(1));
+                            break;
+                        case "不为空":
+                            tmpHavingBuffer.append(havingField + " is not null");
+                            break;
+                        case "为空":
+                            tmpHavingBuffer.append(havingField + " is null");
+                            break;
+                    }
+                    break;
+                case 2:  // 文本
+                    JSONArray seleted = obj.getJSONArray("selected");
+                    if (!(seleted.size() == 1 && seleted.getString(0).equals("全部"))) {
+                        if (seleted.size() > 0) {
+                            tmpWhereBuffer.append(tableName + "." + fieldColumn + " IN (");
+                            for (int j = 0; j < seleted.size(); j++) {
+                                tmpWhereBuffer.append("\'" + seleted.getString(j) + "\'");
+                                if (j != seleted.size() - 1)
+                                    tmpWhereBuffer.append(",");
+                            }
+                            tmpWhereBuffer.append(")");
+                        }
+                    }
+                    break;
+                case 3:   // 日期
+                    break;
+            }
+            if (tmpWhereBuffer.length() > 0) whereBuffer.append(tmpWhereBuffer + " AND ");
+            if (tmpHavingBuffer.length() >0) havingBuffer.append(tmpHavingBuffer + " AND ");
+        }
+        String whereString = whereBuffer.toString();
+        String havingString = havingBuffer.toString();
+        if (whereString.endsWith(" AND ")) whereString = whereString.substring(0,whereString.lastIndexOf(" AND "));
+        if (havingString.endsWith(" AND ")) havingString = havingString.substring(0,havingString.lastIndexOf(" AND "));
+        result[0] = whereString;
+        result[1] = havingString;
+        return result;
     }
 
     /**
@@ -160,13 +246,9 @@ public class QueryBulider {
         String result = "";
         for (int i = 0; i < filter.size(); i++) {
             JSONObject obj = filter.getJSONObject(i);
-            int metadataId = obj.getIntValue("metadataId");
-            SheetMetaData sheetMetaData = metaDataMap.get(metadataId);
-            String fieldName = sheetMetaData.getFieldColumn();
-
+            String fieldColumn = obj.getString("fieldColumn");
             String type = obj.getString("type");
             String subType = obj.getString("subType");
-
             String tmpResult = "";
 
             if (type.equals("date")) {
@@ -175,11 +257,11 @@ public class QueryBulider {
                 String endTime = condition.getString("endTime");
                 if (!(startTime.equals("") && endTime.equals(""))) {
                     if (startTime.equals("")) {
-                        tmpResult = fieldName + " <= \'" + endTime + "\'";
+                        tmpResult = fieldColumn + " <= \'" + endTime + "\'";
                     } else if (endTime.equals("")) {
-                        tmpResult = fieldName + " >= \'" + startTime + "\'";
+                        tmpResult = fieldColumn + " >= \'" + startTime + "\'";
                     } else
-                        tmpResult = "(" + fieldName + " BETWEEN \'" + startTime + "\' AND \'" + endTime + "\')";
+                        tmpResult = "(" + fieldColumn + " BETWEEN \'" + startTime + "\' AND \'" + endTime + "\')";
                 }
             } else if (type.equals("text")) {
                 if (subType.equals("精确筛选")) {
@@ -191,9 +273,9 @@ public class QueryBulider {
                     }
                     boolean invertSelection = obj.getBoolean("invertSelection");
                     if (invertSelection)
-                        tmpResult = "(" + fieldName + " NOT IN (" + colVal + ") )";
+                        tmpResult = "(" + fieldColumn + " NOT IN (" + colVal + ") )";
                     else
-                        tmpResult = "(" + fieldName + " IN (" + colVal + ") )";
+                        tmpResult = "(" + fieldColumn + " IN (" + colVal + ") )";
                 } else if (subType.equals("条件筛选")) {
                     JSONObject condition = obj.getJSONObject("condition");
                     String logic = condition.getString("logic");
@@ -205,28 +287,28 @@ public class QueryBulider {
                         String value = fieldObj.getString("value");
                         switch (operator) {
                             case "等于":   // 等于
-                                tmpResult = tmpResult + " (" + fieldName + " = \'" + value + "\') " + logic;
+                                tmpResult = tmpResult + " (" + fieldColumn + " = \'" + value + "\') " + logic;
                                 break;
                             case "不等于":  // 不等于
-                                tmpResult = tmpResult + " (" + fieldName + " != \'" + value + "\') " + logic;
+                                tmpResult = tmpResult + " (" + fieldColumn + " != \'" + value + "\') " + logic;
                                 break;
                             case "包含": //包含
-                                tmpResult = tmpResult + " (" + fieldName + " like \'%" + value + "%\') " + logic;
+                                tmpResult = tmpResult + " (" + fieldColumn + " like \'%" + value + "%\') " + logic;
                                 break;
                             case "不包含": // 不包含
-                                tmpResult = tmpResult + " (" + fieldName + " not like \'%" + value + "%\') " + logic;
+                                tmpResult = tmpResult + " (" + fieldColumn + " not like \'%" + value + "%\') " + logic;
                                 break;
                             case "开头包含": // 开头包含
-                                tmpResult = tmpResult + " (" + fieldName + " like \'" + value + "%\') " + logic;
+                                tmpResult = tmpResult + " (" + fieldColumn + " like \'" + value + "%\') " + logic;
                                 break;
                             case "结尾包含": // 结尾包含
-                                tmpResult = tmpResult + " (" + fieldName + " like \'%" + value + "\') " + logic;
+                                tmpResult = tmpResult + " (" + fieldColumn + " like \'%" + value + "\') " + logic;
                                 break;
                             case "为空": // 为空
-                                tmpResult = tmpResult + " (" + fieldName + " is null ) " + logic;
+                                tmpResult = tmpResult + " (" + fieldColumn + " is null ) " + logic;
                                 break;
                             case "不为空": // 不为空
-                                tmpResult = tmpResult + " (" + fieldName + " is not null ) " + logic;
+                                tmpResult = tmpResult + " (" + fieldColumn + " is not null ) " + logic;
                                 break;
                             default:
                                 break;
@@ -243,31 +325,31 @@ public class QueryBulider {
 
                     switch (conditionType) {
                         case "等于":
-                            tmpResult = "(" + fieldName + " = " + conditionValues.getDouble(0) + ")";
+                            tmpResult = "(" + fieldColumn + " = " + conditionValues.getDouble(0) + ")";
                             break;
                         case "不等于":
-                            tmpResult = "(" + fieldName + " != " + conditionValues.getDouble(0) + ")";
+                            tmpResult = "(" + fieldColumn + " != " + conditionValues.getDouble(0) + ")";
                             break;
                         case "大于":
-                            tmpResult = "(" + fieldName + " > " + conditionValues.getDouble(0) + ")";
+                            tmpResult = "(" + fieldColumn + " > " + conditionValues.getDouble(0) + ")";
                             break;
                         case "小于":
-                            tmpResult = "(" + fieldName + " < " + conditionValues.getDouble(0) + ")";
+                            tmpResult = "(" + fieldColumn + " < " + conditionValues.getDouble(0) + ")";
                             break;
                         case "大于等于":
-                            tmpResult = "(" + fieldName + " >= " + conditionValues.getDouble(0) + ")";
+                            tmpResult = "(" + fieldColumn + " >= " + conditionValues.getDouble(0) + ")";
                             break;
                         case "小于等于":
-                            tmpResult = "(" + fieldName + " <= " + conditionValues.getDouble(0) + ")";
+                            tmpResult = "(" + fieldColumn + " <= " + conditionValues.getDouble(0) + ")";
                             break;
                         case "区间":
-                            tmpResult = "(" + fieldName + " BETWEEN " + conditionValues.getDouble(0) + " AND " + conditionValues.getDouble(1) + ")";
+                            tmpResult = "(" + fieldColumn + " BETWEEN " + conditionValues.getDouble(0) + " AND " + conditionValues.getDouble(1) + ")";
                             break;
                         case "不为空":
-                            tmpResult = "(" + fieldName + " is not null )";
+                            tmpResult = "(" + fieldColumn + " is not null )";
                             break;
                         case "为空":
-                            tmpResult = "(" + fieldName + " is null )";
+                            tmpResult = "(" + fieldColumn + " is null )";
                             break;
                     }
                 }
@@ -291,33 +373,31 @@ public class QueryBulider {
         if (measure == null || measure.isEmpty()) return result;
         for (int i = 0; i < measure.size(); i++) {
             JSONObject dataObj = measure.getJSONObject(i);
-            int metadataId = dataObj.getIntValue("metadataId");
-            SheetMetaData sheetMetaData = metaDataMap.get(metadataId);
-            String fieldName = sheetMetaData.getFieldColumn();
+            String fieldColumn = dataObj.getString("fieldColumn");
             String aggregate = dataObj.getString("aggregate");
             switch (aggregate) {
                 case "求和":
-                    result = result + "SUM(" + fieldName + ")";
+                    result = result + "SUM(" + fieldColumn + ") AS " + fieldColumn + "_SUM" + i;
                     break;
                 case "计数":
-                    result = result + "COUNT(" + fieldName + ")";
+                    result = result + "COUNT(" + fieldColumn + ") AS " + fieldColumn + "_COUNT" + i;
                     break;
                 case "去重计数":
-                    result = result + "COUNT(DISTINCT " + fieldName + ")";
+                    result = result + "COUNT(DISTINCT " + fieldColumn + ") AS " + fieldColumn + "_DISCOUNT" + i;
                     break;
                 case "平均值":
-                    result = result + "AVG(" + fieldName + ")";
+                    result = result + "AVG(" + fieldColumn + ") AS " + fieldColumn + "_AVG" + i;
                     break;
                 case "最大值":
-                    result = result + "MAX(" + fieldName + ")";
+                    result = result + "MAX(" + fieldColumn + ") AS " + fieldColumn + "_MAX" + i;
                     break;
                 case "最小值":
-                    result = result + "MIN(" + fieldName + ")";
+                    result = result + "MIN(" + fieldColumn + ") AS " + fieldColumn + "_MIN" + i;
                     break;
                 default:
                     break;
             }
-            result = result + " AS " + fieldName + ", ";   //注意此处必须为", "，后续处理需要
+            result = result + ", ";   //注意此处必须为", "，后续处理需要
         }
         if (result.endsWith(", "))
             result = result.substring(0, result.length() - 2);
@@ -338,11 +418,8 @@ public class QueryBulider {
         if (dimension != null && !dimension.isEmpty()) {
             for (int i = 0; i < dimension.size(); i++) {
                 JSONObject dimJsonObj = dimension.getJSONObject(i);
-                int metadataId = dimJsonObj.getIntValue("metadataId");
-                SheetMetaData sheetMetaData = metaDataMap.get(metadataId);
-
-                String fieldName = sheetMetaData.getFieldColumn();
-                int fieldType = sheetMetaData.getFieldType();
+                String fieldColumn = dimJsonObj.getString("fieldColumn");
+                int fieldType = dimJsonObj.getIntValue("fieldType");
                 String dateLevel;
                 String tmpDimString = "";
 
@@ -350,28 +427,28 @@ public class QueryBulider {
                     dateLevel = dimJsonObj.getString("dateLevel");
                     switch (dateLevel) {
                         case "按年":
-                            tmpDimString = "YEAR(" + fieldName + ")";
+                            tmpDimString = "YEAR(" + fieldColumn + ")";
                             break;
                         case "按季":
-                            tmpDimString = "CONCAT(YEAR(" + fieldName + "),\'年\'," + "QUARTER(" + fieldName + "),\'季度\')";
+                            tmpDimString = "CONCAT(YEAR(" + fieldColumn + "),\'年\'," + "QUARTER(" + fieldColumn + "),\'季度\')";
                             break;
                         case "按月":
-                            tmpDimString = "DATE_FORMAT(" + fieldName + ",'%Y-%m')";
+                            tmpDimString = "DATE_FORMAT(" + fieldColumn + ",'%Y-%m')";
                             break;
                         case "按周":
-                            tmpDimString = "CONCAT(YEAR(" + fieldName + "),\'年第\'," + "WEEKOFYEAR(" + fieldName + "),\'周\')";
+                            tmpDimString = "CONCAT(YEAR(" + fieldColumn + "),\'年第\'," + "WEEKOFYEAR(" + fieldColumn + "),\'周\')";
                             break;
                         case "按日":
-                            tmpDimString = "DATE_FORMAT(" + fieldName + ",'%Y-%m-%d')";
+                            tmpDimString = "DATE_FORMAT(" + fieldColumn + ",'%Y-%m-%d')";
                             break;
                         default:
                             break;
                     }
                     groupbyString = groupbyString + tmpDimString + ",";
-                    dimColumns = dimColumns + tmpDimString + " AS " + fieldName + ", "; //注意此处必须为", "，后续处理需要
+                    dimColumns = dimColumns + tmpDimString + " AS " + fieldColumn + "_" + i + ", "; //注意此处必须为", "，后续处理需要
                 } else {
-                    groupbyString = groupbyString + fieldName + ",";
-                    dimColumns = dimColumns + fieldName + ", ";  //注意此处必须为", "，后续处理需要
+                    groupbyString = groupbyString + fieldColumn + ",";
+                    dimColumns = dimColumns + fieldColumn + "_" + i + ", ";  //注意此处必须为", "，后续处理需要
                 }
             }
             if (groupbyString.endsWith(","))
