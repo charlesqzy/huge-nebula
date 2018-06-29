@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="4530c85b-7d39-4ecd-8fff-70cb4f64336a" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/huge-nebula-datasource/huge-nebula-datasource.iml" beforeDir="false" afterPath="$PROJECT_DIR$/huge-nebula-datasource/huge-nebula-datasource.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/huge-nebula-echarts/src/main/java/com/bizwell/echarts/sql/QueryBulider.java" beforeDir="false" afterPath="$PROJECT_DIR$/huge-nebula-echarts/src/main/java/com/bizwell/echarts/sql/QueryBulider.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <ignored path="$PROJECT_DIR$/huge-nebula-passport/target/" />
@@ -27,8 +27,8 @@
       <file leaf-file-name="QueryBulider.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/huge-nebula-echarts/src/main/java/com/bizwell/echarts/sql/QueryBulider.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="380">
-              <caret line="57" column="13" lean-forward="true" selection-start-line="57" selection-start-column="13" selection-end-line="57" selection-end-column="13" />
+            <state relative-caret-position="9006">
+              <caret line="484" column="40" selection-start-line="484" selection-start-column="28" selection-end-line="484" selection-end-column="40" />
             </state>
           </provider>
         </entry>
@@ -141,15 +141,6 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="huge-nebula" type="b2602c69:ProjectViewProjectNode" />
-              <item name="huge-nebula" type="462c0819:PsiDirectoryNode" />
-              <item name="huge-nebula-echarts" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="common" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="huge-nebula" type="b2602c69:ProjectViewProjectNode" />
@@ -378,7 +369,7 @@
       <workItem from="1526536478958" duration="517000" />
       <workItem from="1526537006095" duration="15845000" />
       <workItem from="1530063167236" duration="796000" />
-      <workItem from="1530149718632" duration="13762000" />
+      <workItem from="1530149718632" duration="19660000" />
     </task>
     <task id="LOCAL-00001" summary="增加图内筛选生成SQL的代码">
       <created>1530164922261</created>
@@ -394,15 +385,28 @@
       <option name="project" value="LOCAL" />
       <updated>1530168592838</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="增加图内筛选生成SQL的代码">
+      <created>1530169249993</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1530169249993</updated>
+    </task>
+    <task id="LOCAL-00004" summary="增加图内筛选生成SQL的代码">
+      <created>1530176138705</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1530176138705</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="42034000" />
+    <option name="totallyTimeSpent" value="47932000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
-    <editor active="true" />
+    <frame x="-7" y="-7" width="1550" height="838" extended-state="7" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="Event Log" order="13" side_tool="true" />
@@ -422,10 +426,10 @@
       <window_info anchor="bottom" id="Java Enterprise" order="0" />
       <window_info anchor="right" id="Capture Analysis" order="4" />
       <window_info anchor="bottom" id="Version Control" order="10" weight="0.32872927" />
-      <window_info anchor="bottom" id="Run" order="3" weight="0.33701658" />
+      <window_info anchor="bottom" id="Run" order="3" weight="0.43093923" />
       <window_info anchor="bottom" id="Spring" order="8" />
       <window_info anchor="bottom" id="Terminal" order="9" />
-      <window_info content_ui="combo" id="Project" order="1" weight="0.26106772" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.18554688" />
       <window_info anchor="right" id="Bean Validation" order="9" />
       <window_info id="Web" order="0" side_tool="true" />
       <window_info anchor="bottom" id="Find" order="2" weight="0.37016574" />
@@ -442,7 +446,7 @@
     <layout-to-restore>
       <window_info id="Designer" order="3" />
       <window_info anchor="right" id="Palette" order="3" />
-      <window_info anchor="bottom" id="Run" order="3" visible="true" weight="0.33701658" />
+      <window_info active="true" anchor="bottom" id="Run" order="3" visible="true" weight="0.43093923" />
       <window_info anchor="bottom" id="Spring" order="8" />
       <window_info id="Image Layers" order="4" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
@@ -463,7 +467,7 @@
       <window_info id="Nl-Palette" order="7" />
       <window_info anchor="right" id="Maven Projects" order="10" />
       <window_info anchor="bottom" id="Find" order="2" weight="0.37016574" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.26106772" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.18554688" />
       <window_info anchor="right" id="Database" order="5" />
       <window_info anchor="bottom" id="Message" order="1" />
       <window_info anchor="right" id="Properties" order="7" />
@@ -491,12 +495,12 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/huge-nebula-echarts/src/main/java/com/bizwell/echarts/sql/QueryBulider.java</url>
-          <line>35</line>
+          <line>37</line>
           <properties />
           <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="9" />
+      <option name="time" value="10" />
     </breakpoint-manager>
   </component>
   <component name="antWorkspaceConfiguration">
@@ -767,8 +771,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/huge-nebula-echarts/src/main/java/com/bizwell/echarts/sql/QueryBulider.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="57" column="13" lean-forward="true" selection-start-line="57" selection-start-column="13" selection-end-line="57" selection-end-column="13" />
+        <state relative-caret-position="9006">
+          <caret line="484" column="40" selection-start-line="484" selection-start-column="28" selection-end-line="484" selection-end-column="40" />
         </state>
       </provider>
     </entry>

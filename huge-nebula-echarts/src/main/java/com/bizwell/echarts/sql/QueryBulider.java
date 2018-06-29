@@ -6,7 +6,9 @@ import com.alibaba.fastjson.JSONObject;
 
 public class QueryBulider {
 
-    static String jsonString2 = "{ \"echartType\": \"00\", \"moduleType\": \"01\", \"dimension\": [ { \"metadataId\": 162, \"name\": \"billdate\", \"aggregate\": \"计数\", \"dateLevel\": \"按日\", \"fieldType\": 3, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"C\" } ], \"measure1\": [ { \"metadataId\": 161, \"name\": \"hotelname\", \"aggregate\": \"计数\", \"dateLevel\": \"按日\", \"fieldType\": 2, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"B\" }, { \"metadataId\": 161, \"name\": \"hotelname\", \"aggregate\": \"去重计数\", \"dateLevel\": \"按日\", \"fieldType\": 2, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"B\" }, { \"metadataId\": 163, \"name\": \"餐段数\", \"aggregate\": \"求和\", \"dateLevel\": \"按日\", \"fieldType\": 1, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"D\" } ], \"measure2\": [], \"filter\": [], \"type\": \"\", \"stack\": \"\", \"inChartFilter\": [ { \"name\": \"hotelname\", \"metadataId\": 161, \"level\": 1, \"fieldType\": 1, \"aggregate\": \"计数\", \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"B\", \"condition\": { \"type\": \"全部\", \"value\": [] } }, { \"name\": \"餐段数\", \"metadataId\": 163, \"level\": 1, \"fieldType\": 1, \"aggregate\": \"求和\", \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"D\", \"condition\": { \"type\": \"等于\", \"value\": [ 11 ] } } ] }";
+    static String jsonString2 = "{ \"echartType\": \"00\", \"moduleType\": \"01\", \"dimension\": [ { \"metadataId\": 162, \"name\": \"billdate\", \"aggregate\": \"计数\", \"dateLevel\": \"按日\", \"fieldType\": 3, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"C\", \"it\": 3 } ], \"measure1\": [ { \"metadataId\": 161, \"name\": \"hotelname\", \"aggregate\": \"去重计数\", \"dateLevel\": \"按日\", \"fieldType\": 2, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"B\", \"it\": 1 } ], \"measure2\": [], \"filter\": [], \"type\": \"\", \"stack\": \"\", \"inChartFilter\": [ { \"name\": \"billdate\", \"metadataId\": 162, \"level\": 1, \"fieldType\": 3, \"dateLevel\": \"按日\", \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"C\", \"it\": 100001, \"selected\": [ \"2018-04-26\" ] }, { \"name\": \"hotelname\", \"metadataId\": 161, \"level\": 1, \"fieldType\": 2, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"B\", \"it\": 100002, \"selected\": [ \"海腾名苑店\" ] }, { \"name\": \"hotelname\", \"metadataId\": 161, \"level\": 1, \"fieldType\": 1, \"aggregate\": \"去重计数\", \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"B\", \"it\": 1, \"condition\": { \"type\": \"等于\", \"value\": [ 9 ] } } ] }";
+
+
 
 
     public static void main(String[] args) {
@@ -215,7 +217,7 @@ public class QueryBulider {
                     JSONArray seleted = obj.getJSONArray("selected");
                     if (!(seleted.size() == 1 && seleted.getString(0).equals("全部"))) {
                         if (seleted.size() > 0) {
-                            tmpWhereBuffer.append(tableName + "." + fieldColumn + " IN (");
+                            tmpWhereBuffer.append(fieldColumn + " IN (");
                             for (int j = 0; j < seleted.size(); j++) {
                                 tmpWhereBuffer.append("\'" + seleted.getString(j) + "\'");
                                 if (j != seleted.size() - 1)
@@ -226,6 +228,41 @@ public class QueryBulider {
                     }
                     break;
                 case 3:   // 日期
+                    String dateLavel = obj.getString("dateLevel");
+                    if (dateLavel.equals("常规")) {
+
+                    } else {
+                        seleted = obj.getJSONArray("selected");
+                        String formatedColumnName = null;
+                        switch (dateLavel) {
+                            case "按年":
+                                formatedColumnName = "YEAR(" + fieldColumn + ")";
+                                break;
+                            case "按季":
+                                formatedColumnName = "CONCAT(YEAR(" + fieldColumn + "),\'年\'," + "QUARTER(" + fieldColumn + "),\'季度\')";
+                                break;
+                            case "按月":
+                                formatedColumnName = "DATE_FORMAT(" + fieldColumn + ",'%Y-%m')";
+                                break;
+                            case "按周":
+                                formatedColumnName = "CONCAT(YEAR(" + fieldColumn + "),\'年第\'," + "WEEKOFYEAR(" + fieldColumn + "),\'周\')";
+                                break;
+                            case "按日":
+                                formatedColumnName = "DATE_FORMAT(" + fieldColumn + ",'%Y-%m-%d')";
+                                break;
+                        }
+                        if (!(seleted.size() == 1 && seleted.getString(0).equals("全部"))) {
+                            if (seleted.size() > 0) {
+                                tmpWhereBuffer.append(formatedColumnName + " IN (");
+                                for (int j = 0; j < seleted.size(); j++) {
+                                    tmpWhereBuffer.append("\'" + seleted.getString(j) + "\'");
+                                    if (j != seleted.size() - 1)
+                                        tmpWhereBuffer.append(",");
+                                }
+                                tmpWhereBuffer.append(")");
+                            }
+                        }
+                    }
                     break;
             }
             if (tmpWhereBuffer.length() > 0) whereBuffer.append(tmpWhereBuffer + " AND ");
