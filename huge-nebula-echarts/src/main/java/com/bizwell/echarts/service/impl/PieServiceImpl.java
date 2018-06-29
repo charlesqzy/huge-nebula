@@ -11,6 +11,7 @@ import com.bizwell.echarts.bean.vo.PieData;
 import com.bizwell.echarts.bean.vo.ResultData;
 import com.bizwell.echarts.bean.vo.Series;
 import com.bizwell.echarts.common.JsonUtils;
+import com.bizwell.echarts.common.ReportManager;
 import com.bizwell.echarts.exception.EchartsException;
 import com.bizwell.echarts.exception.ResponseCode;
 import com.bizwell.echarts.service.AbstractReportService;
@@ -46,8 +47,21 @@ public class PieServiceImpl extends AbstractReportService {
 				SheetMetaData sheetMetaData1 = dimensions.get(0);
 				SheetMetaData sheetMetaData2 = measures.get(0);
 				
-				String name = (String) map.get(sheetMetaData1.getFieldColumn());
-				Object value = map.get(sheetMetaData2.getFieldColumn());
+//				String name = (String) map.get(sheetMetaData1.getFieldColumn());
+//				Object value = map.get(sheetMetaData2.getFieldColumn());
+				
+				String name="";
+				Object value=null;
+				
+				for(String key :map.keySet()){
+					if(key.endsWith("D")){
+						String aggregate = ReportManager.getAggregate(key);
+						name=((String)map.get(key))+aggregate;
+					}
+					if(key.endsWith("M")){
+						value=(map.get(key));
+					}
+				}
 				
 				PieData pieData = getPieData(name, value);
 				names.add(name);
@@ -61,7 +75,12 @@ public class PieServiceImpl extends AbstractReportService {
 			for (SheetMetaData sheetMetaData : measures) {
 				Object value = new Object();
 				for (Map<String, Object> map : list) {
-					value = map.get(sheetMetaData.getFieldColumn());
+					//value = map.get(sheetMetaData.getFieldColumn());
+					for(String key :map.keySet()){
+						if(key.endsWith("M")){
+							value = map.get(key);
+						}
+					}
 				}
 				
 				String name = sheetMetaData.getFieldNameNew();

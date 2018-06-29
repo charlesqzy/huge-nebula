@@ -6,9 +6,10 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.bizwell.echarts.common.QueryBulider;
+
 import com.bizwell.echarts.mapper.EchartsMapper;
 import com.bizwell.echarts.service.FormService;
+import com.bizwell.echarts.sql.QueryBulider;
 
 /**
  * @author zhangjianjun
@@ -26,7 +27,8 @@ public class FormServiceImpl implements FormService {
 	@Override
 	public List<Map<String, Object>> selectList(String data, Integer userId) {
 		
-		String sql = QueryBulider.getSql(data, userId);
+		//String sql = QueryBulider.getSql(data, userId);
+		String sql = QueryBulider.getQueryString(data);
 		List<Map<String,Object>> list = echartsMapper.selectBySql(sql);
 		return list;
 	}
@@ -35,7 +37,9 @@ public class FormServiceImpl implements FormService {
 	@Override
 	public Integer selectCnt(String data, Integer userId) {
 		
-		String sql = parseSql(QueryBulider.getSql(data, userId));
+//		String sql = parseSql(QueryBulider.getSql(data, userId));
+		//String sql = QueryBulider.getSql(data, userId);
+		String sql = QueryBulider.getQueryString(data);
 		Integer cnt = echartsMapper.selectCntBySql(sql);
 		return cnt;
 	}
@@ -61,7 +65,7 @@ public class FormServiceImpl implements FormService {
 		}
 		
 		String resultSql = str + " FROM " + split[1].trim();
-		System.out.println(resultSql);
+		//System.out.println(resultSql);
 		return resultSql;
 	}
 	

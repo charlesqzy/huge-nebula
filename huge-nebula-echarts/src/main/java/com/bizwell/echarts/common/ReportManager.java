@@ -52,4 +52,24 @@ public class ReportManager {
 	public static ReportService getService(String code) {
 		return (ReportService) SpringContext.getBean(String.format("%sService", code));
 	}
+	
+	
+	
+	public static String getAggregate(String key) {
+		String aggregate ="";
+		 if(key.contains("SUM")){
+			 	aggregate="(求和)";
+		 }else if(key.contains("COUNT")){
+			 	aggregate="(计数)"; 
+		 }else if(key.contains("DISCOUNT")){
+				aggregate="(去重计数)"; 
+		 }else if(key.contains("AVG")){
+				aggregate="(平均值)"; 
+		 }else if(key.contains("MAX")){
+				aggregate="(最大值)"; 
+		 }else if(key.contains("MIN")){
+				aggregate="(最小值)";
+		 }
+		return aggregate;
+	}
 }

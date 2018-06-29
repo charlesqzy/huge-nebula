@@ -35,7 +35,12 @@ public class GaugeServiceImpl extends AbstractReportService {
 			SheetMetaData sheetMetaData = measures.get(0);
 			Object value = new Object();
 			for (Map<String, Object> map : list) {
-				value = map.get(sheetMetaData.getFieldColumn());
+				//value = map.get(sheetMetaData.getFieldColumn());
+				for(String key :map.keySet()){
+					if(key.startsWith(sheetMetaData.getFieldColumn())){
+						value=(map.get(key));break;
+					}
+				}
 			}
 			resultData.setValue(value);
 			resultData.setEchartType(echartType);

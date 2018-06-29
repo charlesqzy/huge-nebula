@@ -89,8 +89,8 @@
 		</if>
 		
 		<if test='option == "byQuarter"'>
-		SELECT CONCAT(DATE_FORMAT(${fieldColumn},'%Y'),FLOOR((DATE_FORMAT(${fieldColumn}, '%m')+2)/3)) quarters FROM ${tableName} tv 
-		GROUP BY quarters ORDER BY quarters DESC 
+		SELECT CONCAT(CONCAT(DATE_FORMAT(${fieldColumn},'%Y'),"年"),CONCAT(FLOOR((DATE_FORMAT(${fieldColumn}, '%m')+2)/3)),"季度") DAY FROM ${tableName} tv 
+		GROUP BY DAY ORDER BY DAY DESC  
 		</if>
 		
 		<if test='option == "byYear"'>

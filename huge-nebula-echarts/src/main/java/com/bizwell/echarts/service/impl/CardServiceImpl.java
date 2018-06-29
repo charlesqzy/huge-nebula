@@ -38,16 +38,22 @@ public class CardServiceImpl extends AbstractReportService {
 		// 没有维度, 一个或两个数值
 		if(size >= 1 && size <= 2) {
 			
+			
 			for (SheetMetaData sheetMetaData : measures) {
 				Object value = new Object();
 				for (Map<String, Object> map : list) {
-					value = map.get(sheetMetaData.getFieldColumn());
+					//value = map.get(sheetMetaData.getFieldColumn());
+					for(String key :map.keySet()){
+						if(key.endsWith("M")){
+							value=(map.get(key));
+						}
+					}
 				}
-				
 				String name = sheetMetaData.getFieldNameNew();
 				PieData pieData = getPieData(name, value);
 				dataList.add(pieData);
 			}
+			
 			
 			resultData.setNames(dataList);
 			resultData.setEchartType(echartType);

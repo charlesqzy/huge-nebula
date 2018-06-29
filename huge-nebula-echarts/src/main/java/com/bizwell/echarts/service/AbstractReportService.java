@@ -6,8 +6,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bizwell.echarts.bean.vo.ResultData;
-import com.bizwell.echarts.common.QueryBulider;
 import com.bizwell.echarts.mapper.EchartsMapper;
+import com.bizwell.echarts.sql.QueryBulider;
 
 /**
  * @author zhangjianjun
@@ -24,7 +24,9 @@ public abstract class AbstractReportService implements ReportService {
 	public ResultData selectEcharts(String data, Integer userId) {
 
 		// 创建sql
-		String sql = QueryBulider.getSql(data, userId);
+		//String sql = QueryBulider.getSql(data, userId);
+		String sql = QueryBulider.getQueryString(data);
+		System.out.println("selectEcharts.sql="+sql);
 		// 查询出数据
 		List<Map<String,Object>> list = echartsMapper.selectBySql(sql);
 		// 封装各图表所需数据,为抽象方法,需要各个模板类自己实现,封装各自所需的数据格式

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +81,11 @@ public class ReportController extends BaseController {
 			@RequestParam(value = "curPage" , required = true) Integer curPage,
 			@RequestParam(value = "pageSize", defaultValue = "3") Integer pageSize) {
 		
+		
+		System.out.println("param= " +param);
+		
+		String tableName = "xls_16d506e966a257c240adaed164fdbdcc_u16_s01" ;
+		
 		JsonView jsonView = new JsonView();
 		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 		Integer cnt = 0;
@@ -99,12 +105,13 @@ public class ReportController extends BaseController {
 			}
 			
 			List<FormHeader> headerList = new ArrayList<FormHeader>();
-			// 获取用户选中的所有维度与数值,用于组装成表头
+//			// 获取用户选中的所有维度与数值,用于组装成表头
 			List<SheetMetaData> list2 = getMetaData(param, userId);
 			if (list2.size() >= 1) {
 				// 将数值组装进表头
 				getHeader(headerList, list2);
 			}
+			
 			
 			// 分页查询出表格数据
 			list = formService.selectList(param, userId);
@@ -112,7 +119,10 @@ public class ReportController extends BaseController {
 			cnt = formService.selectCnt(param, userId);
 			// 将表头,数据,总条数封装进map中
 			Map<String, Object> map = new HashMap<>();
-			map.put("header", headerList);
+			
+			List<FormHeader> newHeaderList = getNewHaderList(list, headerList);
+			
+			map.put("header", newHeaderList);
 			map.put("list", list);
 			map.put("total", cnt);
 			jsonView = result(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), map);
@@ -125,6 +135,33 @@ public class ReportController extends BaseController {
 		
 		return jsonView;
 	}
+
+	private List<FormHeader> getNewHaderList(List<Map<String, Object>> list, List<FormHeader> headerList) {
+		List<FormHeader> newHeaderList = new ArrayList<FormHeader>();
+		
+		if(list.size()>0){
+			 for(String key :list.get(0).keySet()){
+				 String column = key.split("_")[0];
+				 
+				 String aggregate = ReportManager.getAggregate(key);
+				 
+				 String label="";
+				 for(FormHeader header : headerList){
+					 if(column.equals(header.getProp())){
+						 label= header.getLabel();break;
+					 }
+				 }
+				 
+				 FormHeader header = new FormHeader();
+				 header.setLabel(label+aggregate);
+				 header.setProp(key);
+				 newHeaderList.add(header);
+			 }
+		}
+		return newHeaderList;
+	}
+
+
 	
 	// 获取用户选中的所有维度与数值,用于组装成表头
 	private List<SheetMetaData> getMetaData(String data, Integer userId) {
