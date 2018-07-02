@@ -201,22 +201,22 @@ public class QueryBulider {
         String aggrateColumn = null;
         switch (aggregate) {
             case "求和":
-                aggrateColumn = "SUM(" + fieldColumn + ") AS " + fieldColumn + "_SUM";
+                aggrateColumn = "SUM(" + fieldColumn + ")";
                 break;
             case "计数":
-                aggrateColumn = "COUNT(" + fieldColumn + ") AS " + fieldColumn + "_COUNT";
+                aggrateColumn = "COUNT(" + fieldColumn + ")";
                 break;
             case "去重计数":
-                aggrateColumn = "COUNT(DISTINCT " + fieldColumn + ") AS " + fieldColumn + "_DISCOUNT";
+                aggrateColumn = "COUNT(DISTINCT " + fieldColumn + ")";
                 break;
             case "平均值":
-                aggrateColumn = "AVG(" + fieldColumn + ") AS " + fieldColumn + "_AVG";
+                aggrateColumn = "AVG(" + fieldColumn + ")";
                 break;
             case "最大值":
-                aggrateColumn = "MAX(" + fieldColumn + ") AS " + fieldColumn + "_MAX";
+                aggrateColumn = "MAX(" + fieldColumn + ")";
                 break;
             case "最小值":
-                aggrateColumn = "MIN(" + fieldColumn + ") AS " + fieldColumn + "_MIN";
+                aggrateColumn = "MIN(" + fieldColumn + ")";
                 break;
             default:
                 break;
@@ -279,7 +279,6 @@ public class QueryBulider {
                     JSONObject condition = obj.getJSONObject("condition");
                     if (!condition.getString("type").equals("全部")) {
                         String havingField = getAggregateColumn(obj.getString("aggregate"), fieldColumn);
-                        havingField = havingField.substring(0, havingField.lastIndexOf(" AS "));
                         String numberCondition = getNumberCondition(condition.getString("type"), condition.getJSONArray("value"), havingField);
                         tmpHavingBuffer.append(numberCondition);
                     }
@@ -429,8 +428,14 @@ public class QueryBulider {
             String fieldColumn = dataObj.getString("fieldColumn");
             String aggregate = dataObj.getString("aggregate");
             String aggregateColumn = getAggregateColumn(aggregate, fieldColumn);
-            result.append(aggregateColumn + i);
-            result.append("_M");   //_M表示该字段为度量，后续处理需要
+
+            String suffix;
+            if (aggregateColumn.startsWith("COUNT(DISTINCT"))
+                suffix = "DISCOUNT";
+            else
+                suffix = aggregateColumn.substring(0, aggregateColumn.indexOf("("));
+
+            result.append(aggregateColumn + " AS " + "M" + String.format("%02d", i) + "_" + fieldColumn + "_" + suffix);
             result.append(", ");   //注意此处必须为", "，后续处理需要
         }
         String resultString = result.toString();
@@ -461,7 +466,7 @@ public class QueryBulider {
                 else
                     tmpDimString = fieldColumn;
                 groupByString = groupByString + tmpDimString + ",";
-                dimColumns = dimColumns + tmpDimString + " AS " + fieldColumn + "_" + i + "_D, ";  //注意此处必须为", "，_D表示该字段是维度，后续处理需要
+                dimColumns = dimColumns + tmpDimString + " AS D" + String.format("%02d", i) + "_" + fieldColumn + ", ";  //注意此处必须为", "，_D表示该字段是维度，后续处理需要
             }
             if (groupByString.endsWith(","))
                 groupByString = groupByString.substring(0, groupByString.length() - 1);
