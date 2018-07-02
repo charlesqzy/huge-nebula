@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import com.bizwell.echarts.bean.domain.SheetMetaData;
 import com.bizwell.echarts.bean.vo.FormHeader;
 import com.bizwell.echarts.bean.vo.ResultData;
 import com.bizwell.echarts.common.JsonUtils;
+import com.bizwell.echarts.common.ReportManager;
 import com.bizwell.echarts.service.FormService;
 import com.bizwell.echarts.service.ReportService;
 import com.github.pagehelper.PageHelper;
@@ -48,9 +50,14 @@ public class TableServiceImpl implements ReportService {
 		List<Map<String,Object>> list = formService.selectList(data, userId);
 		// 查询出数据的总条数
 		Integer cnt = formService.selectCnt(data, userId);
+		
+		
+		
+		List<FormHeader> newHeaderList = getNewHaderList(list, headerList);
+		
 		// 将表头,数据,总条数封装进map中
 		Map<String, Object> map = new HashMap<>();
-		map.put("header", headerList);
+		map.put("header", newHeaderList);
 		map.put("list", list);
 		map.put("total", cnt);
 		
@@ -58,6 +65,35 @@ public class TableServiceImpl implements ReportService {
 		resultData.setEchartType(echartType);
 		return resultData;
 	}
+	
+	
+
+	private List<FormHeader> getNewHaderList(List<Map<String, Object>> list, List<FormHeader> headerList) {
+		List<FormHeader> newHeaderList = new ArrayList<FormHeader>();
+		
+		
+		if(list.size()>0){
+			 for(String key :list.get(0).keySet()){
+//				 if(key.endsWith("D")){
+					 String column = key.split("_")[1];
+					 String aggregate = ReportManager.getAggregate(key);
+					 String label="";
+					 for(FormHeader header : headerList){
+						 if(column.equals(header.getProp())){
+							 label= header.getLabel();break;
+						 }
+					 }
+					 
+					 FormHeader header = new FormHeader();
+					 header.setLabel(label+aggregate);
+					 header.setProp(key);
+					 newHeaderList.add(header);
+//				 }
+			 }
+		}
+		return newHeaderList;
+	}
+
 	
 	// 获取用户选中的所有维度与数值,用于组装成表头
 	private List<SheetMetaData> getMetaData(String data, Integer userId) {

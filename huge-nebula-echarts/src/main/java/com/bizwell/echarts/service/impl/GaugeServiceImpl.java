@@ -37,7 +37,8 @@ public class GaugeServiceImpl extends AbstractReportService {
 			for (Map<String, Object> map : list) {
 				//value = map.get(sheetMetaData.getFieldColumn());
 				for(String key :map.keySet()){
-					if(key.startsWith(sheetMetaData.getFieldColumn())){
+					String[] split = key.split("_");
+					if(key.startsWith("M") && sheetMetaData.getFieldColumn().equals(split[1])){
 						value=(map.get(key));break;
 					}
 				}

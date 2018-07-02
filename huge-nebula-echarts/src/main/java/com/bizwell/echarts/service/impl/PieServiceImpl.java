@@ -54,11 +54,11 @@ public class PieServiceImpl extends AbstractReportService {
 				Object value=null;
 				
 				for(String key :map.keySet()){
-					if(key.endsWith("D")){
+					if(key.startsWith("D")){
 						String aggregate = ReportManager.getAggregate(key);
 						name=((String)map.get(key))+aggregate;
 					}
-					if(key.endsWith("M")){
+					if(key.startsWith("M")){
 						value=(map.get(key));
 					}
 				}

@@ -84,7 +84,6 @@ public class ReportController extends BaseController {
 		
 		System.out.println("param= " +param);
 		
-		String tableName = "xls_16d506e966a257c240adaed164fdbdcc_u16_s01" ;
 		
 		JsonView jsonView = new JsonView();
 		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
@@ -136,27 +135,30 @@ public class ReportController extends BaseController {
 		return jsonView;
 	}
 
+
 	private List<FormHeader> getNewHaderList(List<Map<String, Object>> list, List<FormHeader> headerList) {
 		List<FormHeader> newHeaderList = new ArrayList<FormHeader>();
 		
+		
 		if(list.size()>0){
 			 for(String key :list.get(0).keySet()){
-				 String column = key.split("_")[0];
-				 
-				 String aggregate = ReportManager.getAggregate(key);
-				 
-				 String label="";
-				 for(FormHeader header : headerList){
-					 if(column.equals(header.getProp())){
-						 label= header.getLabel();break;
+//				 if(key.endsWith("D")){
+					 String column = key.split("_")[1];
+					 String aggregate = ReportManager.getAggregate(key);
+					 String label="";
+					 for(FormHeader header : headerList){
+						 if(column.equals(header.getProp())){
+							 label= header.getLabel();break;
+						 }
 					 }
-				 }
-				 
-				 FormHeader header = new FormHeader();
-				 header.setLabel(label+aggregate);
-				 header.setProp(key);
-				 newHeaderList.add(header);
+					 
+					 FormHeader header = new FormHeader();
+					 header.setLabel(label+aggregate);
+					 header.setProp(key);
+					 newHeaderList.add(header);
+//				 }
 			 }
+
 		}
 		return newHeaderList;
 	}

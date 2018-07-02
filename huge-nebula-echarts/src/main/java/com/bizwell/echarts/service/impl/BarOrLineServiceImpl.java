@@ -45,7 +45,7 @@ public class BarOrLineServiceImpl extends AbstractReportService {
 		for (Map<String, Object> map : list) {
 			String name = new String();
 			for(String key :map.keySet()){
-				if(key.endsWith("D")){
+				if(key.startsWith("D")){
 					name = name + map.get(key) + "|";
 				}
 			}
@@ -78,7 +78,8 @@ public class BarOrLineServiceImpl extends AbstractReportService {
 			String aggregate = "";
 			for (Map<String, Object> map : list) {				
 				for(String key :map.keySet()){
-					if(key.endsWith("M")){
+					String[] split = key.split("_");
+					if(key.startsWith("M") && sheetMetaData.getFieldColumn().equals(split[1])){
 						values.add(map.get(key));
 						aggregate = ReportManager.getAggregate(key);
 					}
@@ -88,7 +89,7 @@ public class BarOrLineServiceImpl extends AbstractReportService {
 			legend.add(fieldName+aggregate);
 			// 封装series
 			Series series = new Series();
-			series.setName(fieldName);
+			series.setName(fieldName+aggregate);
 			series.setStack(stack);
 			series.setData(values);
 			if (type.equals("bar")) {
