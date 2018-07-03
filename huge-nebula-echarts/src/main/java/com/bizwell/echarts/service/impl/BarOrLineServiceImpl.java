@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bizwell.echarts.bean.domain.SheetMetaData;
@@ -13,6 +14,7 @@ import com.bizwell.echarts.bean.vo.Series;
 import com.bizwell.echarts.common.JsonUtils;
 import com.bizwell.echarts.common.ReportManager;
 import com.bizwell.echarts.service.AbstractReportService;
+import com.bizwell.echarts.service.SheetMetaDataService;
 
 /**
  * @author zhangjianjun
@@ -22,6 +24,9 @@ import com.bizwell.echarts.service.AbstractReportService;
 // 柱形图或者折线图模板,用于封装数据
 @Service("04Service")
 public class BarOrLineServiceImpl extends AbstractReportService {
+	
+	@Autowired
+	private SheetMetaDataService sheetMetaDataService;
 
 	@Override
 	protected ResultData setupData(List<Map<String, Object>> list, String data, Integer userId) {
@@ -64,16 +69,11 @@ public class BarOrLineServiceImpl extends AbstractReportService {
 		List<Series> seriesList = new ArrayList<Series>();
 		List<String> legend = new ArrayList<String>();
 		// 获取数值字段
-		List<SheetMetaData> measures = JsonUtils.getFields(data, "measure1", "metadataId", userId);
+		//List<SheetMetaData> measures = JsonUtils.getFields(data, "measure1", "metadataId", userId);
+		List<SheetMetaData> measures = sheetMetaDataService.getFields(data, "measure1", "metadataId");
 		
 		for (SheetMetaData sheetMetaData : measures) {
 			List<Object> values = new ArrayList<Object>();
-			/*for (Map<String, Object> map : list) {
-				Object value = map.get(sheetMetaData.getFieldColumn());
-				values.add(value);
-			}*/
-			
-			
 			
 			String aggregate = "";
 			for (Map<String, Object> map : list) {				

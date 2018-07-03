@@ -23,9 +23,11 @@ import com.bizwell.echarts.common.JsonView;
 import com.bizwell.echarts.common.ReportManager;
 import com.bizwell.echarts.exception.EchartsException;
 import com.bizwell.echarts.exception.ResponseCode;
+import com.bizwell.echarts.mapper.SheetMetaDataMapper;
 import com.bizwell.echarts.service.ChartConfigService;
 import com.bizwell.echarts.service.FormService;
 import com.bizwell.echarts.service.ReportService;
+import com.bizwell.echarts.service.SheetMetaDataService;
 import com.bizwell.echarts.web.BaseController;
 import com.github.pagehelper.PageHelper;
 
@@ -44,6 +46,9 @@ public class ReportController extends BaseController {
 	
 	@Autowired
 	private ChartConfigService chartConfigService;
+	
+	@Autowired
+	private SheetMetaDataService sheetMetaDataService;
 	
 	// 获取图表需要数据
 	@RequestMapping(value = "/getData", method = RequestMethod.POST)
@@ -170,13 +175,15 @@ public class ReportController extends BaseController {
 		
 		List<SheetMetaData> list = new ArrayList<SheetMetaData>();
 		// 获取维度字段名称
-		List<SheetMetaData> dimensions = JsonUtils.getFields(data, "dimension", "metadataId", userId);
+		//List<SheetMetaData> dimensions = JsonUtils.getFields(data, "dimension", "metadataId", userId);
+		List<SheetMetaData> dimensions = sheetMetaDataService.getFields(data, "dimension", "metadataId");
 		for (SheetMetaData sheetMetaData : dimensions) {
 			list.add(sheetMetaData);
 		}
 		
 		// 获取数值字段
-		List<SheetMetaData> measures = JsonUtils.getFields(data, "measure1", "metadataId", userId);
+		//List<SheetMetaData> measures = JsonUtils.getFields(data, "measure1", "metadataId", userId);
+		List<SheetMetaData> measures = sheetMetaDataService.getFields(data, "measure1", "metadataId");
 		for (SheetMetaData sheetMetaData : measures) {
 			list.add(sheetMetaData);
 		}

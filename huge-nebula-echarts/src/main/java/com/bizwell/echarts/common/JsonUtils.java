@@ -16,7 +16,7 @@ import com.bizwell.echarts.bean.domain.SheetMetaData;
  */
 // json工具类
 public class JsonUtils {
-	
+	/*
 	public static List<SheetMetaData> getFields(String data, String field, String metadataId, Integer userId) {
 		
 		List<SheetMetaData> list = new ArrayList<SheetMetaData>();
@@ -26,12 +26,13 @@ public class JsonUtils {
 		for (int i = 0; i < jsonArray.size(); i++) {
 			JSONObject object = jsonArray.getJSONObject(i);
 			Integer id = object.getIntValue(metadataId);
+			String tableName = object.getString("tableName");
 			SheetMetaData sheetMetadata = MetaDataMap.get(userId, id);
 			list.add(sheetMetadata);
 		}
 		
 		return list;
-	}
+	}*/
 	
 	// 解析json, 获取字符串类型数据
 	public static String getString(String data, String name) {

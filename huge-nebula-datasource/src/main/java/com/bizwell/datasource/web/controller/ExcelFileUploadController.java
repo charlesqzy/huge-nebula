@@ -97,6 +97,7 @@ public class ExcelFileUploadController extends BaseController {
 		String md5Hashcode = FileMD5Util.getFileMD5(new File(filePath + fileName));
 		ExcelFileInfo entity = new ExcelFileInfo();
 		entity.setFileCode(md5Hashcode);
+		entity.setUserId(userId);
 		if (excelFileInfoService.select(entity).size() > 0) {
 			code = 201L;
 			message = "文件已存在,将会覆盖原文件";

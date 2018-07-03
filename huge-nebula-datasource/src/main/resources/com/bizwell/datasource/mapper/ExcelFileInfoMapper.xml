@@ -65,6 +65,9 @@
 				and file_name like concat(concat('%', #{sheetName}),
 				'%')
 			</if>
+			<if test="null != userId">
+				and user_id = #{userId}
+			</if>
 		</where>
 	</select>
 </mapper>

@@ -1,5 +1,6 @@
 package com.bizwell.echarts.service;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
 import com.bizwell.echarts.bean.domain.SheetMetaData;
@@ -10,6 +11,8 @@ import com.bizwell.echarts.bean.domain.SheetMetaData;
  *
  */
 public interface SheetMetaDataService {
+	
+	public List<SheetMetaData> getFields(String data, String field, String metadataId);
 	
 	public ConcurrentMap<Integer,ConcurrentMap<Integer,SheetMetaData>> loadProperty();
 

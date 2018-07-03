@@ -56,13 +56,14 @@ public class ReportManager {
 	
 	
 	public static String getAggregate(String key) {
+		
 		String aggregate ="";
 		 if(key.contains("SUM")){
 			 	aggregate="(求和)";
-		 }else if(key.contains("COUNT")){
-			 	aggregate="(计数)"; 
 		 }else if(key.contains("DISCOUNT")){
 				aggregate="(去重计数)"; 
+		 }else if(key.contains("COUNT")){
+			 	aggregate="(计数)"; 
 		 }else if(key.contains("AVG")){
 				aggregate="(平均值)"; 
 		 }else if(key.contains("MAX")){

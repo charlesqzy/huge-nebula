@@ -9,6 +9,8 @@ import java.util.concurrent.ConcurrentMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.bizwell.echarts.bean.domain.SheetMetaData;
 import com.bizwell.echarts.common.MetaDataMap;
 import com.bizwell.echarts.mapper.SheetMetaDataMapper;
@@ -25,6 +27,26 @@ public class SheetMetaDataServiceImpl implements SheetMetaDataService {
 
 	@Autowired
 	private SheetMetaDataMapper sheetMetaDataMapper;
+	
+	
+	public List<SheetMetaData> getFields(String data, String field, String metadataId) {
+		
+		List<SheetMetaData> list = new ArrayList<SheetMetaData>();
+		
+		JSONObject jsonObject = JSONObject.parseObject(data);
+		JSONArray jsonArray = jsonObject.getJSONArray(field);
+		for (int i = 0; i < jsonArray.size(); i++) {
+			JSONObject object = jsonArray.getJSONObject(i);
+			Integer id = object.getIntValue(metadataId);
+			//String tableName = object.getString("tableName");
+			//SheetMetaData sheetMetadata = MetaDataMap.get(userId, id);
+			SheetMetaData sheetMetadata = sheetMetaDataMapper.selectByPrimaryKey(id);
+			list.add(sheetMetadata);
+		}
+		
+		return list;
+	}
+	
 	
 	// 加载数据
 	@Override

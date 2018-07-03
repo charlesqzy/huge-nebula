@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bizwell.echarts.bean.domain.SheetMetaData;
@@ -15,6 +16,7 @@ import com.bizwell.echarts.common.ReportManager;
 import com.bizwell.echarts.exception.EchartsException;
 import com.bizwell.echarts.exception.ResponseCode;
 import com.bizwell.echarts.service.AbstractReportService;
+import com.bizwell.echarts.service.SheetMetaDataService;
 
 
 /**
@@ -25,6 +27,9 @@ import com.bizwell.echarts.service.AbstractReportService;
 // 饼图模板,用于封装数据
 @Service("05Service")
 public class PieServiceImpl extends AbstractReportService {
+	
+	@Autowired
+	private SheetMetaDataService sheetMetaDataService;
 
 	@Override
 	protected ResultData setupData(List<Map<String, Object>> list, String data, Integer userId) {
@@ -32,9 +37,10 @@ public class PieServiceImpl extends AbstractReportService {
 		ResultData resultData = new ResultData();
 		
 		// 获取维度字段名称
-		List<SheetMetaData> dimensions = JsonUtils.getFields(data, "dimension", "metadataId", userId);
+		//List<SheetMetaData> dimensions = JsonUtils.getFields(data, "dimension", "metadataId", userId);
+		List<SheetMetaData> dimensions = sheetMetaDataService.getFields(data, "dimension", "metadataId");
 		// 获取数值字段
-		List<SheetMetaData> measures = JsonUtils.getFields(data, "measure1", "metadataId", userId);
+		List<SheetMetaData> measures = sheetMetaDataService.getFields(data, "measure1", "metadataId");
 		
 		List<String> names = new ArrayList<String>();
 		List<Object> dataList = new ArrayList<Object>();
@@ -77,7 +83,8 @@ public class PieServiceImpl extends AbstractReportService {
 				for (Map<String, Object> map : list) {
 					//value = map.get(sheetMetaData.getFieldColumn());
 					for(String key :map.keySet()){
-						if(key.endsWith("M")){
+						String[] split = key.split("_");
+						if(key.startsWith("M") && sheetMetaData.getFieldColumn().equals(split[1])){
 							value = map.get(key);
 						}
 					}
