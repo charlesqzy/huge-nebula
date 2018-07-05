@@ -24,7 +24,7 @@ public class MetaDataController extends BaseController {
 	
 	@Autowired
 	private SheetMetaDataService sheetMetaDataService;
-	
+	/*
 	// 刷新数据
 	@RequestMapping(value = "/refresh", method = RequestMethod.POST)
 	@ResponseBody
@@ -42,5 +42,5 @@ public class MetaDataController extends BaseController {
 		}
 		return jsonView;
 	}
-
+*/
 }

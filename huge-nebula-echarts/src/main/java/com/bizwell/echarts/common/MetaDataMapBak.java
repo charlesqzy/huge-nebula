@@ -17,8 +17,8 @@ import com.bizwell.echarts.service.SheetMetaDataService;
  *
  */
 // 系统启动时,用于将表中数据加载到内存中
-@Component
-public class MetaDataMap implements ApplicationRunner {
+//@Component
+public class MetaDataMapBak implements ApplicationRunner {
 	
 	@Autowired
 	private SheetMetaDataService sheetMetaDataService;

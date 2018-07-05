@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bizwell.echarts.bean.domain.ChartConfig;
 import com.bizwell.echarts.bean.dto.ChartConfigParam;
@@ -79,11 +80,13 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 			if (null != jsonObject) {
 				String sqlConfig = chartConfig.getSqlConfig();
 				String echartType = JsonUtils.getString(sqlConfig, "echartType");
+				JSONArray inChartFilter = JsonUtils.getJSONArray(sqlConfig, "inChartFilter");
 				String chatData = getData(chartConfig.getSqlConfig(), chartConfig.getUserId());
 				jsonObject.put("chartName", chartConfig.getChartName());
 				jsonObject.put("chartRemarks", chartConfig.getChartRemarks());
 				jsonObject.put("chatData", chatData);
 				jsonObject.put("echartType", echartType);
+				jsonObject.put("inChartFilter", inChartFilter);
 				resultList.add(jsonObject);				
 			}
 		}

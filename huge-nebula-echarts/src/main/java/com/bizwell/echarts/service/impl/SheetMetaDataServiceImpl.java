@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bizwell.echarts.bean.domain.SheetMetaData;
-import com.bizwell.echarts.common.MetaDataMap;
+//import com.bizwell.echarts.common.MetaDataMap;
 import com.bizwell.echarts.mapper.SheetMetaDataMapper;
 import com.bizwell.echarts.service.SheetMetaDataService;
 
@@ -77,6 +77,8 @@ public class SheetMetaDataServiceImpl implements SheetMetaDataService {
 		return resulthMap;
 	}
 
+	
+	/*
 	// 刷新数据
 	@Override
 	public void refresh(Integer userId) {
@@ -99,6 +101,6 @@ public class SheetMetaDataServiceImpl implements SheetMetaDataService {
 			}
 			MetaDataMap.put(entry.getKey(), map1);
 		}
-	}
+	}*/
 	
 }

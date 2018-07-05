@@ -164,11 +164,12 @@ public class ExcelSheetInfoController extends BaseController {
         	
         	
         	/* requset echarts project */
+        	/*
         	logger.info("createSheet httpUrl="+httpUrl);
     		Map data = new HashMap<>();
     		data.put("userId", userId+"");
     		HttpClientUtil.sendHttpPost(httpUrl, data);
-        	
+        	*/
         	s++;
     	}
     	

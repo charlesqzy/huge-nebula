@@ -16,5 +16,5 @@ public interface SheetMetaDataService {
 	
 	public ConcurrentMap<Integer,ConcurrentMap<Integer,SheetMetaData>> loadProperty();
 
-	public void refresh(Integer userId);
+	/*public void refresh(Integer userId);*/
 }

@@ -45,6 +45,17 @@ public class JsonUtils {
 	}
 	
 	// 解析json, 获取字符串类型数据
+	public static JSONArray getJSONArray(String data, String name) {
+		if (StringUtils.isEmpty(data) || StringUtils.isEmpty(name)) {
+			return null;
+		}
+		JSONObject jsonObject = JSONObject.parseObject(data);
+		JSONArray string = jsonObject.getJSONArray(name);
+		return string;
+	}
+	
+
+	// 解析json, 获取字符串类型数据
 	public static Integer getInteger(String data, String name) {
 		
 		JSONObject jsonObject = JSONObject.parseObject(data);
