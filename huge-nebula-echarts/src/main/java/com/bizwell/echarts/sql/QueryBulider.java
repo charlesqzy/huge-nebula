@@ -227,22 +227,22 @@ public class QueryBulider {
     /**
      * 拼接条件中的IN表达式，fieldColumn类型为字符型
      *
-     * @param seleted
+     * @param selected
      * @param fieldColumn
      * @param isNotIN
      * @return
      */
-    private static StringBuffer getInString(JSONArray seleted, String fieldColumn, boolean isNotIN) {
+    private static StringBuffer getInString(JSONArray selected, String fieldColumn, boolean isNotIN) {
         StringBuffer sb = new StringBuffer();
-        if (!(seleted.size() == 1 && seleted.getString(0).equals("全部"))) {
-            if (seleted.size() > 0) {
+        if (!(selected.size() == 1 && selected.getString(0).equals("全部"))) {
+            if (selected.size() > 0) {
                 if (isNotIN)
                     sb.append(fieldColumn + " NOT IN (");
                 else
                     sb.append(fieldColumn + " IN (");
-                for (int j = 0; j < seleted.size(); j++) {
-                    sb.append("\'" + seleted.getString(j) + "\'");
-                    if (j != seleted.size() - 1)
+                for (int j = 0; j < selected.size(); j++) {
+                    sb.append("\'" + selected.getString(j) + "\'");
+                    if (j != selected.size() - 1)
                         sb.append(",");
                 }
                 sb.append(")");
@@ -284,9 +284,15 @@ public class QueryBulider {
                     }
                     break;
                 case 2:  // 文本
-                    JSONArray seleted = obj.getJSONArray("selected");
-                    boolean isNotIn = false;
-                    tmpWhereBuffer = getInString(seleted, fieldColumn, isNotIn);
+                    String subType = obj.getString("subType");
+                    if (subType.equals("精确筛选")) {
+                        JSONArray selected = obj.getJSONArray("selected");
+                        boolean isNotIn = obj.getBoolean("invertSelection");
+                        tmpWhereBuffer = getInString(selected, fieldColumn, isNotIn);
+                    } else if (subType.equals("条件筛选")) {
+                        condition = obj.getJSONObject("selected");
+                        tmpWhereBuffer = getStringCondition(condition, fieldColumn);
+                    }
                     break;
                 case 3:   // 日期
                     String dateLavel = obj.getString("dateLevel");
@@ -294,10 +300,9 @@ public class QueryBulider {
                         condition = obj.getJSONObject("condition");
                         tmpWhereBuffer = getDataCondition(condition, fieldColumn);
                     } else {
-                        seleted = obj.getJSONArray("selected");
+                        JSONArray selected = obj.getJSONArray("selected");
                         String formatColumnName = getFormatDateColumn(dateLavel, fieldColumn);
-                        isNotIn = false;
-                        tmpWhereBuffer = getInString(seleted, formatColumnName, isNotIn);
+                        tmpWhereBuffer = getInString(selected, formatColumnName, false);
                     }
                     break;
             }
@@ -311,6 +316,56 @@ public class QueryBulider {
         result[0] = whereString;
         result[1] = havingString;
         return result;
+    }
+
+    /**
+     * 拼接字段格式是文本时的条件语句，如 colunName like '%信息'
+     *
+     * @param condition
+     * @param fieldColumn
+     * @return
+     */
+    private static StringBuffer getStringCondition(JSONObject condition, String fieldColumn) {
+        StringBuffer sb = new StringBuffer();
+        JSONArray fields = condition.getJSONArray("fields");
+        if (fields != null && !fields.isEmpty()) {
+            String logic = condition.getString("logic");
+            for (int j = 0; j < fields.size(); j++) {
+                JSONObject fieldObj = fields.getJSONObject(j);
+                String operator = fieldObj.getString("operator");
+                String value = fieldObj.getString("value");
+                switch (operator) {
+                    case "等于":   // 等于
+                        sb.append(fieldColumn + " = \'" + value + "\' ");
+                        break;
+                    case "不等于":  // 不等于
+                        sb.append(fieldColumn + " != \'" + value + "\' ");
+                        break;
+                    case "包含": //包含
+                        sb.append(fieldColumn + " like \'%" + value + "%\' ");
+                        break;
+                    case "不包含": // 不包含
+                        sb.append(fieldColumn + " not like \'%" + value + "%\' ");
+                        break;
+                    case "开头包含": // 开头包含
+                        sb.append(fieldColumn + " like \'" + value + "%\' ");
+                        break;
+                    case "结尾包含": // 结尾包含
+                        sb.append(fieldColumn + " like \'%" + value + "\' ");
+                        break;
+                    case "为空": // 为空
+                        sb.append(fieldColumn + " is null ");
+                        break;
+                    case "不为空": // 不为空
+                        sb.append(fieldColumn + " is not null ");
+                        break;
+                    default:
+                        break;
+                }
+                if (j < fields.size() - 1) sb.append(logic + " ");
+            }
+        }
+        return sb;
     }
 
     /**
@@ -349,7 +404,6 @@ public class QueryBulider {
             String type = obj.getString("type");
             String subType = obj.getString("subType");
             String tmpResult = "";
-
             if (type.equals("date")) {
                 JSONObject condition = obj.getJSONObject("condition");
                 tmpResult = getDataCondition(condition, fieldColumn).toString();
@@ -360,44 +414,7 @@ public class QueryBulider {
                     tmpResult = getInString(condition, fieldColumn, invertSelection).toString();
                 } else if (subType.equals("条件筛选")) {
                     JSONObject condition = obj.getJSONObject("condition");
-                    String logic = condition.getString("logic");
-                    JSONArray fields = condition.getJSONArray("fields");
-                    for (int j = 0; j < fields.size(); j++) {
-                        if (j == 0) tmpResult += "( ";
-                        JSONObject fieldObj = fields.getJSONObject(j);
-                        String operator = fieldObj.getString("operator");
-                        String value = fieldObj.getString("value");
-                        switch (operator) {
-                            case "等于":   // 等于
-                                tmpResult = tmpResult + " (" + fieldColumn + " = \'" + value + "\') " + logic;
-                                break;
-                            case "不等于":  // 不等于
-                                tmpResult = tmpResult + " (" + fieldColumn + " != \'" + value + "\') " + logic;
-                                break;
-                            case "包含": //包含
-                                tmpResult = tmpResult + " (" + fieldColumn + " like \'%" + value + "%\') " + logic;
-                                break;
-                            case "不包含": // 不包含
-                                tmpResult = tmpResult + " (" + fieldColumn + " not like \'%" + value + "%\') " + logic;
-                                break;
-                            case "开头包含": // 开头包含
-                                tmpResult = tmpResult + " (" + fieldColumn + " like \'" + value + "%\') " + logic;
-                                break;
-                            case "结尾包含": // 结尾包含
-                                tmpResult = tmpResult + " (" + fieldColumn + " like \'%" + value + "\') " + logic;
-                                break;
-                            case "为空": // 为空
-                                tmpResult = tmpResult + " (" + fieldColumn + " is null ) " + logic;
-                                break;
-                            case "不为空": // 不为空
-                                tmpResult = tmpResult + " (" + fieldColumn + " is not null ) " + logic;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    if (tmpResult.endsWith(logic))
-                        tmpResult = tmpResult.substring(0, tmpResult.lastIndexOf(" ")) + " )";
+                    tmpResult = getStringCondition(condition, fieldColumn).toString();
                 }
             } else if (type.equals("number")) {
                 if (subType.equals("条件筛选")) {
@@ -479,7 +496,75 @@ public class QueryBulider {
     }
 
     public static void main(String[] args) {
-        String jsonString2 = "{ \"echartType\": \"00\", \"moduleType\": \"01\", \"dimension\": [ { \"metadataId\": 162, \"name\": \"billdate\", \"aggregate\": \"计数\", \"dateLevel\": \"按日\", \"fieldType\": 3, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"C\", \"it\": 2 } ], \"measure1\": [ { \"metadataId\": 161, \"name\": \"hotelname\", \"aggregate\": \"计数\", \"dateLevel\": \"按日\", \"fieldType\": 2, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"B\", \"it\": 1 } ], \"measure2\": [], \"filter\": [], \"type\": \"\", \"stack\": \"\", \"inChartFilter\": [ { \"name\": \"billdate\", \"metadataId\": 162, \"level\": 1, \"fieldType\": 3, \"dateLevel\": \"常规\", \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"C\", \"it\": 100001, \"type\": 7, \"condition\": { \"startTime\": \"2018-06-01 00:00:00\", \"endTime\": \"2018-06-30 00:00:00\" } }, { \"name\": \"hotelname\", \"metadataId\": 161, \"level\": 1, \"fieldType\": 2, \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"B\", \"it\": 100002, \"selected\": [ \"全部\" ] }, { \"name\": \"hotelname\", \"metadataId\": 161, \"level\": 1, \"fieldType\": 1, \"aggregate\": \"计数\", \"tableName\": \"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\", \"fieldColumn\": \"B\", \"it\": 1, \"condition\": { \"type\": \"全部\", \"value\": [] } } ] }";
+        String jsonString2 = "{\n" +
+                " \"filter\": [{\n" +
+                "  \"fieldColumn\": \"B\",\n" +
+                "  \"isshow\": true,\n" +
+                "  \"metadataId\": 434,\n" +
+                "  \"condition\": [\"中餐\", \"晚餐\"],\n" +
+                "  \"name\": \"班次\",\n" +
+                "  \"invertSelection\": false,\n" +
+                "  \"subType\": \"精确筛选\",\n" +
+                "  \"type\": \"text\",\n" +
+                "  \"tableName\": \"xls_05f90cf21b60772d3015d50eaa0bafeb_u16_s01\"\n" +
+                " }],\n" +
+                " \"stack\": \"\",\n" +
+                " \"measure2\": [],\n" +
+                " \"moduleType\": \"01\",\n" +
+                " \"measure1\": [{\n" +
+                "  \"fieldColumn\": \"Q\",\n" +
+                "  \"metadataId\": 449,\n" +
+                "  \"name\": \"结算|折扣|公司折扣\",\n" +
+                "  \"it\": 3,\n" +
+                "  \"fieldType\": 1,\n" +
+                "  \"dateLevel\": \"按日\",\n" +
+                "  \"aggregate\": \"求和\",\n" +
+                "  \"tableName\": \"xls_05f90cf21b60772d3015d50eaa0bafeb_u16_s01\"\n" +
+                " }],\n" +
+                " \"echartType\": \"00\",\n" +
+                " \"inChartFilter\": [{\n" +
+                "  \"fieldColumn\": \"C\",\n" +
+                "  \"metadataId\": 435,\n" +
+                "  \"level\": 1,\n" +
+                "  \"name\": \"流水号\",\n" +
+                "  \"it\": 100005,\n" +
+                "  \"fieldType\": 2,\n" +
+                "  \"tableName\": \"xls_05f90cf21b60772d3015d50eaa0bafeb_u16_s01\",\n" +
+                "  \"selected\": [\"421115\", \"421116\"],\n" +
+                "  \"subType\": \"精确筛选\",\n" +
+                "  \"invertSelection\": false\n" +
+                " }, {\n" +
+                "  \"fieldColumn\": \"B\",\n" +
+                "  \"metadataId\": 434,\n" +
+                "  \"level\": 1,\n" +
+                "  \"name\": \"班次\",\n" +
+                "  \"it\": 100004,\n" +
+                "  \"fieldType\": 2,\n" +
+                "  \"tableName\": \"xls_05f90cf21b60772d3015d50eaa0bafeb_u16_s01\",\n" +
+                "  \"selected\": {\n" +
+                "   \"logic\": \"AND\",\n" +
+                "   \"fields\": [{\n" +
+                "    \"operator\": \"等于\",\n" +
+                "    \"value\": \"555\"\n" +
+                "   }, {\n" +
+                "    \"operator\": \"包含\",\n" +
+                "    \"value\": \"66\"\n" +
+                "   }]\n" +
+                "  },\n" +
+                "  \"subType\": \"条件筛选\"\n" +
+                " }],\n" +
+                " \"type\": \"\",\n" +
+                " \"dimension\": [{\n" +
+                "  \"fieldColumn\": \"W\",\n" +
+                "  \"metadataId\": 455,\n" +
+                "  \"name\": \"结帐时间\",\n" +
+                "  \"it\": 4,\n" +
+                "  \"fieldType\": 3,\n" +
+                "  \"dateLevel\": \"按日\",\n" +
+                "  \"aggregate\": \"计数\",\n" +
+                "  \"tableName\": \"xls_05f90cf21b60772d3015d50eaa0bafeb_u16_s01\"\n" +
+                " }]\n" +
+                "}";
 
 
         System.out.println(jsonString2);
