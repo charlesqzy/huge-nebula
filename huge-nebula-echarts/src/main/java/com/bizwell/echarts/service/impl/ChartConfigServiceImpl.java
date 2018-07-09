@@ -80,13 +80,13 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 			if (null != jsonObject) {
 				String sqlConfig = chartConfig.getSqlConfig();
 				String echartType = JsonUtils.getString(sqlConfig, "echartType");
-				JSONArray inChartFilter = JsonUtils.getJSONArray(sqlConfig, "inChartFilter");
+				//JSONArray inChartFilter = JsonUtils.getJSONArray(sqlConfig, "inChartFilter");
 				String chatData = getData(chartConfig.getSqlConfig(), chartConfig.getUserId());
 				jsonObject.put("chartName", chartConfig.getChartName());
 				jsonObject.put("chartRemarks", chartConfig.getChartRemarks());
 				jsonObject.put("chatData", chatData);
 				jsonObject.put("echartType", echartType);
-				jsonObject.put("inChartFilter", inChartFilter);
+				jsonObject.put("sqlConfig", JSONObject.parseObject(sqlConfig));
 				resultList.add(jsonObject);				
 			}
 		}

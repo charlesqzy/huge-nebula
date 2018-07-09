@@ -28,6 +28,7 @@ import com.bizwell.datasource.bean.XLSHaderType;
 import com.bizwell.datasource.bean.XlsContent;
 import com.bizwell.datasource.common.Constants;
 import com.bizwell.datasource.common.DateHelp;
+import com.bizwell.datasource.common.JsonUtils;
 
 
 /**
@@ -96,11 +97,11 @@ public class ReadExcelForHSSF {
 					String value = "";
 					
 					Cell hssfCell = row.getCell(j);
-			        DecimalFormat df = new DecimalFormat("#");
+			        //DecimalFormat df = new DecimalFormat("#");
 			        if(hssfCell != null){
 				        switch (row.getCell(j).getCellType()){
 				        case HSSFCell.CELL_TYPE_NUMERIC:
-				        	value= df.format(hssfCell.getNumericCellValue());
+				        	value= String.valueOf(hssfCell.getNumericCellValue());
 				        	
 				            if(HSSFDateUtil.isCellDateFormatted(hssfCell)||isReserved(hssfCell.getCellStyle().getDataFormat())||isDateFormat(hssfCell.getCellStyle().getDataFormatString())){
 				                value= sdf.format(HSSFDateUtil.getJavaDate(hssfCell.getNumericCellValue()));
@@ -212,14 +213,14 @@ public class ReadExcelForHSSF {
    }
    
 
-	/*public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException {
 		String filePath = "D:\\";
-		String fileName = "predict.xls";
+		String fileName = "effect.xls";
 
 		XlsContent xlsContent = new ReadExcelForHSSF().readExcel(filePath, fileName,false);
 
 		System.out.println(JsonUtils.toJson(xlsContent));
 	}
-	*/
+	
 
 }
