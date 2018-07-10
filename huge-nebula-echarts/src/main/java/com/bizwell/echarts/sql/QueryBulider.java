@@ -16,21 +16,20 @@ public class QueryBulider {
         JSONObject jsonObject = JSONObject.parseObject(jsonString);
 
         JSONArray dimension = jsonObject.getJSONArray("dimension");
-        JSONArray measure1 = jsonObject.getJSONArray("measure1");
-        JSONArray measure2 = jsonObject.getJSONArray("measure2");
-        JSONArray measure = combineJSONArray(measure1, measure2);
-
-        String[] dimAndGroupByStrings = getDimColString(jsonObject.getJSONArray("dimension"));
+        String[] dimAndGroupByStrings = getDimAndGroupByString(jsonObject.getJSONArray("dimension"));
         String dimString = dimAndGroupByStrings[0];
         String groupByString = dimAndGroupByStrings[1];
 
-        String tableName = getTableName(dimension, measure);
-        String measureString = getMeasureString(measure);
+        JSONArray measure1 = jsonObject.getJSONArray("measure1");
+        JSONArray measure2 = jsonObject.getJSONArray("measure2");
+        String tableName = getTableName(dimension, measure1, measure2);
+        String measureString = getMeasureString(measure1, measure2);
 
         String filterString = getFilterString(jsonObject.getJSONArray("filter"));
         String[] inChartFilterString = getInChartFilterString(jsonObject.getJSONArray("inChartFilter"));
         String allFilterString = combineFilterString(filterString, inChartFilterString[0]);
         String havingString = inChartFilterString[1];
+        
         StringBuffer sqlStringBuffer = new StringBuffer();
 
         if (!(dimString.equals("") && measureString.equals(""))) {
@@ -84,39 +83,24 @@ public class QueryBulider {
      * 获取对应的表名
      *
      * @param dimension
-     * @param measure
+     * @param measure1
+     * @param measure2
      * @return
      */
-    private static String getTableName(JSONArray dimension, JSONArray measure) {
+    private static String getTableName(JSONArray dimension, JSONArray measure1, JSONArray measure2) {
         String tableName = null;
         if (dimension != null && !dimension.isEmpty()) {
             JSONObject dm = dimension.getJSONObject(0);
             tableName = dm.getString("tableName");
-        } else if (measure != null && !measure.isEmpty()) {
-            JSONObject ms = measure.getJSONObject(0);
+        } else if (measure1 != null && !measure1.isEmpty()) {
+            JSONObject ms = measure1.getJSONObject(0);
+            tableName = ms.getString("tableName");
+        } else if (measure2 != null && !measure2.isEmpty()) {
+            JSONObject ms = measure2.getJSONObject(0);
             tableName = ms.getString("tableName");
         }
         return tableName;
     }
-
-    /**
-     * 将两个JSONArray合并成一个JSONArray
-     *
-     * @param array1
-     * @param array2
-     * @return
-     */
-    private static JSONArray combineJSONArray(JSONArray array1, JSONArray array2) {
-        if (array1 == null && array2 == null) return null;
-        else if (array1 == null) return array2;
-        else if (array2 == null) return array1;
-        else {
-            for (int i = 0; i < array2.size(); i++)
-                array1.add(array2.getJSONObject(i));
-            return array1;
-        }
-    }
-
 
     /**
      * 拼接出数值类型的where条件语句
@@ -285,9 +269,11 @@ public class QueryBulider {
                     break;
                 case 2:  // 文本
                     String subType = obj.getString("subType");
+                    if (subType == null || subType.equals("")) subType = "精确筛选";
                     if (subType.equals("精确筛选")) {
                         JSONArray selected = obj.getJSONArray("selected");
-                        boolean isNotIn = obj.getBoolean("invertSelection");
+                        Boolean isNotIn = obj.getBoolean("invertSelection");
+                        if (isNotIn == null) isNotIn = false;
                         tmpWhereBuffer = getInString(selected, fieldColumn, isNotIn);
                     } else if (subType.equals("条件筛选")) {
                         condition = obj.getJSONObject("selected");
@@ -434,10 +420,26 @@ public class QueryBulider {
     /**
      * 解析度量字段
      *
+     * @param measure1
+     * @param measure2
+     * @return
+     */
+    private static String getMeasureString(JSONArray measure1, JSONArray measure2) {
+        String m1 = getPartalMeasureString(measure1, 1);
+        String m2 = getPartalMeasureString(measure2, 2);
+        if (m1.equals("") && m2.equals("")) return "";
+        else if (m1.equals("")) return m2;
+        else if (m2.equals("")) return m1;
+        else return m1 + ", " + m2;
+    }
+
+    /**
+     * 解析度量字段
+     *
      * @param measure
      * @return
      */
-    private static String getMeasureString(JSONArray measure) {
+    private static String getPartalMeasureString(JSONArray measure, int index) {
         StringBuffer result = new StringBuffer();
         if (measure == null || measure.isEmpty()) return result.toString();
         for (int i = 0; i < measure.size(); i++) {
@@ -452,7 +454,7 @@ public class QueryBulider {
             else
                 suffix = aggregateColumn.substring(0, aggregateColumn.indexOf("("));
 
-            result.append(aggregateColumn + " AS " + "M" + String.format("%02d", i) + "_" + fieldColumn + "_" + suffix);
+            result.append(aggregateColumn + " AS " + "M" + index + String.format("%02d", i) + "_" + fieldColumn + "_" + suffix);
             result.append(", ");   //注意此处必须为", "，后续处理需要
         }
         String resultString = result.toString();
@@ -467,7 +469,7 @@ public class QueryBulider {
      * @param dimension
      * @return
      */
-    private static String[] getDimColString(JSONArray dimension) {
+    private static String[] getDimAndGroupByString(JSONArray dimension) {
         String result[] = new String[2];
         String dimColumns = "";
         String groupByString = "";
@@ -496,75 +498,7 @@ public class QueryBulider {
     }
 
     public static void main(String[] args) {
-        String jsonString2 = "{\n" +
-                " \"filter\": [{\n" +
-                "  \"fieldColumn\": \"B\",\n" +
-                "  \"isshow\": true,\n" +
-                "  \"metadataId\": 434,\n" +
-                "  \"condition\": [\"中餐\", \"晚餐\"],\n" +
-                "  \"name\": \"班次\",\n" +
-                "  \"invertSelection\": false,\n" +
-                "  \"subType\": \"精确筛选\",\n" +
-                "  \"type\": \"text\",\n" +
-                "  \"tableName\": \"xls_05f90cf21b60772d3015d50eaa0bafeb_u16_s01\"\n" +
-                " }],\n" +
-                " \"stack\": \"\",\n" +
-                " \"measure2\": [],\n" +
-                " \"moduleType\": \"01\",\n" +
-                " \"measure1\": [{\n" +
-                "  \"fieldColumn\": \"Q\",\n" +
-                "  \"metadataId\": 449,\n" +
-                "  \"name\": \"结算|折扣|公司折扣\",\n" +
-                "  \"it\": 3,\n" +
-                "  \"fieldType\": 1,\n" +
-                "  \"dateLevel\": \"按日\",\n" +
-                "  \"aggregate\": \"求和\",\n" +
-                "  \"tableName\": \"xls_05f90cf21b60772d3015d50eaa0bafeb_u16_s01\"\n" +
-                " }],\n" +
-                " \"echartType\": \"00\",\n" +
-                " \"inChartFilter\": [{\n" +
-                "  \"fieldColumn\": \"C\",\n" +
-                "  \"metadataId\": 435,\n" +
-                "  \"level\": 1,\n" +
-                "  \"name\": \"流水号\",\n" +
-                "  \"it\": 100005,\n" +
-                "  \"fieldType\": 2,\n" +
-                "  \"tableName\": \"xls_05f90cf21b60772d3015d50eaa0bafeb_u16_s01\",\n" +
-                "  \"selected\": [\"421115\", \"421116\"],\n" +
-                "  \"subType\": \"精确筛选\",\n" +
-                "  \"invertSelection\": false\n" +
-                " }, {\n" +
-                "  \"fieldColumn\": \"B\",\n" +
-                "  \"metadataId\": 434,\n" +
-                "  \"level\": 1,\n" +
-                "  \"name\": \"班次\",\n" +
-                "  \"it\": 100004,\n" +
-                "  \"fieldType\": 2,\n" +
-                "  \"tableName\": \"xls_05f90cf21b60772d3015d50eaa0bafeb_u16_s01\",\n" +
-                "  \"selected\": {\n" +
-                "   \"logic\": \"AND\",\n" +
-                "   \"fields\": [{\n" +
-                "    \"operator\": \"等于\",\n" +
-                "    \"value\": \"555\"\n" +
-                "   }, {\n" +
-                "    \"operator\": \"包含\",\n" +
-                "    \"value\": \"66\"\n" +
-                "   }]\n" +
-                "  },\n" +
-                "  \"subType\": \"条件筛选\"\n" +
-                " }],\n" +
-                " \"type\": \"\",\n" +
-                " \"dimension\": [{\n" +
-                "  \"fieldColumn\": \"W\",\n" +
-                "  \"metadataId\": 455,\n" +
-                "  \"name\": \"结帐时间\",\n" +
-                "  \"it\": 4,\n" +
-                "  \"fieldType\": 3,\n" +
-                "  \"dateLevel\": \"按日\",\n" +
-                "  \"aggregate\": \"计数\",\n" +
-                "  \"tableName\": \"xls_05f90cf21b60772d3015d50eaa0bafeb_u16_s01\"\n" +
-                " }]\n" +
-                "}";
+        String jsonString2 = "{\"echartType\":\"17\",\"moduleType\":\"05\",\"dimension\":[{\"metadataId\":161,\"name\":\"hotelname\",\"aggregate\":\"计数\",\"dateLevel\":\"按日\",\"fieldType\":2,\"tableName\":\"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\",\"fieldColumn\":\"B\",\"it\":3}],\"measure1\":[{\"metadataId\":163,\"name\":\"餐段数\",\"aggregate\":\"求和\",\"dateLevel\":\"按日\",\"fieldType\":1,\"tableName\":\"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\",\"fieldColumn\":\"D\",\"it\":2}],\"measure2\":[{\"metadataId\":163,\"name\":\"餐段数\",\"aggregate\":\"求和\",\"dateLevel\":\"按日\",\"fieldType\":1,\"tableName\":\"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\",\"fieldColumn\":\"D\",\"it\":2}],\"filter\":[],\"type\":\"pie\",\"stack\":\"\",\"inChartFilter\":[{\"name\":\"hotelname\",\"metadataId\":161,\"level\":1,\"fieldType\":2,\"tableName\":\"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\",\"fieldColumn\":\"B\",\"it\":100002,\"selected\":[\"全部\"]},{\"name\":\"餐段数\",\"metadataId\":163,\"level\":1,\"fieldType\":1,\"aggregate\":\"求和\",\"tableName\":\"xls_16d506e966a257c240adaed164fdbdcc_u16_s01\",\"fieldColumn\":\"D\",\"it\":2,\"condition\":{\"type\":\"全部\",\"value\":[]}}]}";
 
 
         System.out.println(jsonString2);
