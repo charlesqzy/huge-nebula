@@ -3,7 +3,7 @@ package com.bizwell.datasource.service;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +39,8 @@ public class ReadExcelForHSSF {
 	private static Logger logger = LoggerFactory.getLogger(ReadExcelForHSSF.class);
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
+	NumberFormat nf = NumberFormat.getInstance();
 
 	public XlsContent readExcel(String filePath, String fileName,boolean isCut) throws IOException {
 
@@ -101,8 +103,8 @@ public class ReadExcelForHSSF {
 			        if(hssfCell != null){
 				        switch (row.getCell(j).getCellType()){
 				        case HSSFCell.CELL_TYPE_NUMERIC:
-				        	value= String.valueOf(hssfCell.getNumericCellValue());
-				        	
+				        	//value= String.valueOf(hssfCell.getNumericCellValue());
+				        	value=nf.format(hssfCell.getNumericCellValue());
 				            if(HSSFDateUtil.isCellDateFormatted(hssfCell)||isReserved(hssfCell.getCellStyle().getDataFormat())||isDateFormat(hssfCell.getCellStyle().getDataFormatString())){
 				                value= sdf.format(HSSFDateUtil.getJavaDate(hssfCell.getNumericCellValue()));
 				            }
@@ -147,34 +149,34 @@ public class ReadExcelForHSSF {
 		case HSSFCell.CELL_TYPE_NUMERIC: // 数字
 			// 如果为时间格式的内容
 			if (DateUtil.isCellDateFormatted(cell)) {
-				value = "date";break;
+				value = "3";break;
 			} else {
-				value = "numeric";
+				value = "1";
 			}
 			break;
 		case HSSFCell.CELL_TYPE_STRING: // 字符串
 			if(DateHelp.isRightDateStr(cell.getStringCellValue(),"yyyy-MM-dd")){
-				value = "date";break;
+				value = "3";break;
 			}
 			if(DateHelp.isRightDateStr(cell.getStringCellValue(),"yyyy-MM-dd HH:mm:ss")){
-				value = "date";break;
+				value = "3";break;
 			}
-			value = "string";
+			value = "2";
 			break;
 		case HSSFCell.CELL_TYPE_BOOLEAN: // Boolean
-			value = "boolean";
+			value = "4";
 			break;
 		case HSSFCell.CELL_TYPE_FORMULA: // 公式
-			value = "formula";
+			value = "5";
 			break;
 		case HSSFCell.CELL_TYPE_BLANK: // 空值
-			value = "blank";
+			value = "6";
 			break;
 		case HSSFCell.CELL_TYPE_ERROR: // 故障
-			value = "非法字符";
+			value = "7";
 			break;
 		default:
-			value = "未知类型";
+			value = "7";
 			break;
 		}
 		return value;
@@ -215,8 +217,9 @@ public class ReadExcelForHSSF {
 
 	public static void main(String[] args) throws IOException {
 		String filePath = "D:\\";
-		String fileName = "effect.xls";
+		String fileName = "predict.xlsx";
 
+	
 		XlsContent xlsContent = new ReadExcelForHSSF().readExcel(filePath, fileName,false);
 
 		System.out.println(JsonUtils.toJson(xlsContent));

@@ -28,6 +28,10 @@ public class ReportManager {
 	
 	// 饼图
 	public static final String PIE = "05";
+	
+	
+	public static final String BIAX = "06";
+
 
 	// 设置code对应中文
 	private static final Map<String,String> REPORT_NAME = new HashMap<String,String>() {
@@ -40,6 +44,7 @@ public class ReportManager {
 			put(GAUGE, "仪表盘");
 			put(BAR_LINE, "柱形图与折线图");
 			put(PIE, "饼图");
+			put(BIAX, "双轴图");
 		}
 	};
 	

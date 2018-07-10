@@ -40,12 +40,12 @@ public class MysqlHelper {
 		createSql.append("create table ").append(tableName).append("(");
 		for (XLSHaderType type : typeList) {
 			createSql.append(type.getProp());
-			if ("string".equals(type.getType())) {
+			if ("2".equals(type.getType())) {
 				createSql.append(" varchar(200) ,");
-			} else if ("date".equals(type.getType())) {
+			} else if ("3".equals(type.getType())) {
 				//createSql.append(" varchar(20) ,");
 				createSql.append(" datetime ,");
-			} else if ("numeric".equals(type.getType())) {
+			} else if ("1".equals(type.getType())) {
 				createSql.append(" double ,");
 			}
 		}
@@ -94,13 +94,15 @@ public class MysqlHelper {
 		for (int i = 0; i < headerMap.size(); i++) {
 			
 			
-			if ("string".equals(typeList.get(i).getType())) {
+			if ("2".equals(typeList.get(i).getType())) {
 				fieldType =2;
-			} else if ("date".equals(typeList.get(i).getType())) {
+			} else if ("3".equals(typeList.get(i).getType())) {
 				fieldType =3;
-			} else if ("numeric".equals(typeList.get(i).getType())) {
+			} else if ("1".equals(typeList.get(i).getType())) {
 				fieldType = 1;
 			}
+			
+
 			
 			metadataSQL.append("('" + sheetId + "','"+tableName+"','"+Constants.excelHader[i]+"','" + headerMap.get(Constants.excelHader[i]) + "','" + headerMap.get(Constants.excelHader[i]) + "',"+fieldType+",'','1','"+userId+"'),");
 		}

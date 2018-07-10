@@ -12,6 +12,8 @@ public class ResultData {
 	
 	private List<Object> names;
 	
+	private List<YAxis> yAxies;
+	
 	private List<Series> series;
 	
 	private List<String> legend;
@@ -59,10 +61,20 @@ public class ResultData {
 	public void setEchartType(String echartType) {
 		this.echartType = echartType;
 	}
+	
+	
+
+	public List<YAxis> getyAxies() {
+		return yAxies;
+	}
+
+	public void setyAxies(List<YAxis> yAxies) {
+		this.yAxies = yAxies;
+	}
 
 	@Override
 	public String toString() {
-		return String.format("ResultData [names=%s, series=%s, legend=%s, echartType=%s, value=%s]", names, series,
+		return String.format("ResultData [names=%s , yAxies=%s, series=%s, legend=%s, echartType=%s, value=%s]", names, yAxies, series,
 				legend, echartType, value);
 	}
 

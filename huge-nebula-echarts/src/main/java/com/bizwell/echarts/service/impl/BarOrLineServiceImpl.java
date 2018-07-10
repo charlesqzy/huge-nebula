@@ -30,22 +30,7 @@ public class BarOrLineServiceImpl extends AbstractReportService {
 
 	@Override
 	protected ResultData setupData(List<Map<String, Object>> list, String data, Integer userId) {
-/*
-		// 获取维度字段名称
-		List<SheetMetaData> dimensions = JsonUtils.getFields(data, "dimension", "metadataId", userId);
-		// 组装维度,假如有多个维度通过 "|"分隔
-		List<Object> names = new ArrayList<Object>();
-		for (Map<String, Object> map : list) {
-			String name = new String();
-			for (SheetMetaData sheetMetaData : dimensions) {
-				name = name + map.get(sheetMetaData.getFieldColumn()) + "|";				
-			}
-			if (name.endsWith("|")) {
-				name = name.substring(0, name.length() - 1);
-			}		
-			names.add(name);
-		}
-*/
+
 		List<Object> names = new ArrayList<Object>();
 		for (Map<String, Object> map : list) {
 			String name = new String();
@@ -109,7 +94,7 @@ public class BarOrLineServiceImpl extends AbstractReportService {
 		
 		// 封装结果数据
 		ResultData resultData = new ResultData();
-		resultData.setNames(names);
+		resultData.setNames(names);		
 		resultData.setSeries(seriesList);
 		resultData.setLegend(legend);
 		resultData.setEchartType(echartType);

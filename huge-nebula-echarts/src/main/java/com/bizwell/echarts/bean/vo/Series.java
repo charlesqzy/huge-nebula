@@ -20,8 +20,19 @@ public class Series {
 	
 	private String  areaStyle;
 	
+	private Integer yAxisIndex;
+	
 	private List<Object> data;
 	
+	
+	public Integer getyAxisIndex() {
+		return yAxisIndex;
+	}
+
+	public void setyAxisIndex(Integer yAxisIndex) {
+		this.yAxisIndex = yAxisIndex;
+	}
+
 	public Object getName() {
 		return name;
 	}
@@ -72,8 +83,8 @@ public class Series {
 
 	@Override
 	public String toString() {
-		return String.format("Series [name=%s, type=%s, stack=%s, smooth=%s, areaStyle=%s, data=%s]", name, type, stack,
-				smooth, areaStyle, data);
+		return String.format("Series [name=%s, type=%s, stack=%s, smooth=%s, areaStyle=%s , yAxisIndex=%s, data=%s]", name, type, stack,
+				smooth, areaStyle, yAxisIndex, data);
 	}
 
 }

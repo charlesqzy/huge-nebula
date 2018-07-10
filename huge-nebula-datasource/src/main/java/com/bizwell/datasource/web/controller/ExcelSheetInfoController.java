@@ -94,7 +94,7 @@ public class ExcelSheetInfoController extends BaseController {
 			if (fileName.indexOf(".xlsx") > -1 || fileName.indexOf(".xls") > -1) {// 判断文件类型
 				newXlsContent =  readExcelForHSSF.readExcel(filePath, fileName, false);
 			} else if (fileName.indexOf(".csv") > -1) {
-				newXlsContent = ReadCSVUtil.readCSV(filePath, fileName, true);
+				newXlsContent = ReadCSVUtil.readCSV(filePath, fileName, false);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -143,7 +143,7 @@ public class ExcelSheetInfoController extends BaseController {
         	String insertMetadataSQL=MysqlHelper.generateInsertMetadataSQL(xlsContent.getSheets()[s].getTypeList(),
         			sheet.getContentList(),excelSheetInfo.getId(),tableName,userId);
         	
-        	boolean flag1 = jdbcService.executeSql(dropSql);
+        	boolean flag1 =jdbcService.executeSql(dropSql);
         	boolean flag2 =jdbcService.executeSql(createSql);
         	boolean flag3 =jdbcService.executeSql(insertSQL);
         	

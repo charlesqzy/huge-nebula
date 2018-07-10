@@ -27,12 +27,23 @@ public class ReadCSVUtil {
 		SheetInfo[] sheets = new SheetInfo[1];
 
 		// 创建CSV读对象
-		CsvReader csvReader = new CsvReader(filePath + fileName, ',', Charset.forName("GBK"));
+		CsvReader csvReader = new CsvReader(filePath + fileName, ',', Charset.forName("utf-8"));
 
 		List<XLSHaderType> typeList = new ArrayList<XLSHaderType>();
 		List<Map<String, String>> contentList = new ArrayList<Map<String, String>>();
 		Map<String, String> rowCellValues = null;
 
+		String[] headers;
+		if(csvReader.readHeaders()){
+			rowCellValues = new HashMap<String, String>();
+			headers = csvReader.getHeaders();
+			for (int i = 0; i < headers.length; i++) {
+				rowCellValues.put(Constants.excelHader[i], headers[i]);
+			}
+			contentList.add(rowCellValues);
+		}
+		
+		
 		String type;
 		int s = 0;
 		while (csvReader.readRecord()) {
@@ -53,13 +64,22 @@ public class ReadCSVUtil {
 						type = "2";
 					}
 
+			
 					XLSHaderType xlsHaderType = new XLSHaderType();
 					xlsHaderType.setProp(Constants.excelHader[j]);
 					xlsHaderType.setType(type);
 					xlsHaderType.setLabel(value);
 					typeList.add(xlsHaderType);
+					
+
 				}
-			} else {
+				rowCellValues = new HashMap<String, String>();
+				for (int j = 0; j < fileColumns; j++) {
+					String value = csvReader.get(j);
+					rowCellValues.put(Constants.excelHader[j], value);
+				}
+				contentList.add(rowCellValues);
+			}else{
 				rowCellValues = new HashMap<String, String>();
 				for (int j = 0; j < fileColumns; j++) {
 					String value = csvReader.get(j);
@@ -67,6 +87,8 @@ public class ReadCSVUtil {
 				}
 				contentList.add(rowCellValues);
 			}
+			
+
 
 			fileRows += 1;
 			s++;
@@ -95,7 +117,7 @@ public class ReadCSVUtil {
 	public static void main(String[] args) throws IOException {
 
 		String path = "D:\\";
-		String fileName = "predict.csv";
+		String fileName = "position.csv";
 		
 		XlsContent xlsContent = ReadCSVUtil.readCSV(path, fileName, false);
 
