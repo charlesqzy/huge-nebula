@@ -67,6 +67,7 @@ public class BarOrLineServiceImpl extends AbstractReportService {
 					if(key.startsWith("M") && sheetMetaData.getFieldColumn().equals(split[1])){
 						values.add(map.get(key));
 						aggregate = ReportManager.getAggregate(key);
+						
 					}
 				}
 			}

@@ -3,6 +3,7 @@ package com.bizwell.datasource.service;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,7 +126,13 @@ public class MysqlHelper {
 			Map<String, String> map = contentList.get(k);
 			insertSql.append("(");
 			for (int i = 0; i < map.size(); i++) {
-				insertSql.append("'").append(map.get(Constants.excelHader[i])).append("',");
+				String value =map.get(Constants.excelHader[i]);
+				if(StringUtils.isEmpty(value)){
+					insertSql.append("null,");
+				}else{
+					insertSql.append("'").append(value).append("',");
+				}
+				
 			}
 			insertSql.delete(insertSql.lastIndexOf(","), insertSql.lastIndexOf(",") + 1);
 			insertSql.append("),");
