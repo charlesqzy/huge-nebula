@@ -135,7 +135,7 @@ public class ExcelSheetInfoController extends BaseController {
         	Integer rowIndex = xlsContent.getSheets()[s].getRowIndex();
         	Integer startRow = rowIndex>0?rowIndex-1:rowIndex ;
         	System.out.println("startRow===="+startRow);
-        	String insertSQL=MysqlHelper.generateInsertTableSQL(
+        	String[] insertSQLs=MysqlHelper.generateInsertTableSQL(
         			sheet.getContentList().subList(startRow, sheet.getContentList().size()),tableName);
         	
         	String deleteMetadataSQL=MysqlHelper.generateDeleteMetadataSQL(tableName);
@@ -145,7 +145,7 @@ public class ExcelSheetInfoController extends BaseController {
         	
         	boolean flag1 =jdbcService.executeSql(dropSql);
         	boolean flag2 =jdbcService.executeSql(createSql);
-        	boolean flag3 =jdbcService.executeSql(insertSQL);
+        	boolean flag3 =jdbcService.executeSql(insertSQLs);
         	
         	boolean flag4 =jdbcService.executeSql(deleteMetadataSQL);
         	boolean flag5 =jdbcService.executeSql(insertMetadataSQL);

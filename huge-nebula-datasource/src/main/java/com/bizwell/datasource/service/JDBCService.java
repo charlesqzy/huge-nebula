@@ -24,27 +24,37 @@ public class JDBCService {
 	private DataSource dataSource;
 
 	public boolean executeSql(String sql)  {
-		
 		boolean flag = true;
-		
 		Connection connection = DataSourceUtils.getConnection(dataSource);
 		PreparedStatement preparedStatement = null;
-//		Statement preparedStatement = null;
-//	    ResultSet resultSet = null;
-	    // 创建Statement对象
         try {
 			preparedStatement = connection.prepareStatement(sql);
 			// 执行sql
 			preparedStatement.execute();
-
 			connection.close();
 		} catch (SQLException e) {
 			flag = false;
 			e.printStackTrace();
 		}
-        
         return flag;
-	     
 	}
 
+	
+	
+	public boolean executeSql(String[] sqls)  {
+		boolean flag = true;
+		Connection connection = DataSourceUtils.getConnection(dataSource);
+		PreparedStatement preparedStatement = null;
+        try {
+        	for(String sql : sqls){
+				preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.execute();
+	        }
+			connection.close();
+		} catch (SQLException e) {
+			flag = false;
+			e.printStackTrace();
+		}
+        return flag;
+	}
 }

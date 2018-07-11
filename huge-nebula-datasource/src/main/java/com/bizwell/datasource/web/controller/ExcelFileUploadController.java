@@ -188,9 +188,9 @@ public class ExcelFileUploadController extends BaseController {
 				msg="replase sheet";
 			}
 
-			String insertSQL = MysqlHelper.generateInsertTableSQL(xlsContent.getSheets()[0].getContentList(),
+			String[] insertSQLs = MysqlHelper.generateInsertTableSQL(xlsContent.getSheets()[0].getContentList(),
 					tableName);
-			flag = jdbcService.executeSql(insertSQL);
+			flag = jdbcService.executeSql(insertSQLs);
 
 			SheetLog sheetLog = new SheetLog();
 			sheetLog.setSheetId(excelSheetInfo.getId());
