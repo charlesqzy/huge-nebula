@@ -11,12 +11,14 @@ import java.util.Date;
 public class ChartConfig {
 	
     private Integer id;
-
+    
     private Integer sheetId;
 
     private Integer folderId;
 
     private Integer panelId;
+    
+    private String panelUuid;
 
     private Integer userId;
 
@@ -160,11 +162,20 @@ public class ChartConfig {
         this.reserved3 = reserved3 == null ? null : reserved3.trim();
     }
 
+    
+	public String getPanelUuid() {
+		return panelUuid;
+	}
+
+	public void setPanelUuid(String panelUuid) {
+		this.panelUuid = panelUuid;
+	}
+
 	@Override
 	public String toString() {
 		return String.format(
-				"ChartConfig [id=%s, sheetId=%s, folderId=%s, panelId=%s, userId=%s, chartName=%s, chartRemarks=%s, location=%s, sqlConfig=%s, chatConfig=%s, createTime=%s, updateTime=%s, reserved1=%s, reserved2=%s, reserved3=%s]",
-				id, sheetId, folderId, panelId, userId, chartName, chartRemarks, location, sqlConfig, chatConfig,
+				"ChartConfig [id=%s, sheetId=%s, folderId=%s, panelId=%s,panelUuid=%s, userId=%s, chartName=%s, chartRemarks=%s, location=%s, sqlConfig=%s, chatConfig=%s, createTime=%s, updateTime=%s, reserved1=%s, reserved2=%s, reserved3=%s]",
+				id, sheetId, folderId, panelId,panelUuid, userId, chartName, chartRemarks, location, sqlConfig, chatConfig,
 				createTime, updateTime, reserved1, reserved2, reserved3);
 	}
     

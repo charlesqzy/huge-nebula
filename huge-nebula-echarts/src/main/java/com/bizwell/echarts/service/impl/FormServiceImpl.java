@@ -25,17 +25,17 @@ public class FormServiceImpl implements FormService {
 
 	// 查询出数据
 	@Override
-	public List<Map<String, Object>> selectList(String data, Integer userId) {
+	public List<Map<String, Object>> selectList(String data,int start,int end) {
 		
 		//String sql = QueryBulider.getSql(data, userId);
 		String sql = QueryBulider.getQueryString(data);
-		List<Map<String,Object>> list = echartsMapper.selectBySql(sql);
+		List<Map<String,Object>> list = echartsMapper.selectBySql(sql + " LIMIT "+start+","+end);
 		return list;
 	}
 
 	// 查询总条数
 	@Override
-	public Integer selectCnt(String data, Integer userId) {
+	public Integer selectCnt(String data) {
 		
 //		String sql = parseSql(QueryBulider.getSql(data, userId));
 		//String sql = QueryBulider.getSql(data, userId);

@@ -2,7 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.bizwell.echarts.mapper.FolderInfoMapper">
   <resultMap id="BaseResultMap" type="com.bizwell.echarts.bean.domain.FolderInfo" autoMapping="true">
-    <id column="id" property="id" jdbcType="INTEGER" />
+    <id column="id" property="id" jdbcType="INTEGER" />    
+   
     <result column="user_id" property="userId" jdbcType="INTEGER" />
     <result column="folder_name" property="folderName" jdbcType="VARCHAR" />
     <result column="folder_type" property="folderType" jdbcType="INTEGER" />
@@ -16,13 +17,14 @@
     <result column="showMore" property="showMore" jdbcType="BOOLEAN" />
     <collection property="childrenFolder" ofType="com.bizwell.echarts.bean.domain.ChildrenFolder" autoMapping="true">
         <id column="child_id" property="childId" jdbcType="INTEGER" />
+        <result column="child_panel_uuid" property="panelUuid" jdbcType="VARCHAR" />
 		<result column="child_folder_name" property="childFolderName" jdbcType="VARCHAR" />
 		<result column="showMore1" property="showMore1" jdbcType="BOOLEAN" />
     </collection>
   </resultMap>
   
   <sql id="Base_Column_List" >
-    id, user_id, folder_name, folder_type, parent_id, level, is_del, create_time, update_time, reserved1, reserved2, showMore
+    id,panel_uuid, user_id, folder_name, folder_type, parent_id, level, is_del, create_time, update_time, reserved1, reserved2, showMore
   </sql>
   
   <select id="selectByParam" resultMap="BaseResultMap" parameterType="com.bizwell.echarts.bean.dto.FolderParam">
@@ -41,9 +43,10 @@
   
   <select id="selectFolder" resultMap="BaseResultMap" parameterType="java.lang.String">
   	select
-  		t1.id,
+  		t1.id,  		
   		t1.folder_name,
   		t2.id as child_id,
+  		t2.panel_uuid as child_panel_uuid,
   		t2.folder_name as child_folder_name,
   		t1.showMore,
         t2.showMore as showMore1
@@ -73,12 +76,12 @@
   </delete>
   
   <insert id="insert" parameterType="com.bizwell.echarts.bean.domain.FolderInfo" >
-    insert into gb_folder_info (id, user_id, folder_name, 
+    insert into gb_folder_info (id,panel_uuid, user_id, folder_name, 
       folder_type, parent_id, level, 
       is_del, create_time, update_time, 
       reserved1, reserved2, showMore
       )
-    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{folderName,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER},REPLACE(UUID(),"-",""), #{userId,jdbcType=INTEGER}, #{folderName,jdbcType=VARCHAR}, 
       #{folderType,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER}, #{level,jdbcType=INTEGER}, 
       #{isDel,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{reserved1,jdbcType=VARCHAR}, #{reserved2,jdbcType=VARCHAR}, #{showMore,jdbcType=BOOLEAN}
@@ -92,6 +95,7 @@
       <if test="id != null" >
         id,
       </if>
+      panel_uuid,
       <if test="userId != null" >
         user_id,
       </if>
@@ -130,6 +134,7 @@
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
+      REPLACE(UUID(),"-",""),
       <if test="userId != null" >
         #{userId,jdbcType=INTEGER},
       </if>

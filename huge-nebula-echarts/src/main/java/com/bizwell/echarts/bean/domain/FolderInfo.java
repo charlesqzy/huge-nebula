@@ -13,6 +13,8 @@ import java.util.List;
 public class FolderInfo {
 	
     private Integer id;
+    
+    private String panelUuid;
 
     private Integer userId;
 
@@ -20,7 +22,15 @@ public class FolderInfo {
 
     private Integer folderType;
 
-    private Integer parentId;
+    public String getPanelUuid() {
+		return panelUuid;
+	}
+
+	public void setPanelUuid(String panelUuid) {
+		this.panelUuid = panelUuid;
+	}
+
+	private Integer parentId;
 
     private Integer level;
     

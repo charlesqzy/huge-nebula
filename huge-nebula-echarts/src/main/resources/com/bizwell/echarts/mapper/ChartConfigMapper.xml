@@ -1,246 +1,268 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.bizwell.echarts.mapper.ChartConfigMapper" >
-  <resultMap id="BaseResultMap" type="com.bizwell.echarts.bean.domain.ChartConfig" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="sheet_id" property="sheetId" jdbcType="INTEGER" />
-    <result column="folder_id" property="folderId" jdbcType="INTEGER" />
-    <result column="panel_id" property="panelId" jdbcType="INTEGER" />
-    <result column="user_id" property="userId" jdbcType="INTEGER" />
-    <result column="chart_name" property="chartName" jdbcType="VARCHAR" />
-    <result column="chart_remarks" property="chartRemarks" jdbcType="VARCHAR" />
-    <result column="location" property="location" jdbcType="VARCHAR" />
-    <result column="sql_config" property="sqlConfig" jdbcType="VARCHAR" />
-    <result column="chat_config" property="chatConfig" jdbcType="VARCHAR" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-    <result column="reserved1" property="reserved1" jdbcType="VARCHAR" />
-    <result column="reserved2" property="reserved2" jdbcType="VARCHAR" />
-    <result column="reserved3" property="reserved3" jdbcType="VARCHAR" />
-  </resultMap>
-  
-  <sql id="Base_Column_List" >
-    id, sheet_id, folder_id, panel_id, user_id, chart_name, chart_remarks, location, 
-    sql_config, chat_config, create_time, update_time, reserved1, reserved2, reserved3
-  </sql>
-  
-  <select id="selectChartConfig" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-  	select 
-    	t.id,
-    	t.sheet_id,
-    	t.folder_id,
-    	t.panel_id,
-    	t.user_id,
-    	t.chart_name,
-    	t.chart_remarks,
-    	t.location,
-    	t.sql_config,
-    	t1.reserved1,
-    	t1.reserved2
-    from ws_chart_config_info t right join gb_folder_info t1
-    on t.panel_id = t1.id
-    <where>
-    	t1.is_del = 0
-    	<if test="panelId != null and panelId != ''">
-			<trim prefixOverrides="and / or">
-				<!-- and t.panel_id = #{panelId, jdbcType=INTEGER} -->
-				and t1.id = #{panelId, jdbcType=INTEGER}
-			</trim>
-		</if>
-    </where>
-  </select>
+<mapper namespace="com.bizwell.echarts.mapper.ChartConfigMapper">
+	<resultMap id="BaseResultMap" type="com.bizwell.echarts.bean.domain.ChartConfig">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sheet_id" property="sheetId" jdbcType="INTEGER" />
+		<result column="folder_id" property="folderId" jdbcType="INTEGER" />
+		<result column="panel_id" property="panelId" jdbcType="INTEGER" />
+		<result column="panel_uuid" property="panelUuid" jdbcType="VARCHAR" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="chart_name" property="chartName" jdbcType="VARCHAR" />
+		<result column="chart_remarks" property="chartRemarks"
+			jdbcType="VARCHAR" />
+		<result column="location" property="location" jdbcType="VARCHAR" />
+		<result column="sql_config" property="sqlConfig" jdbcType="VARCHAR" />
+		<result column="chat_config" property="chatConfig" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="reserved1" property="reserved1" jdbcType="VARCHAR" />
+		<result column="reserved2" property="reserved2" jdbcType="VARCHAR" />
+		<result column="reserved3" property="reserved3" jdbcType="VARCHAR" />
+	</resultMap>
 
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
-    <include refid="Base_Column_List" />
-    from ws_chart_config_info
-    where id = #{id,jdbcType=INTEGER}
-  </select>
-  
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from ws_chart_config_info
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
-  
-  <insert id="insert" parameterType="com.bizwell.echarts.bean.domain.ChartConfig" >
-    insert into ws_chart_config_info (id, sheet_id, folder_id, 
-      panel_id, user_id, chart_name, 
-      chart_remarks, location, sql_config, 
-      chat_config, create_time, update_time, 
-      reserved1, reserved2, reserved3
-      )
-    values (#{id,jdbcType=INTEGER}, #{sheetId,jdbcType=INTEGER}, #{folderId,jdbcType=INTEGER}, 
-      #{panelId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{chartName,jdbcType=VARCHAR}, 
-      #{chartRemarks,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR}, #{sqlConfig,jdbcType=VARCHAR}, 
-      #{chatConfig,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{reserved1,jdbcType=VARCHAR}, #{reserved2,jdbcType=VARCHAR}, #{reserved3,jdbcType=VARCHAR}
-      )
-  </insert>
-  
-  <insert id="insertSelective" parameterType="com.bizwell.echarts.bean.domain.ChartConfig"
-  			useGeneratedKeys="true" keyProperty="id">
-    insert into ws_chart_config_info
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
-      <if test="sheetId != null" >
-        sheet_id,
-      </if>
-      <if test="folderId != null" >
-        folder_id,
-      </if>
-      <if test="panelId != null" >
-        panel_id,
-      </if>
-      <if test="userId != null" >
-        user_id,
-      </if>
-      <if test="chartName != null" >
-        chart_name,
-      </if>
-      <if test="chartRemarks != null" >
-        chart_remarks,
-      </if>
-      <if test="location != null" >
-        location,
-      </if>
-      <if test="sqlConfig != null" >
-        sql_config,
-      </if>
-      <if test="chatConfig != null" >
-        chat_config,
-      </if>
-      <if test="createTime != null" >
-        create_time,
-      </if>
-      <if test="updateTime != null" >
-        update_time,
-      </if>
-      <if test="reserved1 != null" >
-        reserved1,
-      </if>
-      <if test="reserved2 != null" >
-        reserved2,
-      </if>
-      <if test="reserved3 != null" >
-        reserved3,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=INTEGER},
-      </if>
-      <if test="sheetId != null" >
-        #{sheetId,jdbcType=INTEGER},
-      </if>
-      <if test="folderId != null" >
-        #{folderId,jdbcType=INTEGER},
-      </if>
-      <if test="panelId != null" >
-        #{panelId,jdbcType=INTEGER},
-      </if>
-      <if test="userId != null" >
-        #{userId,jdbcType=INTEGER},
-      </if>
-      <if test="chartName != null" >
-        #{chartName,jdbcType=VARCHAR},
-      </if>
-      <if test="chartRemarks != null" >
-        #{chartRemarks,jdbcType=VARCHAR},
-      </if>
-      <if test="location != null" >
-        #{location,jdbcType=VARCHAR},
-      </if>
-      <if test="sqlConfig != null" >
-        #{sqlConfig,jdbcType=VARCHAR},
-      </if>
-      <if test="chatConfig != null" >
-        #{chatConfig,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateTime != null" >
-        #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="reserved1 != null" >
-        #{reserved1,jdbcType=VARCHAR},
-      </if>
-      <if test="reserved2 != null" >
-        #{reserved2,jdbcType=VARCHAR},
-      </if>
-      <if test="reserved3 != null" >
-        #{reserved3,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  
-  <update id="updateByPrimaryKeySelective" parameterType="com.bizwell.echarts.bean.domain.ChartConfig" >
-    update ws_chart_config_info
-    <set >
-      <if test="sheetId != null" >
-        sheet_id = #{sheetId,jdbcType=INTEGER},
-      </if>
-      <if test="folderId != null" >
-        folder_id = #{folderId,jdbcType=INTEGER},
-      </if>
-      <if test="panelId != null" >
-        panel_id = #{panelId,jdbcType=INTEGER},
-      </if>
-      <if test="userId != null" >
-        user_id = #{userId,jdbcType=INTEGER},
-      </if>
-      <if test="chartName != null" >
-        chart_name = #{chartName,jdbcType=VARCHAR},
-      </if>
-      <if test="chartRemarks != null" >
-        chart_remarks = #{chartRemarks,jdbcType=VARCHAR},
-      </if>
-      <if test="location != null" >
-        location = #{location,jdbcType=VARCHAR},
-      </if>
-      <if test="sqlConfig != null" >
-        sql_config = #{sqlConfig,jdbcType=VARCHAR},
-      </if>
-      <if test="chatConfig != null" >
-        chat_config = #{chatConfig,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="reserved1 != null" >
-        reserved1 = #{reserved1,jdbcType=VARCHAR},
-      </if>
-      <if test="reserved2 != null" >
-        reserved2 = #{reserved2,jdbcType=VARCHAR},
-      </if>
-      <if test="reserved3 != null" >
-        reserved3 = #{reserved3,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  
-  <update id="updateByPrimaryKey" parameterType="com.bizwell.echarts.bean.domain.ChartConfig" >
-    update ws_chart_config_info
-    set sheet_id = #{sheetId,jdbcType=INTEGER},
-      folder_id = #{folderId,jdbcType=INTEGER},
-      panel_id = #{panelId,jdbcType=INTEGER},
-      user_id = #{userId,jdbcType=INTEGER},
-      chart_name = #{chartName,jdbcType=VARCHAR},
-      chart_remarks = #{chartRemarks,jdbcType=VARCHAR},
-      location = #{location,jdbcType=VARCHAR},
-      sql_config = #{sqlConfig,jdbcType=VARCHAR},
-      chat_config = #{chatConfig,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      reserved1 = #{reserved1,jdbcType=VARCHAR},
-      reserved2 = #{reserved2,jdbcType=VARCHAR},
-      reserved3 = #{reserved3,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
+	<sql id="Base_Column_List">
+		id , sheet_id, folder_id, panel_id,panel_uuid, user_id, chart_name,
+		chart_remarks, location,
+		sql_config, chat_config, create_time, update_time, reserved1, reserved2,
+		reserved3
+	</sql>
+
+	<select id="selectChartConfig" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		t.id,	
+		t.sheet_id,
+		t.folder_id,
+		t.panel_id,
+		t.panel_uuid,
+		t.user_id,
+		t.chart_name,
+		t.chart_remarks,
+		t.location,
+		t.sql_config,
+		t1.reserved1,
+		t1.reserved2
+		from ws_chart_config_info t right join gb_folder_info t1
+		on t.panel_id = t1.id
+		<where>
+			t1.is_del = 0
+			<if test="panelId != null and panelId != ''">
+				<trim prefixOverrides="and / or">
+					<!-- and t.panel_id = #{panelId, jdbcType=INTEGER} -->
+					and t1.id = #{panelId, jdbcType=INTEGER}
+				</trim>
+			</if>
+			<if test="panelUuid != null and panelUuid != ''">
+				<trim prefixOverrides="and / or">
+					<!-- and t.panel_id = #{panelId, jdbcType=INTEGER} -->
+					and t1.panel_uuid = #{panelUuid}
+				</trim>
+			</if>
+		</where>
+	</select>
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from ws_chart_config_info
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from ws_chart_config_info
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insert" parameterType="com.bizwell.echarts.bean.domain.ChartConfig">
+		insert into ws_chart_config_info (id, sheet_id, folder_id,
+		panel_id,panel_uuid, user_id, chart_name,
+		chart_remarks, location, sql_config,
+		chat_config, create_time, update_time,
+		reserved1, reserved2, reserved3
+		)
+		values (#{id,jdbcType=INTEGER},  #{sheetId,jdbcType=INTEGER},
+		#{folderId,jdbcType=INTEGER},
+		#{panelId,jdbcType=INTEGER},#{panelUuid,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{chartName,jdbcType=VARCHAR},
+		#{chartRemarks,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR},
+		#{sqlConfig,jdbcType=VARCHAR},
+		#{chatConfig,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
+		#{reserved1,jdbcType=VARCHAR}, #{reserved2,jdbcType=VARCHAR},
+		#{reserved3,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<insert id="insertSelective" parameterType="com.bizwell.echarts.bean.domain.ChartConfig"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into ws_chart_config_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="sheetId != null">
+				sheet_id,
+			</if>
+			<if test="folderId != null">
+				folder_id,
+			</if>
+			<if test="panelId != null">
+				panel_id,
+			</if>
+			<if test="panelUuid != null">
+				panel_uuid,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="chartName != null">
+				chart_name,
+			</if>
+			<if test="chartRemarks != null">
+				chart_remarks,
+			</if>
+			<if test="location != null">
+				location,
+			</if>
+			<if test="sqlConfig != null">
+				sql_config,
+			</if>
+			<if test="chatConfig != null">
+				chat_config,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+			<if test="reserved1 != null">
+				reserved1,
+			</if>
+			<if test="reserved2 != null">
+				reserved2,
+			</if>
+			<if test="reserved3 != null">
+				reserved3,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="sheetId != null">
+				#{sheetId,jdbcType=INTEGER},
+			</if>
+			<if test="folderId != null">
+				#{folderId,jdbcType=INTEGER},
+			</if>
+			<if test="panelId != null">
+				#{panelId,jdbcType=INTEGER},
+			</if>
+			<if test="panelUuid != null">
+				#{panelUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="chartName != null">
+				#{chartName,jdbcType=VARCHAR},
+			</if>
+			<if test="chartRemarks != null">
+				#{chartRemarks,jdbcType=VARCHAR},
+			</if>
+			<if test="location != null">
+				#{location,jdbcType=VARCHAR},
+			</if>
+			<if test="sqlConfig != null">
+				#{sqlConfig,jdbcType=VARCHAR},
+			</if>
+			<if test="chatConfig != null">
+				#{chatConfig,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="reserved1 != null">
+				#{reserved1,jdbcType=VARCHAR},
+			</if>
+			<if test="reserved2 != null">
+				#{reserved2,jdbcType=VARCHAR},
+			</if>
+			<if test="reserved3 != null">
+				#{reserved3,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateByPrimaryKeySelective" parameterType="com.bizwell.echarts.bean.domain.ChartConfig">
+		update ws_chart_config_info
+		<set>
+			<if test="sheetId != null">
+				sheet_id = #{sheetId,jdbcType=INTEGER},
+			</if>
+			<if test="folderId != null">
+				folder_id = #{folderId,jdbcType=INTEGER},
+			</if>
+			<if test="panelId != null">
+				panel_id = #{panelId,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="chartName != null">
+				chart_name = #{chartName,jdbcType=VARCHAR},
+			</if>
+			<if test="chartRemarks != null">
+				chart_remarks = #{chartRemarks,jdbcType=VARCHAR},
+			</if>
+			<if test="location != null">
+				location = #{location,jdbcType=VARCHAR},
+			</if>
+			<if test="sqlConfig != null">
+				sql_config = #{sqlConfig,jdbcType=VARCHAR},
+			</if>
+			<if test="chatConfig != null">
+				chat_config = #{chatConfig,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="reserved1 != null">
+				reserved1 = #{reserved1,jdbcType=VARCHAR},
+			</if>
+			<if test="reserved2 != null">
+				reserved2 = #{reserved2,jdbcType=VARCHAR},
+			</if>
+			<if test="reserved3 != null">
+				reserved3 = #{reserved3,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<update id="updateByPrimaryKey" parameterType="com.bizwell.echarts.bean.domain.ChartConfig">
+		update ws_chart_config_info
+		set sheet_id = #{sheetId,jdbcType=INTEGER},
+		folder_id = #{folderId,jdbcType=INTEGER},
+		panel_id = #{panelId,jdbcType=INTEGER},
+		user_id = #{userId,jdbcType=INTEGER},
+		chart_name = #{chartName,jdbcType=VARCHAR},
+		chart_remarks = #{chartRemarks,jdbcType=VARCHAR},
+		location = #{location,jdbcType=VARCHAR},
+		sql_config = #{sqlConfig,jdbcType=VARCHAR},
+		chat_config = #{chatConfig,jdbcType=VARCHAR},
+		create_time = #{createTime,jdbcType=TIMESTAMP},
+		update_time = #{updateTime,jdbcType=TIMESTAMP},
+		reserved1 = #{reserved1,jdbcType=VARCHAR},
+		reserved2 = #{reserved2,jdbcType=VARCHAR},
+		reserved3 = #{reserved3,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
 </mapper>

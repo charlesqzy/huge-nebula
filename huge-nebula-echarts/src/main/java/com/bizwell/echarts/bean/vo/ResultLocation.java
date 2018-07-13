@@ -11,6 +11,8 @@ import java.util.List;
 // 用于封装仪表盘展示页中各图表的位置信息与所需数据
 public class ResultLocation {
 	
+	
+	
 	private String status;
 	
 	private String shareRemarks;
@@ -40,6 +42,7 @@ public class ResultLocation {
 	public void setLocations(List<Object> locations) {
 		this.locations = locations;
 	}
+
 
 	@Override
 	public String toString() {

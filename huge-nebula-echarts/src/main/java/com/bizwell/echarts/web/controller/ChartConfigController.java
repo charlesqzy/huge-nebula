@@ -55,15 +55,17 @@ public class ChartConfigController extends BaseController {
 	// 点击仪表盘下文件,获取所有图表的位置信息以及相关数据
 	@RequestMapping(value = "/get", method = RequestMethod.POST)
 	@ResponseBody
-	public JsonView get(@RequestParam(value = "panelId", required = true) Integer panelId) {
+	public JsonView get(
+			@RequestParam(value = "panelId",required = false) Integer panelId,
+			@RequestParam(value = "panelUuid",required = false) String panelUuid) {
 		
 		JsonView jsonView = new JsonView();
 		try {
 			ResultLocation resultLocation = new ResultLocation();
 			// 仪表盘id为空时,不查询
-			if (null != panelId) {
-				resultLocation = chartConfigService.selectLocation(panelId);				
-			}
+			//if (null != panelId) {
+				resultLocation = chartConfigService.selectLocation(panelId,panelUuid);				
+			//}
 			jsonView = result(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), resultLocation);
 		} catch (EchartsException e) {
 			jsonView = result(e.getCode(), e.getMessage(), null);

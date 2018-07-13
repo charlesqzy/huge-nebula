@@ -82,7 +82,7 @@ public class ReportController extends BaseController {
 	@ResponseBody
 	public JsonView getPage(@RequestParam(value = "param", required = true) String param,
 			@RequestParam(value = "id", required = true) Integer id, 
-			@RequestParam(value = "userId", required = true) Integer userId, 
+			//@RequestParam(value = "userId", required = true) Integer userId, 
 			@RequestParam(value = "curPage" , required = true) Integer curPage,
 			@RequestParam(value = "pageSize", defaultValue = "3") Integer pageSize) {
 		
@@ -101,7 +101,7 @@ public class ReportController extends BaseController {
 			}
 			
 			// 开启分页查询
-			PageHelper.startPage(curPage, pageSize);
+			//PageHelper.startPage(curPage, pageSize);
 			// 通过moduleType获取出code,判断是否是系统支持的图表
 			String code = JsonUtils.getString(param, "moduleType");
 			if (!ReportManager.isSupport(code)) {
@@ -110,7 +110,7 @@ public class ReportController extends BaseController {
 			
 			List<FormHeader> headerList = new ArrayList<FormHeader>();
 //			// 获取用户选中的所有维度与数值,用于组装成表头
-			List<SheetMetaData> list2 = getMetaData(param, userId);
+			List<SheetMetaData> list2 = getMetaData(param);
 			if (list2.size() >= 1) {
 				// 将数值组装进表头
 				getHeader(headerList, list2);
@@ -118,9 +118,9 @@ public class ReportController extends BaseController {
 			
 			
 			// 分页查询出表格数据
-			list = formService.selectList(param, userId);
+			list = formService.selectList(param,(curPage-1)*pageSize,pageSize);
 			// 查询出数据的总条数
-			cnt = formService.selectCnt(param, userId);
+			cnt = formService.selectCnt(param);
 			// 将表头,数据,总条数封装进map中
 			Map<String, Object> map = new HashMap<>();
 			
@@ -171,7 +171,7 @@ public class ReportController extends BaseController {
 
 	
 	// 获取用户选中的所有维度与数值,用于组装成表头
-	private List<SheetMetaData> getMetaData(String data, Integer userId) {
+	private List<SheetMetaData> getMetaData(String data) {
 		
 		List<SheetMetaData> list = new ArrayList<SheetMetaData>();
 		// 获取维度字段名称

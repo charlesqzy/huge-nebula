@@ -10,8 +10,8 @@ import java.util.Map;
  */
 public interface FormService {
 	
-	public List<Map<String,Object>> selectList(String data, Integer userId);
+	public List<Map<String,Object>> selectList(String data,int start,int end);
 	
-	public Integer selectCnt(String data, Integer userId);
+	public Integer selectCnt(String data);
 
 }

@@ -15,6 +15,8 @@ public class FolderVo {
 	
 	private Integer id;
 
+    private String panelUuid;
+	
 	private String folderName;
 
 	private List<ChildrenFolder> childrenFolder = new ArrayList<ChildrenFolder>();
@@ -51,6 +53,16 @@ public class FolderVo {
 
 	public void setShowMore(Boolean showMore) {
 		this.showMore = showMore;
+	}
+
+	
+	
+	public String getPanelUuid() {
+		return panelUuid;
+	}
+
+	public void setPanelUuid(String panelUuid) {
+		this.panelUuid = panelUuid;
 	}
 
 	@Override

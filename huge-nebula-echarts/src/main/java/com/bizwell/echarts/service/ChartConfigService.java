@@ -15,7 +15,7 @@ public interface ChartConfigService {
 	
 	public void save(ChartConfigParam param);
 	
-	public ResultLocation selectLocation(Integer panelId);
+	public ResultLocation selectLocation(Integer panelId,String panelUuid);
 	
 	public ChartConfigVo getOne(Integer id);
 	

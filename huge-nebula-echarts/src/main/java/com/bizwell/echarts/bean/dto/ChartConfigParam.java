@@ -17,6 +17,8 @@ public class ChartConfigParam {
     private Integer folderId;
 
     private Integer panelId;
+    
+    private String panelUuid;
 
     private Integer userId;
 
@@ -113,8 +115,19 @@ public class ChartConfigParam {
 	@Override
 	public String toString() {
 		return String.format(
-				"ChartConfigParam [id=%s, sheetId=%s, folderId=%s, panelId=%s, userId=%s, chartName=%s, chartRemarks=%s, sqlConfig=%s, location=%s, locations=%s]",
-				id, sheetId, folderId, panelId, userId, chartName, chartRemarks, sqlConfig, location, locations);
+				"ChartConfigParam [id=%s, sheetId=%s, folderId=%s, panelId=%s,panelUuid=%s, userId=%s, chartName=%s, chartRemarks=%s, sqlConfig=%s, location=%s, locations=%s]",
+				id, sheetId, folderId, panelId,panelUuid, userId, chartName, chartRemarks, sqlConfig, location, locations);
 	}
+
+	public String getPanelUuid() {
+		return panelUuid;
+	}
+
+	public void setPanelUuid(String panelUuid) {
+		this.panelUuid = panelUuid;
+	}
+
     
+	
+	
 }

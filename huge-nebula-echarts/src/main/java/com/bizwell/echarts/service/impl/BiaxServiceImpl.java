@@ -105,6 +105,7 @@ public class BiaxServiceImpl extends AbstractReportService {
 			yAxis = new YAxis();
 			String name = measures.get(0).getFieldNameNew();
 			yAxis.setName(name);
+			yAxis.setSplitLine("{show: false}");
 			yAxies.add(yAxis);
 		}
 		
@@ -153,6 +154,7 @@ public class BiaxServiceImpl extends AbstractReportService {
 			yAxis = new YAxis();
 			String name = measures2.get(0).getFieldNameNew();
 			yAxis.setName(name);
+			yAxis.setSplitLine("{show: false}");
 			yAxies.add(yAxis);
 		}
 		

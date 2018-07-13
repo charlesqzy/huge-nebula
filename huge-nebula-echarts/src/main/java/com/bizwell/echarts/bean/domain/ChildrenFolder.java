@@ -9,6 +9,7 @@ package com.bizwell.echarts.bean.domain;
 public class ChildrenFolder {
 	
 	private Integer childId;
+	private String panelUuid;
 
     private String childFolderName;
     
@@ -36,6 +37,16 @@ public class ChildrenFolder {
 
 	public void setShowMore1(Boolean showMore1) {
 		this.showMore1 = showMore1;
+	}
+	
+	
+
+	public String getPanelUuid() {
+		return panelUuid;
+	}
+
+	public void setPanelUuid(String panelUuid) {
+		this.panelUuid = panelUuid;
 	}
 
 	@Override

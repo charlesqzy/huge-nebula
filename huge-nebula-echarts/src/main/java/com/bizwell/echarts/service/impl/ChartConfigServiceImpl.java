@@ -42,7 +42,7 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 	public void save(ChartConfigParam param) {
 		
 		// 查询出改用户新建的仪表盘条数
-		List<ChartConfig> list = chartConfigMapper.selectChartConfig(param.getPanelId());
+		List<ChartConfig> list = chartConfigMapper.selectChartConfig(param.getPanelId(),param.getPanelUuid());
 		Integer size = list.size();
 		
 		ChartConfig chartConfig = new ChartConfig();
@@ -62,13 +62,13 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 
 	// 查询位置信息
 	@Override
-	public ResultLocation selectLocation(Integer panelId) {
+	public ResultLocation selectLocation(Integer panelId,String panelUuid) {
 
 		List<Object> resultList = new ArrayList<Object>();
 		String status = null;
 		String shareRemarks = null;
 		// 查询出改仪表盘下面所有配置信息
-		List<ChartConfig> list = chartConfigMapper.selectChartConfig(panelId);
+		List<ChartConfig> list = chartConfigMapper.selectChartConfig(panelId,panelUuid);
 		for (ChartConfig chartConfig : list) {
 			if (StringUtils.isEmpty(status)) {
 				status = chartConfig.getReserved1();
@@ -82,6 +82,7 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 				String echartType = JsonUtils.getString(sqlConfig, "echartType");
 				//JSONArray inChartFilter = JsonUtils.getJSONArray(sqlConfig, "inChartFilter");
 				String chatData = getData(chartConfig.getSqlConfig(), chartConfig.getUserId());
+				jsonObject.put("panelUuid", chartConfig.getPanelUuid());
 				jsonObject.put("chartName", chartConfig.getChartName());
 				jsonObject.put("chartRemarks", chartConfig.getChartRemarks());
 				jsonObject.put("chatData", chatData);
