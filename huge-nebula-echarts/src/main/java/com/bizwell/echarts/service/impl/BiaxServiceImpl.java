@@ -54,14 +54,31 @@ public class BiaxServiceImpl extends AbstractReportService {
 		List<Series> seriesList = new ArrayList<Series>();
 		List<String> legend = new ArrayList<String>();
 		
+		Series series;
+		
 		YAxis yAxis = null;
 		List<YAxis> yAxies = new ArrayList<YAxis>();
 		
 		//获取axiosType
 		JSONArray axiosType = JsonUtils.getJSONArray(data, "axiosType");
 		
+		
 		// 获取数值字段1
 		List<SheetMetaData> measures = sheetMetaDataService.getFields(data, "measure1", "metadataId");
+		
+		if(measures.size()==0){			
+			series = new Series();
+			series.setType("bar");
+			series.setName("");
+			series.setStack("");
+			series.setData(null);
+			seriesList.add(series);
+			
+			yAxis = new YAxis();
+			yAxis.setName("");
+			yAxis.setSplitLine("");
+			yAxies.add(yAxis);
+		}
 		
 		for (SheetMetaData sheetMetaData : measures) {			
 			List<Object> values = new ArrayList<Object>();
@@ -78,7 +95,7 @@ public class BiaxServiceImpl extends AbstractReportService {
 			String fieldName = sheetMetaData.getFieldNameNew();
 			legend.add(fieldName);
 			// 封装series
-			Series series = new Series();
+			series = new Series();
 			series.setName(fieldName);
 			series.setStack(stack);
 			series.setData(values);
@@ -128,7 +145,7 @@ public class BiaxServiceImpl extends AbstractReportService {
 			String fieldName = sheetMetaData.getFieldNameNew();
 			legend.add(fieldName);
 			// 封装series
-			Series series = new Series();
+			series = new Series();
 			series.setName(fieldName);
 			series.setStack(stack);
 			series.setData(values);

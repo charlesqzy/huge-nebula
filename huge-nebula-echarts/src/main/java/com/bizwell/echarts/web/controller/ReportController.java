@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +42,8 @@ import com.github.pagehelper.PageHelper;
 @RequestMapping(value="/echarts/report")
 public class ReportController extends BaseController {
 	
+	private static Logger logger = LoggerFactory.getLogger(ReportController.class);
+	
 	@Autowired
 	private FormService formService;
 	
@@ -54,6 +57,8 @@ public class ReportController extends BaseController {
 	@RequestMapping(value = "/getData", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonView getReport(String param, Integer userId) {
+		
+		logger.info("param= " +param);
 		
 		JsonView jsonView = new JsonView();
 		try {
@@ -86,9 +91,7 @@ public class ReportController extends BaseController {
 			@RequestParam(value = "curPage" , required = true) Integer curPage,
 			@RequestParam(value = "pageSize", defaultValue = "3") Integer pageSize) {
 		
-		
-		System.out.println("param= " +param);
-		
+		logger.info("param= " +param);
 		
 		JsonView jsonView = new JsonView();
 		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
@@ -185,6 +188,11 @@ public class ReportController extends BaseController {
 		//List<SheetMetaData> measures = JsonUtils.getFields(data, "measure1", "metadataId", userId);
 		List<SheetMetaData> measures = sheetMetaDataService.getFields(data, "measure1", "metadataId");
 		for (SheetMetaData sheetMetaData : measures) {
+			list.add(sheetMetaData);
+		}
+		
+		List<SheetMetaData> measures2 = sheetMetaDataService.getFields(data, "measure2", "metadataId");
+		for (SheetMetaData sheetMetaData : measures2) {
 			list.add(sheetMetaData);
 		}
 		return list;
