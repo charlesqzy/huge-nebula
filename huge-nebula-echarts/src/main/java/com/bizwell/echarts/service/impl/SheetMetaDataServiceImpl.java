@@ -33,20 +33,24 @@ public class SheetMetaDataServiceImpl implements SheetMetaDataService {
 		
 		List<SheetMetaData> list = new ArrayList<SheetMetaData>();
 		
+		List<Integer> ids = new ArrayList<Integer>();
 		JSONObject jsonObject = JSONObject.parseObject(data);
 		JSONArray jsonArray = jsonObject.getJSONArray(field);
 		for (int i = 0; i < jsonArray.size(); i++) {
 			JSONObject object = jsonArray.getJSONObject(i);
 			Integer id = object.getIntValue(metadataId);
-			//String tableName = object.getString("tableName");
-			//SheetMetaData sheetMetadata = MetaDataMap.get(userId, id);
-			SheetMetaData sheetMetadata = sheetMetaDataMapper.selectByPrimaryKey(id);
-			list.add(sheetMetadata);
+//			SheetMetaData sheetMetadata = sheetMetaDataMapper.selectByPrimaryKey(id);
+//			list.add(sheetMetadata);
+			ids.add(id);
+		}
+		
+		if(ids.size()>0){
+			list = sheetMetaDataMapper.selectByIds(ids);
 		}
 		
 		return list;
 	}
-	
+	/*
 	
 	// 加载数据
 	@Override
@@ -76,7 +80,7 @@ public class SheetMetaDataServiceImpl implements SheetMetaDataService {
 		
 		return resulthMap;
 	}
-
+*/
 	
 	/*
 	// 刷新数据

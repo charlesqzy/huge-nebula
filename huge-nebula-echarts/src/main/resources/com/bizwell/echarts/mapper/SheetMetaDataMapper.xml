@@ -39,6 +39,19 @@
     where id = #{id,jdbcType=INTEGER}
   </select>
   
+  	<select id="selectByIds" resultMap="BaseResultMap">
+	    select 
+	    <include refid="Base_Column_List" />
+	    from ds_sheet_metadata
+		where ID in
+            <foreach item="item" index="index" collection="ids" 
+                     open="(" separator="," close=")">
+                    #{item}
+            </foreach>
+	</select>
+  
+  
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from ds_sheet_metadata
     where id = #{id,jdbcType=INTEGER}

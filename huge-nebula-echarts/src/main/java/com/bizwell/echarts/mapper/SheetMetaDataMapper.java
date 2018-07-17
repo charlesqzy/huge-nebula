@@ -20,6 +20,8 @@ public interface SheetMetaDataMapper {
     int insertSelective(SheetMetaData record);
 
     SheetMetaData selectByPrimaryKey(Integer id);
+    
+    List<SheetMetaData> selectByIds(@Param("ids")List<Integer> ids);
 
     int updateByPrimaryKeySelective(SheetMetaData record);
 

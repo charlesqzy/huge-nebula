@@ -14,7 +14,7 @@ public interface SheetMetaDataService {
 	
 	public List<SheetMetaData> getFields(String data, String field, String metadataId);
 	
-	public ConcurrentMap<Integer,ConcurrentMap<Integer,SheetMetaData>> loadProperty();
+	/*public ConcurrentMap<Integer,ConcurrentMap<Integer,SheetMetaData>> loadProperty();*/
 
 	/*public void refresh(Integer userId);*/
 }
