@@ -50,8 +50,8 @@ public class PieServiceImpl extends AbstractReportService {
 		// 一个维度, 一个数值
 		if (dimensions.size() == 1 && measures.size() == 1) {
 			for (Map<String, Object> map : list) {
-				SheetMetaData sheetMetaData1 = dimensions.get(0);
-				SheetMetaData sheetMetaData2 = measures.get(0);
+//				SheetMetaData sheetMetaData1 = dimensions.get(0);
+//				SheetMetaData sheetMetaData2 = measures.get(0);
 				
 //				String name = (String) map.get(sheetMetaData1.getFieldColumn());
 //				Object value = map.get(sheetMetaData2.getFieldColumn());

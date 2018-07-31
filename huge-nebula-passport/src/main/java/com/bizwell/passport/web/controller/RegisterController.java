@@ -60,7 +60,7 @@ public class RegisterController extends BaseController {
 	@ResponseBody
 	public String register(@RequestParam(value = "userName", required = true) String userName,
 			@RequestParam(value = "password", required = true) String password,
-			@RequestParam(value = "companyName", required = true) String companyName,
+			@RequestParam(value = "companyName", required = false) String companyName,
 			@RequestParam(value = "telephone", required = false) String telephone) {
 		
 		JsonView jsonView = new JsonView();
@@ -71,9 +71,11 @@ public class RegisterController extends BaseController {
 			if (StringUtils.isEmpty(password)) {
 				throw new PassportException(ResponseCode.PASSPORT_FAIL02.getCode(), ResponseCode.PASSPORT_FAIL02.getMessage());
 			}
+			/*
 			if (StringUtils.isEmpty(companyName)) {
 				throw new PassportException(ResponseCode.PASSPORT_FAIL09.getCode(), ResponseCode.PASSPORT_FAIL09.getMessage());
 			}
+			*/
 			
 			// 判断用户是否存在
 			User user = userService.getUser(userName);
