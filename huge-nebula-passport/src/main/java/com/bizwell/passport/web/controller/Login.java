@@ -44,7 +44,8 @@ public class Login extends BaseController {
 	@ResponseBody
 	public String doLogin(HttpServletRequest request, HttpServletResponse response, HttpSession session,
 			@RequestParam(value = "userName", required = true) String userName,
-			@RequestParam(value = "password", required = true) String password) {
+			@RequestParam(value = "password", required = true) String password,
+			@RequestParam(value = "system", required = false) String system) {
 		
 		JsonView jsonView = new JsonView();
 		try {
@@ -55,7 +56,7 @@ public class Login extends BaseController {
 				throw new PassportException(ResponseCode.PASSPORT_FAIL02.getCode(), ResponseCode.PASSPORT_FAIL02.getMessage());
 			}
 			
-			UserVo userVo = userService.login(userName, password);
+			UserVo userVo = userService.login(userName, password , system);
 			String ip = WebUtils.getRemoteIp(request);
 			// 生成ticket,并存储到redis
 			String ticket = genterateTicket(ip, userVo);

@@ -6,11 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bizwell.passport.bean.domain.User;
+import com.bizwell.passport.bean.domain.UserLog;
 import com.bizwell.passport.bean.vo.UserVo;
 import com.bizwell.passport.common.AESCodec;
 import com.bizwell.passport.common.Constants;
 import com.bizwell.passport.exception.PassportException;
 import com.bizwell.passport.exception.ResponseCode;
+import com.bizwell.passport.mapper.UserLogMapper;
 import com.bizwell.passport.mapper.UserMapper;
 import com.bizwell.passport.service.UserService;
 
@@ -24,10 +26,13 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private UserMapper userMapper;
+	
+	@Autowired
+	private UserLogMapper userLogMapper;
 
 	// 登录
 	@Override
-	public UserVo login(String userName, String password) throws Exception {
+	public UserVo login(String userName, String password , String system) throws Exception {
 
 		// 通过用户名查询用户,判断用户是否存在
 		User user = userMapper.selectByUserName(userName);
@@ -40,6 +45,13 @@ public class UserServiceImpl implements UserService {
 		if (!password.equals(pwd)) {
 			throw new PassportException(ResponseCode.PASSPORT_FAIL04.getCode(), ResponseCode.PASSPORT_FAIL04.getMessage());
 		}
+		
+		//记录登陆日志
+		UserLog record = new UserLog();
+		record.setUserId(user.getId());
+		record.setSystem(system);
+		userLogMapper.insert(record);
+		
 		
 		UserVo userVo = new UserVo();
 		BeanUtils.copyProperties(user, userVo);

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.bizwell.echarts.bean.domain.ChartLog;
 import com.bizwell.echarts.bean.dto.ChartConfigParam;
 import com.bizwell.echarts.bean.vo.ChartConfigVo;
 import com.bizwell.echarts.bean.vo.ResultLocation;
@@ -14,6 +15,7 @@ import com.bizwell.echarts.common.JsonUtils;
 import com.bizwell.echarts.common.JsonView;
 import com.bizwell.echarts.exception.EchartsException;
 import com.bizwell.echarts.exception.ResponseCode;
+import com.bizwell.echarts.mapper.ChartLogMapper;
 import com.bizwell.echarts.service.ChartConfigService;
 import com.bizwell.echarts.web.BaseController;
 
@@ -29,6 +31,9 @@ public class ChartConfigController extends BaseController {
 	
 	@Autowired
 	private ChartConfigService chartConfigService;
+	
+	@Autowired
+	private ChartLogMapper chartLogMapper;
 	
 	// 编辑或者保存图表时,保存其各类配置信息
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
@@ -57,7 +62,17 @@ public class ChartConfigController extends BaseController {
 	@ResponseBody
 	public JsonView get(
 			@RequestParam(value = "panelId",required = false) Integer panelId,
-			@RequestParam(value = "panelUuid",required = false) String panelUuid) {
+			@RequestParam(value = "panelUuid",required = false) String panelUuid,
+			@RequestParam(value = "userId",required = false) Integer userId) {
+		
+		
+		//记录查询日志
+		ChartLog record = new ChartLog();
+		record.setPanelId(panelId);
+		record.setPanelUuid(panelUuid);
+		record.setUserId(userId);
+		chartLogMapper.insert(record);
+		
 		
 		JsonView jsonView = new JsonView();
 		try {

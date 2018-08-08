@@ -10,7 +10,7 @@ import com.bizwell.passport.bean.vo.UserVo;
  */
 public interface UserService {
 	
-	public UserVo login(String userName, String password) throws Exception;
+	public UserVo login(String userName, String password , String system) throws Exception;
 	
 	public User getUser(String userName);
 	
