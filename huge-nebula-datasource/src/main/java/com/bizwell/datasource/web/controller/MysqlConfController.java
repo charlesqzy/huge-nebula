@@ -1,5 +1,6 @@
 package com.bizwell.datasource.web.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.bizwell.datasource.bean.DatabaseInfo;
 import com.bizwell.datasource.bean.MysqlConnConf;
 import com.bizwell.datasource.bean.MysqlTableConf;
 import com.bizwell.datasource.bean.SheetMetadata;
@@ -48,7 +50,8 @@ public class MysqlConfController extends BaseController {
 	@RequestMapping(value = "/datasource/testMysqlConn")
 	@ResponseBody
 	public ResponseJson testMysqlConn(@RequestParam(required = true) String dbUrl,
-			@RequestParam(required = true) String username, @RequestParam(required = true) String password) {
+			@RequestParam(required = true) String username, 
+			@RequestParam(required = true) String password) {
 		logger.info("createMysqlConn dbUrl=" + dbUrl + "  username=" + username + "  password=" + password);
 
 		boolean flag = jdbcService.testMysqlConn(dbUrl, username, password);
@@ -66,7 +69,9 @@ public class MysqlConfController extends BaseController {
 	@RequestMapping(value = "/datasource/showDatabases")
 	@ResponseBody
 	public ResponseJson showDatabases(@RequestParam(required = true) String dbUrl,
-			@RequestParam(required = true) String username, @RequestParam(required = true) String password) {
+			@RequestParam(required = true) String username, 
+			@RequestParam(required = true) String password) {
+		
 		logger.info("createMysqlConn dbUrl=" + dbUrl + "  username=" + username + "  password=" + password);
 
 		List<String> list = jdbcService.showDatabases(dbUrl, username, password);
@@ -154,6 +159,15 @@ public class MysqlConfController extends BaseController {
 	@ResponseBody
 	public ResponseJson createMysqlTable(
 			@RequestBody List<MysqlTableConf> list) {
+		
+		List<Integer> connIds=new ArrayList<>();
+		for(MysqlTableConf table : list){
+			connIds.add(table.getConnId());
+		}
+		if(connIds.size()>0){
+			mysqlTableConfService.deleteByConnId(connIds);
+		}
+		
 
 		logger.info("createMysqlTable list.size() == "+list.size());
 	
@@ -163,6 +177,27 @@ public class MysqlConfController extends BaseController {
 		result.put("list", list);
 		return new ResponseJson(200l, "success", result);
 	}
+	
+	
+	/**
+	 * 获取mysql工作表
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/datasource/getMysqlDatabase")
+	@ResponseBody
+	public ResponseJson getMysqlDatabase(
+			@RequestParam(required = false) Integer userId,
+			@RequestParam(required = false) Integer connId) {
+		logger.info("getMysqlTable userId=" + userId + "connId =" +connId);
+		
+		MysqlTableConf entity = new MysqlTableConf();
+		entity.setUserId(userId);
+		entity.setConnId(connId);
+		List<DatabaseInfo> list = mysqlTableConfService.selectDatabase(entity);
+
+		return new ResponseJson(200l, "success", list);
+	}
 
 	/**
 	 * 获取mysql工作表
@@ -171,10 +206,14 @@ public class MysqlConfController extends BaseController {
 	 */
 	@RequestMapping(value = "/datasource/getMysqlTable")
 	@ResponseBody
-	public ResponseJson getMysqlTable(@RequestParam(required = true) Integer userId) {
-		logger.info("getMysqlTable userId=" + userId);
+	public ResponseJson getMysqlTable(
+			@RequestParam(required = false) Integer userId,
+			@RequestParam(required = false) Integer connId) {
+		logger.info("getMysqlTable userId=" + userId + "connId =" +connId);
+		
 		MysqlTableConf entity = new MysqlTableConf();
 		entity.setUserId(userId);
+		entity.setConnId(connId);
 		List<MysqlTableConf> list = mysqlTableConfService.select(entity);
 		return new ResponseJson(200l, "success", list);
 	}
@@ -195,7 +234,9 @@ public class MysqlConfController extends BaseController {
 			@RequestParam(required = true) Integer connId,
 			@RequestParam(required = true) String tableName,
 			@RequestParam(required = true) Integer userId) {
-		logger.info("getMysqlTableMetadata userId=" + userId);
+		
+		logger.info("getMysqlTableMetadata connId="+connId+" tableName="+tableName+"  userId=" + userId );
+		
 		MysqlConnConf entity = new MysqlConnConf();
 		entity.setUserId(userId);
 		entity.setId(connId);		
@@ -203,7 +244,6 @@ public class MysqlConfController extends BaseController {
 		
 		
 		List<SheetMetadata> metadataList = null;
-		
 		if(list.size()>0){
 			MysqlConnConf conn = list.get(0);
 			metadataList = jdbcService.getMysqlTableMetadata(conn.getDbUrl(), conn.getUsername(), conn.getPassword(), conn.getPassword(), tableName);

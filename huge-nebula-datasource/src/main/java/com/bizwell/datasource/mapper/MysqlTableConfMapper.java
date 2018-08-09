@@ -1,7 +1,8 @@
 package com.bizwell.datasource.mapper;
 
-
 import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
 
 import com.bizwell.datasource.bean.MysqlTableConf;
 
@@ -12,9 +13,13 @@ import com.bizwell.datasource.bean.MysqlTableConf;
 public interface MysqlTableConfMapper {
 
 	void save(MysqlTableConf entity);
-    
-    List<MysqlTableConf> select(MysqlTableConf entity);
+
+	List<MysqlTableConf> select(MysqlTableConf entity);
 
 	void saveBatch(List<MysqlTableConf> list);
-    
+
+	void deleteByConnId(@Param("ids") List<Integer> ids);
+
+	List<MysqlTableConf> selectDatabase(MysqlTableConf entity);
+
 }

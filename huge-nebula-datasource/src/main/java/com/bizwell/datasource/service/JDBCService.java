@@ -214,6 +214,21 @@ public class JDBCService {
 		return list;
 	}
 	
+	/*
+
+SELECT 
+TABLE_SCHEMA tableName,
+COLUMN_NAME fieldColumn,
+CASE
+ WHEN DATA_TYPE IN('bigint','int','tinyint','decimal','double','float','mediumint','smallint') THEN 1 
+ WHEN DATA_TYPE IN('varchar','longtext','mediumtext','text','bit','char') THEN 2
+ WHEN DATA_TYPE IN('datetime','timestamp','time','date') THEN 3
+END fieldType FROM information_schema.COLUMNS 
+WHERE TABLE_SCHEMA ='information_schema'  AND TABLE_NAME='COLLATIONS'
+ORDER BY fieldType DESC
+	 
+	 */
+	
 
 	
 

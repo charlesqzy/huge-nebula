@@ -4,7 +4,9 @@
 	<resultMap id="BaseResultMap" type="com.bizwell.datasource.bean.MysqlTableConf">
 		<id column="id" property="id" />
 		<result column="conn_id" property="connId" />
-		<result column="database_name" property="databaseName" jdbcType="VARCHAR" />
+		<result column="conn_name" property="connName" />
+		<result column="database_name" property="databaseName"
+			jdbcType="VARCHAR" />
 		<result column="table_name" property="tableName" jdbcType="VARCHAR" />
 		<result column="table_comment" property="tableComment"
 			jdbcType="VARCHAR" />
@@ -19,7 +21,7 @@
 			select
 			LAST_INSERT_ID()
 		</selectKey>
-		INSERT INTO `nebula`.`ds_mysql_table_conf`
+		INSERT INTO `ds_mysql_table_conf`
 		(
 		`conn_id`,
 		`database_name`,
@@ -63,22 +65,62 @@
 	<select id="select" parameterType="com.bizwell.datasource.bean.MysqlTableConf"
 		resultMap="BaseResultMap">
 		SELECT
-		`id`,
-		`conn_id`,
-		`database_name`,
-		`table_name`,
-		`table_comment`,
-		`user_id`,
-		DATE_FORMAT(create_time,'%Y-%m-%d') create_time
+		t1.`id`,
+		t1.`conn_id`,
+		t2.name conn_name,
+		t1.`database_name`,
+		t1.`table_name`,
+		t1.`table_comment`,
+		t1.`user_id`,
+		DATE_FORMAT(t1.create_time,'%Y-%m-%d') create_time
+		FROM
+		`ds_mysql_table_conf` t1
+		left join ds_mysql_conn_conf t2 on (t1.conn_id=t2.id)
+		<where>
+			<if test="null != id">
+				and t1.id = #{id}
+			</if>
+			<if test="null != connId">
+				and t1.conn_id = #{connId}
+			</if>
+			<if test="null != databaseName">
+				and t1.database_name = #{databaseName}
+			</if>
+			<if test="null != userId">
+				and t1.user_id = #{userId}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectDatabase" parameterType="com.bizwell.datasource.bean.MysqlTableConf"
+		resultMap="BaseResultMap">
+		SELECT 
+		distinct `database_name`,
+		`user_id`
 		FROM
 		`ds_mysql_table_conf`
 		<where>
 			<if test="null != id">
 				and id = #{id}
 			</if>
+			<if test="null != connId">
+				conn_id = #{connId}
+			</if>
 			<if test="null != userId">
 				and user_id = #{userId}
 			</if>
 		</where>
 	</select>
+
+
+
+
+	<delete id="deleteByConnId">
+		DELETE FROM ds_mysql_table_conf WHERE conn_id in
+		<foreach collection="ids" item="id" open="(" close=")"
+			separator=",">
+			#{id}
+		</foreach>
+	</delete>
+
 </mapper>

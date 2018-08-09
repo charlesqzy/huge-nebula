@@ -2,16 +2,20 @@ package com.bizwell.datasource.bean;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class MysqlTableConf {
 	private Integer id;
 	private Integer connId;
+	private String connName;
 	private String databaseName;
 	private String tableName;
 	private String tableComment;
 	private Integer userId;
+	
+	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;
 
 	public Date getCreateTime() {
@@ -68,6 +72,14 @@ public class MysqlTableConf {
 
 	public void setUserId(Integer userId) {
 		this.userId = userId;
+	}
+
+	public String getConnName() {
+		return connName;
+	}
+
+	public void setConnName(String connName) {
+		this.connName = connName;
 	}
 
 }

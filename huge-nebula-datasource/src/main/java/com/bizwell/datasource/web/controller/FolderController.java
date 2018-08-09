@@ -69,7 +69,10 @@ public class FolderController extends BaseController {
 		folderInfo.setFolderName(folderName);
 		folderInfo.setUserId(userId);
 		List<FolderInfo> list = folderInfoService.select(folderInfo);
-		// logger.info("return"+JsonUtils.toJson(list));
+
+		
+
+		
 		return new ResponseJson(200l, "success", list);
 	}
 

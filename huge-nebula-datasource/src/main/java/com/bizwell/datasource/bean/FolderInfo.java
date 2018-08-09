@@ -7,6 +7,18 @@ public class FolderInfo {
 	private Integer folderType;
 	private Integer parentId;
 	private Integer level;
+	
+	private Integer mode = 1;//1,excel文件夹    2,mysql数据库
+	
+	
+
+	public Integer getMode() {
+		return mode;
+	}
+
+	public void setMode(Integer mode) {
+		this.mode = mode;
+	}
 
 	public Integer getId() {
 		return id;
