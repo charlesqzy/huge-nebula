@@ -17,6 +17,7 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Service;
 
 import com.bizwell.datasource.bean.MysqlTableConf;
+import com.bizwell.datasource.bean.SheetMetadata;
 
 /**
  * @author zhangjianjun
@@ -178,6 +179,42 @@ public class JDBCService {
 		return list;
 	}
 	
+	
+	public List<SheetMetadata> getMysqlTableMetadata(String dbUrl,String username,String password,String databaseName,String tableName){
+		List<SheetMetadata> list = new ArrayList<SheetMetadata>();
+		SheetMetadata sheetMetadata = null;
+
+		String sql = "SELECT TABLE_SCHEMA tableName,COLUMN_NAME fieldColumn, "+
+		"CASE WHEN DATA_TYPE IN('bigint','int','tinyint','decimal','double','float','mediumint','smallint') THEN 1 "+ 
+		" 	  WHEN DATA_TYPE IN('varchar','longtext','mediumtext','text','bit','char') THEN 2 "+
+		" 	  WHEN DATA_TYPE IN('datetime','timestamp','time','date') THEN 3 "+
+		"END fieldType FROM information_schema.COLUMNS "+ 
+		"WHERE TABLE_SCHEMA =? AND TABLE_NAME=? ORDER BY fieldType DESC";
+		
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			conn = DriverManager.getConnection(dbUrl, username, password);
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, databaseName);
+			ps.setString(2, tableName);
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()){
+				sheetMetadata = new SheetMetadata();
+				sheetMetadata.setTableName(rs.getString("tableName"));
+				sheetMetadata.setFieldColumn(rs.getString("fieldColumn"));
+				sheetMetadata.setFieldNameNew(rs.getString("fieldColumn"));
+				sheetMetadata.setFieldType(rs.getInt("fieldType"));
+				list.add(sheetMetadata);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeDB();
+		}
+		return list;
+	}
+	
+
 	
 
 	private void closeDB() {

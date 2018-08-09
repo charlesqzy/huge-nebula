@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bizwell.datasource.bean.MysqlConnConf;
 import com.bizwell.datasource.bean.MysqlTableConf;
+import com.bizwell.datasource.bean.SheetMetadata;
 import com.bizwell.datasource.bean.XlsContent;
 import com.bizwell.datasource.json.ResponseJson;
 import com.bizwell.datasource.service.JDBCService;
@@ -177,5 +178,39 @@ public class MysqlConfController extends BaseController {
 		List<MysqlTableConf> list = mysqlTableConfService.select(entity);
 		return new ResponseJson(200l, "success", list);
 	}
+	
+	
+	
+	
+	/**
+	 * 获取mysql表的元数据
+	 * @param connId
+	 * @param tableName
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping(value = "/datasource/getMysqlTableMetadata")
+	@ResponseBody
+	public ResponseJson getMysqlTableMetadata(
+			@RequestParam(required = true) Integer connId,
+			@RequestParam(required = true) String tableName,
+			@RequestParam(required = true) Integer userId) {
+		logger.info("getMysqlTableMetadata userId=" + userId);
+		MysqlConnConf entity = new MysqlConnConf();
+		entity.setUserId(userId);
+		entity.setId(connId);		
+		List<MysqlConnConf> list = mysqlConnConfService.select(entity);
+		
+		
+		List<SheetMetadata> metadataList = null;
+		
+		if(list.size()>0){
+			MysqlConnConf conn = list.get(0);
+			metadataList = jdbcService.getMysqlTableMetadata(conn.getDbUrl(), conn.getUsername(), conn.getPassword(), conn.getPassword(), tableName);
+		}
+		
+		return new ResponseJson(200l, "success", metadataList);
+	}
+
 
 }
