@@ -10,8 +10,14 @@
 		<result column="table_name" property="tableName" jdbcType="VARCHAR" />
 		<result column="table_comment" property="tableComment"
 			jdbcType="VARCHAR" />
+		<result column="table_clumns" property="tableClumns"
+			jdbcType="VARCHAR" />
+		<result column="table_rows" property="tableRows"
+			jdbcType="VARCHAR" />
+		<result column="rows_clumns" property="rowsClumns" jdbcType="VARCHAR" />
 		<result column="user_id" property="userId" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="VARCHAR" />
+		<result column="update_time" property="updateTime" jdbcType="VARCHAR" />
 	</resultMap>
 
 
@@ -27,12 +33,16 @@
 		`database_name`,
 		`table_name`,
 		`table_comment`,
+		`table_clumns`,
+        `table_rows`,         
 		`user_id`)
 		VALUES (
 		#{connId},
 		#{databaseName},
 		#{tableName},
 		#{tableComment},
+		#{tableClumns},
+        #{tableRows},
 		#{userId});
 	</insert>
 
@@ -49,6 +59,8 @@
 		`database_name`,
 		`table_name`,
 		`table_comment`,
+		`table_clumns`,
+        `table_rows`,       
 		`user_id`)
 		VALUES
 		<foreach collection="list" item="entity" index="index"
@@ -57,6 +69,8 @@
 			'${entity.databaseName}',
 			'${entity.tableName}',
 			'${entity.tableComment}',
+			'${entity.tableClumns}',
+      		'${entity.tableRows}',
 			'${entity.userId}')
 		</foreach>
 	</insert>
@@ -71,8 +85,12 @@
 		t1.`database_name`,
 		t1.`table_name`,
 		t1.`table_comment`,
+		t1.`table_clumns`,
+        t1.`table_rows`,
+        CONCAT_WS('/',t1.table_rows,t1.table_clumns,NULL) AS rows_clumns,
 		t1.`user_id`,
-		DATE_FORMAT(t1.create_time,'%Y-%m-%d') create_time
+		DATE_FORMAT(t1.create_time,'%Y-%m-%d') create_time,
+		t1.update_time
 		FROM
 		`ds_mysql_table_conf` t1
 		left join ds_mysql_conn_conf t2 on (t1.conn_id=t2.id)

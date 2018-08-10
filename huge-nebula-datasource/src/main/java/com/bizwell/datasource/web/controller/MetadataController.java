@@ -124,9 +124,7 @@ public class MetadataController {
     	result.put("data", data);
     	return new ResponseJson(200l,"success",result);
     }
-    
-    
-    
+
     
     @RequestMapping(value = "/datasource/getXlsDataByConvergeFilter")
     @ResponseBody

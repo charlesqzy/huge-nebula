@@ -296,8 +296,6 @@ public class ExcelSheetInfoController extends BaseController {
     	result.put("header", haderList);
     	result.put("totalRows", totalRows);
     	result.put("pageNum", pageNum);
-    	//return new ResponseJson(200l,"success",result);
-    	
     	
     	Map m = new HashMap();
     	m.put("code", 200);

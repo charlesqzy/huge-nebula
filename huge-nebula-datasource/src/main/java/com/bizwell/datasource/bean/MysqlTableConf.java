@@ -5,7 +5,7 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class MysqlTableConf {
 	private Integer id;
 	private Integer connId;
@@ -13,10 +13,47 @@ public class MysqlTableConf {
 	private String databaseName;
 	private String tableName;
 	private String tableComment;
+	private Integer tableClumns;
+	private Integer tableRows;
+	private String rowsClumns;
 	private Integer userId;
-	
 	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;
+	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date updateTime;
+
+
+	public Integer getTableClumns() {
+		return tableClumns;
+	}
+
+	public void setTableClumns(Integer tableClumns) {
+		this.tableClumns = tableClumns;
+	}
+
+	public Integer getTableRows() {
+		return tableRows;
+	}
+
+	public void setTableRows(Integer tableRows) {
+		this.tableRows = tableRows;
+	}
+
+	public String getRowsClumns() {
+		return rowsClumns;
+	}
+
+	public void setRowsClumns(String rowsClumns) {
+		this.rowsClumns = rowsClumns;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
 
 	public Date getCreateTime() {
 		return createTime;

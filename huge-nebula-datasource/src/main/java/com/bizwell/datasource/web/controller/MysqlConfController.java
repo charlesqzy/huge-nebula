@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bizwell.datasource.bean.DatabaseInfo;
+import com.bizwell.datasource.bean.ExcelSheetInfo;
 import com.bizwell.datasource.bean.MysqlConnConf;
 import com.bizwell.datasource.bean.MysqlTableConf;
 import com.bizwell.datasource.bean.SheetMetadata;
 import com.bizwell.datasource.bean.XlsContent;
+import com.bizwell.datasource.common.JsonUtils;
 import com.bizwell.datasource.json.ResponseJson;
 import com.bizwell.datasource.service.JDBCService;
 import com.bizwell.datasource.service.MysqlConnConfService;
@@ -162,17 +164,19 @@ public class MysqlConfController extends BaseController {
 		
 		List<Integer> connIds=new ArrayList<>();
 		for(MysqlTableConf table : list){
+		
 			connIds.add(table.getConnId());
 		}
 		if(connIds.size()>0){
 			mysqlTableConfService.deleteByConnId(connIds);
+			
+			jdbcService.setMysqlTableRowsClumns(list);//设置rows和clumns
+			
+			mysqlTableConfService.save(list);
 		}
-		
-
 		logger.info("createMysqlTable list.size() == "+list.size());
 	
-		mysqlTableConfService.save(list);
-
+		
 		Map result = new HashMap();
 		result.put("list", list);
 		return new ResponseJson(200l, "success", result);
@@ -218,8 +222,7 @@ public class MysqlConfController extends BaseController {
 		return new ResponseJson(200l, "success", list);
 	}
 	
-	
-	
+
 	
 	/**
 	 * 获取mysql表的元数据
@@ -228,29 +231,152 @@ public class MysqlConfController extends BaseController {
 	 * @param userId
 	 * @return
 	 */
-	@RequestMapping(value = "/datasource/getMysqlTableMetadata")
+	@RequestMapping(value = "/datasource/getMysqlDataByTableName")
 	@ResponseBody
-	public ResponseJson getMysqlTableMetadata(
+	public ResponseJson getMysqlDataByTableName(
 			@RequestParam(required = true) Integer connId,
+			@RequestParam(required = true) String databaseName,
 			@RequestParam(required = true) String tableName,
-			@RequestParam(required = true) Integer userId) {
+			@RequestParam(required = true) Integer userId,
+    		@RequestParam(defaultValue = "1") Integer pageNum,
+    		@RequestParam(defaultValue = "20") Integer pageSize) {
 		
-		logger.info("getMysqlTableMetadata connId="+connId+" tableName="+tableName+"  userId=" + userId );
+		logger.info("getMysqlDataByTableName connId="+connId+" tableName="+tableName+" userId=" + userId );
 		
 		MysqlConnConf entity = new MysqlConnConf();
 		entity.setUserId(userId);
 		entity.setId(connId);		
 		List<MysqlConnConf> list = mysqlConnConfService.select(entity);
 		
-		
-		List<SheetMetadata> metadataList = null;
+		Map result = null;
 		if(list.size()>0){
 			MysqlConnConf conn = list.get(0);
-			metadataList = jdbcService.getMysqlTableMetadata(conn.getDbUrl(), conn.getUsername(), conn.getPassword(), conn.getPassword(), tableName);
+			result = jdbcService.getMysqlTableData(conn,databaseName,tableName,pageNum,pageSize);
 		}
-		
-		return new ResponseJson(200l, "success", metadataList);
+    	
+    	return new ResponseJson(200l, "success", result);
 	}
 
+	
+    /**
+     * 根据sheetId获取Metadata数据
+     * @param tableName
+     * @param sheetId
+     * @param pageNum
+     * @return
+     */
+    @RequestMapping(value = "/datasource/getMetadataByMysqlTableName")
+    @ResponseBody
+    public ResponseJson getMetadataByMysqlTableName(
+			@RequestParam(required = true) Integer connId,
+			@RequestParam(required = true) String databaseName,
+    		@RequestParam(required = true) String tableName) {
+    	
+    	logger.info("getMetadataByMysqlTableName connId = " + connId + " databaseName="+databaseName + " tableName="+tableName );
+    	
+		MysqlConnConf conn = getConnConfById(connId);
+    	
+    	List<SheetMetadata> metadataList = jdbcService.getMetadataByMysqlTableName(conn,databaseName,tableName);;
+    	
+    	Map result = new HashMap<>();
+    	result.put("metadataList", metadataList);
+    	result.put("sheetName", tableName);
+    	return new ResponseJson(200l,"success",result);
+    }
+    
 
+    /**
+     * 通过connId查连接配置信息
+     * @param connId
+     * @return
+     */
+	private MysqlConnConf getConnConfById(Integer connId) {
+		MysqlConnConf entity = new MysqlConnConf();
+		entity.setId(connId);		
+		List<MysqlConnConf> list = mysqlConnConfService.select(entity);
+		if(list.size()>0){
+			return list.get(0);
+		}else {
+			return null;
+		}
+	}
+	
+	
+	
+    /**
+     * 根据fieldColumn获取mysql表中的数据
+     * @param tableName
+     * @param fieldColumn
+     * @return
+     */
+    @RequestMapping(value = "/datasource/getMysqlTableDataByFilter")
+    @ResponseBody
+    public ResponseJson getMysqlTableDataByFilter(
+			@RequestParam(required = true) Integer connId,
+			@RequestParam(required = true) String databaseName,
+    		@RequestParam(required = true) String tableName,
+    		@RequestParam(required = true) String fieldColumn) {
+    	
+     	logger.info("getMysqlTableDataByFilter connId = " + connId + "  databaseName="+databaseName + "  tableName="+tableName +"  fieldColumn="+fieldColumn);
+       	
+     	MysqlConnConf conn = getConnConfById(connId);
+     	
+		List<Map> mysqlData = null;
+		mysqlData = jdbcService.getMysqlTableDataByFilter(conn,databaseName,tableName,fieldColumn);
+    	
+    	Map result = new HashMap<>();
+    	result.put("mysqlData", mysqlData);
+    	return new ResponseJson(200l,"success",result);
+    }
+    
+    
+    /**
+     * 获取mysql表中的指定数字列的最大值和最小值
+     * @param connId
+     * @param databaseName
+     * @param tableName
+     * @param fieldColumn
+     * @return
+     */
+    @RequestMapping(value = "/datasource/getMysqlTableDataByNumberFilter")
+    @ResponseBody
+    public ResponseJson getXlsDataByNumberFilter(
+			@RequestParam(required = true) Integer connId,
+			@RequestParam(required = true) String databaseName,
+    		@RequestParam(required = true) String tableName,
+    		@RequestParam(required = true) String fieldColumn) {
+    	
+     	logger.info("getMysqlTableDataByNumberFilter connId = " + connId + "  databaseName="+databaseName + " tableName="+tableName +" fieldColumn="+fieldColumn);
+       	
+     	MysqlConnConf conn = getConnConfById(connId);
+     	
+    	List<Map> data = jdbcService.getMysqlTableDataByNumberFilter(conn,databaseName, tableName, fieldColumn);
+    	
+    	Map result = new HashMap<>();
+    	result.put("data", data);
+    	return new ResponseJson(200l,"success",result);
+    }
+
+    
+    
+    @RequestMapping(value = "/datasource/getMysqlTableDataByConvergeFilter")
+    @ResponseBody
+    public ResponseJson getXlsDataByConvergeFilter(
+    		@RequestParam(required = true) Integer connId,
+    		@RequestParam(required = true) String databaseName,
+    		@RequestParam(required = true) String tableName,
+    		@RequestParam(required = true) String fieldColumn,
+    		@RequestParam(required = true) String option) {
+    	
+     	logger.info("getMysqlTableDataByConvergeFilter connId = " + connId + "  databaseName="+databaseName + "  tableName="+tableName +"  fieldColumn="+fieldColumn);
+       	
+     	MysqlConnConf conn = getConnConfById(connId);
+     	
+    	List<Map> data = jdbcService.getXlsDataByConvergeFilter(conn,databaseName, tableName, fieldColumn,option);
+    	
+    	Map result = new HashMap<>();
+    	result.put("data", data);
+    	return new ResponseJson(200l,"success",result);
+    }
+	
 }
