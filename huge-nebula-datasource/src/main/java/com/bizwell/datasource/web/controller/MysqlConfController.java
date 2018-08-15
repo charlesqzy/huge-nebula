@@ -144,10 +144,12 @@ public class MysqlConfController extends BaseController {
 	 */
 	@RequestMapping(value = "/datasource/getMysqlConn")
 	@ResponseBody
-	public ResponseJson getMysqlConn(@RequestParam(required = true) Integer userId) {
+	public ResponseJson getMysqlConn(@RequestParam(required = true) Integer userId,
+			@RequestParam(required = true) Integer connId) {
 		logger.info("getMysqlConn userId=" + userId);
 		MysqlConnConf entity = new MysqlConnConf();
 		entity.setUserId(userId);
+		entity.setId(connId);
 		List<MysqlConnConf> list = mysqlConnConfService.select(entity);
 		return new ResponseJson(200l, "success", list);
 	}

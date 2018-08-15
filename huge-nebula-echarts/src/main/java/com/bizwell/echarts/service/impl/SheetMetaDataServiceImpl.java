@@ -70,26 +70,21 @@ public class SheetMetaDataServiceImpl implements SheetMetaDataService {
 			for (int i = 0; i < jsonArray.size(); i++) {
 				JSONObject object = jsonArray.getJSONObject(i);
 				
-				String connId = object.getString("connId");
+				int connId = object.getInteger("connId");
 				String databaseName = object.getString("databaseName");
 				String tableName = object.getString("tableName");
 				String fieldColumn = object.getString("fieldColumn");
 				
 				
 				MysqlConnConf connConf = new MysqlConnConf();
-				connConf.setId(3);
+				connConf.setId(connId);
 				List<MysqlConnConf> connList = mysqlConnConfMapper.select(connConf);
 				if(connList.size()>0){
 					MysqlConnConf conf = connList.get(0);
-					meteData=jdbcService.getMysqlTableMetaData(conf.getDbUrl(), conf.getUsername(), conf.getPassword(), connId,databaseName,tableName,fieldColumn);
+					meteData=jdbcService.getMysqlTableMetaData(conf.getDbUrl(), conf.getUsername(), conf.getPassword(), databaseName,tableName,fieldColumn);
 					list.add(meteData);
 				}
-				
 			}
-			
-			
-			
-	
 		}
 		
 

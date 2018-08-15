@@ -166,7 +166,7 @@ public class JDBCService {
 		}
 	}
 
-	public SheetMetaData getMysqlTableMetaData(String dbUrl, String username, String password, String connId,String databaseName,
+	public SheetMetaData getMysqlTableMetaData(String dbUrl, String username, String password, String databaseName,
 			String tableName, String fieldColumn) {
 
 		SheetMetaData sheetMetadata =null;

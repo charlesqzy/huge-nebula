@@ -55,8 +55,10 @@ public abstract class AbstractReportService implements ReportService {
 		if(dataSourceType==1){
 			list = echartsMapper.selectBySql(sql);// 查询出数据
 		}else if(dataSourceType==2){
+			int connId = JsonUtils.getInteger(data, "connId");
+			
 			MysqlConnConf connConf = new MysqlConnConf();
-			connConf.setId(3);
+			connConf.setId(connId);
 			List<MysqlConnConf> connList = mysqlConnConfMapper.select(connConf);
 			if(connList.size()>0){
 				MysqlConnConf conf = connList.get(0);
