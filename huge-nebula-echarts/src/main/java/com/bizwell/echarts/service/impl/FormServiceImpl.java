@@ -57,7 +57,7 @@ public class FormServiceImpl implements FormService {
 			List<MysqlConnConf> connList = mysqlConnConfMapper.select(connConf);
 			if(connList.size()>0){
 				MysqlConnConf conf = connList.get(0);
-				list=jdbcService.getMysqlTableData(conf.getDbUrl(), conf.getUsername(), conf.getPassword(), sql);
+				list=jdbcService.getMysqlTableData(conf.getDbUrl(), conf.getUsername(), conf.getPassword(), sql+ " LIMIT "+start+","+end);
 			}
 		}
 	
