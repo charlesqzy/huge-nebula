@@ -85,7 +85,7 @@ public class BiaxServiceImpl extends AbstractReportService {
 			//String aggregate = "";
 			for (Map<String, Object> map : list) {				
 				for(String key :map.keySet()){
-					String[] split = key.split("_");
+					String[] split = key.split("__");
 					if(key.startsWith("M1") && sheetMetaData.getFieldColumn().equals(split[1])){
 						values.add(map.get(key));break;
 						//aggregate = ReportManager.getAggregate(key);
@@ -135,7 +135,7 @@ public class BiaxServiceImpl extends AbstractReportService {
 			//String aggregate = "";
 			for (Map<String, Object> map : list) {				
 				for(String key :map.keySet()){
-					String[] split = key.split("_");
+					String[] split = key.split("__");
 					if(key.startsWith("M2") && sheetMetaData.getFieldColumn().equals(split[1])){
 						values.add(map.get(key));break;
 						//aggregate = ReportManager.getAggregate(key);

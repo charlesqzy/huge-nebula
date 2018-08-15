@@ -19,13 +19,16 @@
 		<result column="reserved1" property="reserved1" jdbcType="VARCHAR" />
 		<result column="reserved2" property="reserved2" jdbcType="VARCHAR" />
 		<result column="reserved3" property="reserved3" jdbcType="VARCHAR" />
+		<result column="conn_id" property="connId" jdbcType="INTEGER" />
+		<result column="database_name" property="databaseName" jdbcType="VARCHAR" />
+		<result column="table_name" property="tableName" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
 		id , sheet_id, folder_id, panel_id,panel_uuid, user_id, chart_name,
 		chart_remarks, location,
 		sql_config, chat_config, create_time, update_time, reserved1, reserved2,
-		reserved3
+		reserved3,conn_id,database_name,table_name
 	</sql>
 
 	<select id="selectChartConfig" resultMap="BaseResultMap"
@@ -41,8 +44,9 @@
 		t.chart_remarks,
 		t.location,
 		t.sql_config,
-		t1.reserved1,
-		t1.reserved2
+		t.reserved1,
+		t.reserved2,
+		t.conn_id,t.database_name,t.table_name
 		from ws_chart_config_info t right join gb_folder_info t1
 		on t.panel_id = t1.id
 		<where>
@@ -83,7 +87,7 @@
 		panel_id,panel_uuid, user_id, chart_name,
 		chart_remarks, location, sql_config,
 		chat_config, create_time, update_time,
-		reserved1, reserved2, reserved3
+		reserved1, reserved2, reserved3,conn_id,database_name,table_name
 		)
 		values (#{id,jdbcType=INTEGER},  #{sheetId,jdbcType=INTEGER},
 		#{folderId,jdbcType=INTEGER},
@@ -92,7 +96,8 @@
 		#{sqlConfig,jdbcType=VARCHAR},
 		#{chatConfig,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
 		#{reserved1,jdbcType=VARCHAR}, #{reserved2,jdbcType=VARCHAR},
-		#{reserved3,jdbcType=VARCHAR}
+		#{reserved3,jdbcType=VARCHAR},
+		#{connId},#{databaseName},#{tableName}
 		)
 	</insert>
 
@@ -148,6 +153,18 @@
 			<if test="reserved3 != null">
 				reserved3,
 			</if>
+			
+			
+			<if test="connId != null">
+				conn_id,
+			</if>			
+			<if test="databaseName != null">
+				database_name,
+			</if>
+			<if test="tableName != null">
+				table_name,
+			</if>
+			
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -198,6 +215,16 @@
 			<if test="reserved3 != null">
 				#{reserved3,jdbcType=VARCHAR},
 			</if>
+			
+			<if test="connId != null">
+				#{connId},
+			</if>			
+			<if test="databaseName != null">
+				#{databaseName},
+			</if>
+			<if test="tableName != null">
+				#{tableName},
+			</if>
 		</trim>
 	</insert>
 
@@ -246,6 +273,16 @@
 			<if test="reserved3 != null">
 				reserved3 = #{reserved3,jdbcType=VARCHAR},
 			</if>
+			
+			<if test="connId != null">
+				conn_id = #{connId},
+			</if>			
+			<if test="databaseName != null">
+				database_name = #{databaseName},
+			</if>
+			<if test="tableName != null">
+				table_name=#{tableName},
+			</if>
 		</set>
 		where id = #{id,jdbcType=INTEGER}
 	</update>
@@ -265,7 +302,10 @@
 		update_time = #{updateTime,jdbcType=TIMESTAMP},
 		reserved1 = #{reserved1,jdbcType=VARCHAR},
 		reserved2 = #{reserved2,jdbcType=VARCHAR},
-		reserved3 = #{reserved3,jdbcType=VARCHAR}
+		reserved3 = #{reserved3,jdbcType=VARCHAR},
+		conn_id = #{connId},
+		database_name = #{databaseName},
+		table_name=#{tableName}
 		where id = #{id,jdbcType=INTEGER}
 	</update>
 </mapper>

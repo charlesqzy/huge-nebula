@@ -10,6 +10,30 @@ import java.util.List;
 // 封装ChartConfig中所需参数
 public class ChartConfigParam {
 	
+	public Integer getConnId() {
+		return connId;
+	}
+
+	public void setConnId(Integer connId) {
+		this.connId = connId;
+	}
+
+	public String getDatabaseName() {
+		return databaseName;
+	}
+
+	public void setDatabaseName(String databaseName) {
+		this.databaseName = databaseName;
+	}
+
+	public String getTableName() {
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
 	private Integer id;
 	
     private Integer sheetId;
@@ -31,6 +55,15 @@ public class ChartConfigParam {
     private String location;
     
     private List<String> locations;
+    
+    private Integer connId;
+    
+    private String databaseName;
+    
+    private String tableName;
+    
+    
+    
     
 	public Integer getId() {
 		return id;

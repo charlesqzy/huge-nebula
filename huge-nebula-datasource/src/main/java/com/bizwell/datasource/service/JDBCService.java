@@ -14,6 +14,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -191,12 +192,14 @@ public class JDBCService {
 		List<SheetMetadata> list = new ArrayList<SheetMetadata>();
 		SheetMetadata sheetMetadata = null;
 
-		String sql = "SELECT TABLE_SCHEMA tableName,COLUMN_NAME fieldColumn,COLUMN_COMMENT fieldNameNew"
+		String sql = "SELECT TABLE_NAME tableName,COLUMN_NAME fieldColumn,COLUMN_COMMENT fieldNameNew, "
 				+ "CASE WHEN DATA_TYPE IN('bigint','int','tinyint','decimal','double','float','mediumint','smallint') THEN 1 "
 				+ " 	  WHEN DATA_TYPE IN('varchar','longtext','mediumtext','text','bit','char') THEN 2 "
 				+ " 	  WHEN DATA_TYPE IN('datetime','timestamp','time','date') THEN 3 "
 				+ "END fieldType FROM information_schema.COLUMNS "
 				+ "WHERE TABLE_SCHEMA =? AND TABLE_NAME=? ORDER BY fieldType DESC";
+		
+		//System.out.println(sql);
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -209,7 +212,7 @@ public class JDBCService {
 				sheetMetadata = new SheetMetadata();
 				sheetMetadata.setTableName(rs.getString("tableName"));
 				sheetMetadata.setFieldColumn(rs.getString("fieldColumn"));
-				sheetMetadata.setFieldNameNew(rs.getString("fieldNameNew"));
+				sheetMetadata.setFieldNameNew(StringUtils.isEmpty(rs.getString("fieldNameNew"))?rs.getString("fieldColumn"):rs.getString("fieldNameNew"));
 				sheetMetadata.setFieldType(rs.getInt("fieldType"));
 				list.add(sheetMetadata);
 			}

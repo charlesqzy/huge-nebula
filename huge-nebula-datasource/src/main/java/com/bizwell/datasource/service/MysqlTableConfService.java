@@ -36,7 +36,7 @@ public class MysqlTableConfService {
 		List<DatabaseInfo> list = new ArrayList();
 		
 		
-		List<MysqlTableConf> selectDatabase = mysqlTableConfMapper.select(entity);
+		List<MysqlTableConf> selectDatabase = mysqlTableConfMapper.selectDatabase(entity);
 		for(MysqlTableConf database : selectDatabase){
 			String databaseName = database.getDatabaseName();			
 			databaseInfo = new DatabaseInfo();			

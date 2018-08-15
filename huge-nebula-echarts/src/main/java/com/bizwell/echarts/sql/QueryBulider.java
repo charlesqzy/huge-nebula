@@ -1,6 +1,8 @@
 package com.bizwell.echarts.sql;
 
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
@@ -89,16 +91,25 @@ public class QueryBulider {
      */
     private static String getTableName(JSONArray dimension, JSONArray measure1, JSONArray measure2) {
         String tableName = null;
+        String databaseName = null;
         if (dimension != null && !dimension.isEmpty()) {
             JSONObject dm = dimension.getJSONObject(0);
             tableName = dm.getString("tableName");
+            databaseName = dm.getString("databaseName");
         } else if (measure1 != null && !measure1.isEmpty()) {
             JSONObject ms = measure1.getJSONObject(0);
             tableName = ms.getString("tableName");
+            databaseName = ms.getString("databaseName");
         } else if (measure2 != null && !measure2.isEmpty()) {
             JSONObject ms = measure2.getJSONObject(0);
             tableName = ms.getString("tableName");
+            databaseName = ms.getString("databaseName");
         }
+        
+        if(StringUtils.isNotEmpty(databaseName)){
+        	tableName = databaseName+"."+tableName;
+        }
+        
         return tableName;
     }
 
@@ -454,7 +465,7 @@ public class QueryBulider {
             else
                 suffix = aggregateColumn.substring(0, aggregateColumn.indexOf("("));
 
-            result.append(aggregateColumn + " AS " + "M" + index + String.format("%02d", i) + "_" + fieldColumn + "_" + suffix);
+            result.append(aggregateColumn + " AS " + "M" + index + String.format("%02d", i) + "__" + fieldColumn + "__" + suffix);
             result.append(", ");   //注意此处必须为", "，后续处理需要
         }
         String resultString = result.toString();
@@ -485,7 +496,7 @@ public class QueryBulider {
                 else
                     tmpDimString = fieldColumn;
                 groupByString = groupByString + tmpDimString + ",";
-                dimColumns = dimColumns + tmpDimString + " AS D" + String.format("%02d", i) + "_" + fieldColumn + ", ";  //注意此处必须为", "，_D表示该字段是维度，后续处理需要
+                dimColumns = dimColumns + tmpDimString + " AS D" + String.format("%02d", i) + "__" + fieldColumn + ", ";  //注意此处必须为", "，##D表示该字段是维度，后续处理需要
             }
             if (groupByString.endsWith(","))
                 groupByString = groupByString.substring(0, groupByString.length() - 1);

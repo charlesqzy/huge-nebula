@@ -88,6 +88,9 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 				jsonObject.put("chatData", chatData);
 				jsonObject.put("echartType", echartType);
 				jsonObject.put("sqlConfig", JSONObject.parseObject(sqlConfig));
+				jsonObject.put("connId", chartConfig.getConnId());
+				jsonObject.put("databaseName", chartConfig.getDatabaseName());
+				jsonObject.put("tableName", chartConfig.getTableName());
 				resultList.add(jsonObject);				
 			}
 		}

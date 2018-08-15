@@ -63,7 +63,7 @@ public class BarOrLineServiceImpl extends AbstractReportService {
 			String aggregate = "";
 			for (Map<String, Object> map : list) {				
 				for(String key :map.keySet()){
-					String[] split = key.split("_");
+					String[] split = key.split("__");
 					if(key.startsWith("M") && sheetMetaData.getFieldColumn().equals(split[1])){
 						values.add(map.get(key));
 						aggregate = ReportManager.getAggregate(key);

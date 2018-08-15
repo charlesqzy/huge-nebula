@@ -3,12 +3,18 @@ package com.bizwell.echarts.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
+import com.bizwell.echarts.bean.MysqlConnConf;
+import com.bizwell.echarts.common.JsonUtils;
 import com.bizwell.echarts.mapper.EchartsMapper;
+import com.bizwell.echarts.mapper.MysqlConnConfMapper;
+import com.bizwell.echarts.service.AbstractReportService;
 import com.bizwell.echarts.service.FormService;
+import com.bizwell.echarts.service.JDBCService;
 import com.bizwell.echarts.sql.QueryBulider;
 
 /**
@@ -20,16 +26,39 @@ import com.bizwell.echarts.sql.QueryBulider;
 @Service
 public class FormServiceImpl implements FormService {
 	
+	private static Logger logger = LoggerFactory.getLogger(FormServiceImpl.class);
+
+	
 	@Autowired
 	private EchartsMapper echartsMapper;
+	@Autowired
+	private MysqlConnConfMapper mysqlConnConfMapper;
+	@Autowired
+	private JDBCService jdbcService;
 
 	// 查询出数据
 	@Override
 	public List<Map<String, Object>> selectList(String data,int start,int end) {
+		List<Map<String,Object>> list = null;
 		
-		//String sql = QueryBulider.getSql(data, userId);
+		
 		String sql = QueryBulider.getQueryString(data);
-		List<Map<String,Object>> list = echartsMapper.selectBySql(sql + " LIMIT "+start+","+end);
+		logger.info("data=="+data + "\n selectEcharts.sql="+sql);
+		
+		
+		int dataSourceType = JsonUtils.getInteger(data, "dataSourceType");
+		if(dataSourceType==1){
+			list = echartsMapper.selectBySql(sql + " LIMIT "+start+","+end);
+		}else if(dataSourceType==2){
+			MysqlConnConf connConf = new MysqlConnConf();
+			connConf.setId(3);
+			List<MysqlConnConf> connList = mysqlConnConfMapper.select(connConf);
+			if(connList.size()>0){
+				MysqlConnConf conf = connList.get(0);
+				list=jdbcService.getMysqlTableData(conf.getDbUrl(), conf.getUsername(), conf.getPassword(), sql);
+			}
+		}
+	
 		return list;
 	}
 
@@ -37,10 +66,23 @@ public class FormServiceImpl implements FormService {
 	@Override
 	public Integer selectCnt(String data) {
 		
-//		String sql = parseSql(QueryBulider.getSql(data, userId));
-		//String sql = QueryBulider.getSql(data, userId);
+		Integer cnt = 0;
+		
 		String sql = QueryBulider.getQueryString(data);
-		Integer cnt = echartsMapper.selectCntBySql(sql);
+		
+		int dataSourceType = JsonUtils.getInteger(data, "dataSourceType");
+		if(dataSourceType==1){
+			cnt = echartsMapper.selectCntBySql(sql);
+		}else if(dataSourceType==2){
+			MysqlConnConf connConf = new MysqlConnConf();
+			connConf.setId(3);
+			List<MysqlConnConf> connList = mysqlConnConfMapper.select(connConf);
+			if(connList.size()>0){
+				MysqlConnConf conf = connList.get(0);
+				cnt=jdbcService.getMysqlTableDataCount(conf.getDbUrl(), conf.getUsername(), conf.getPassword(), sql);
+			}
+		}
+		
 		return cnt;
 	}
 	

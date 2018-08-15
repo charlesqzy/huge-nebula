@@ -41,8 +41,42 @@ public class ChartConfig {
     private String reserved2;
 
     private String reserved3;
+    
+    private Integer connId;
+    
+    private String databaseName;
+    
+    private String tableName;
+    
+    
 
-    public Integer getId() {
+    public Integer getConnId() {
+		return connId;
+	}
+
+	public void setConnId(Integer connId) {
+		this.connId = connId;
+	}
+
+
+
+	public String getDatabaseName() {
+		return databaseName;
+	}
+
+	public void setDatabaseName(String databaseName) {
+		this.databaseName = databaseName;
+	}
+
+	public String getTableName() {
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
+	public Integer getId() {
         return id;
     }
 

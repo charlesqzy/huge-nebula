@@ -75,7 +75,8 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   
-  <insert id="insert" parameterType="com.bizwell.echarts.bean.domain.FolderInfo" >
+  
+<!--   <insert id="insert" parameterType="com.bizwell.echarts.bean.domain.FolderInfo" >
     insert into gb_folder_info (id,panel_uuid, user_id, folder_name, 
       folder_type, parent_id, level, 
       is_del, create_time, update_time, 
@@ -87,7 +88,7 @@
       #{reserved1,jdbcType=VARCHAR}, #{reserved2,jdbcType=VARCHAR}, #{showMore,jdbcType=BOOLEAN}
       )
   </insert>
-  
+   -->
   <insert id="insertSelective" parameterType="com.bizwell.echarts.bean.domain.FolderInfo"
   			useGeneratedKeys="true" keyProperty="id">
     insert into gb_folder_info

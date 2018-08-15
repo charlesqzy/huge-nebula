@@ -151,7 +151,7 @@ public class ReportController extends BaseController {
 		if(list.size()>0){
 			 for(String key :list.get(0).keySet()){
 //				 if(key.endsWith("D")){
-					 String column = key.split("_")[1];
+					 String column = key.split("__")[1];
 					 String aggregate = ReportManager.getAggregate(key);
 					 String label="";
 					 for(FormHeader header : headerList){

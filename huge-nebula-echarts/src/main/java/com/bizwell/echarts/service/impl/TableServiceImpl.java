@@ -78,7 +78,7 @@ public class TableServiceImpl implements ReportService {
 		if(list.size()>0){
 			 for(String key :list.get(0).keySet()){
 //				 if(key.endsWith("D")){
-					 String column = key.split("_")[1];
+					 String column = key.split("__")[1];
 					 String aggregate = ReportManager.getAggregate(key);
 					 String label="";
 					 for(FormHeader header : headerList){
@@ -103,14 +103,12 @@ public class TableServiceImpl implements ReportService {
 		
 		List<SheetMetaData> list = new ArrayList<SheetMetaData>();
 		// 获取维度字段名称
-		//List<SheetMetaData> dimensions = JsonUtils.getFields(data, "dimension", "metadataId", userId);
 		List<SheetMetaData> dimensions = sheetMetaDataService.getFields(data, "dimension", "metadataId");
 		for (SheetMetaData sheetMetaData : dimensions) {
 			list.add(sheetMetaData);
 		}
 		
 		// 获取数值字段
-		//List<SheetMetaData> measures = JsonUtils.getFields(data, "measure1", "metadataId", userId);
 		List<SheetMetaData> measures = sheetMetaDataService.getFields(data, "measure1", "metadataId");
 		for (SheetMetaData sheetMetaData : measures) {
 			list.add(sheetMetaData);

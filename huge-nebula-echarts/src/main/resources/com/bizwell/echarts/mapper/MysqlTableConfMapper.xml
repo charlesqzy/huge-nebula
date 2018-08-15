@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.bizwell.datasource.mapper.MysqlTableConfMapper">
-	<resultMap id="BaseResultMap" type="com.bizwell.datasource.bean.MysqlTableConf">
+<mapper namespace="com.bizwell.echarts.mapper.MysqlTableConfMapper">
+	<resultMap id="BaseResultMap" type="com.bizwell.echarts.bean.MysqlTableConf">
 		<id column="id" property="id" />
 		<result column="conn_id" property="connId" />
 		<result column="conn_name" property="connName" />
@@ -21,7 +21,7 @@
 	</resultMap>
 
 
-	<insert id="save" parameterType="com.bizwell.datasource.bean.MysqlTableConf"
+	<insert id="save" parameterType="com.bizwell.echarts.bean.MysqlTableConf"
 		useGeneratedKeys="true" keyProperty="id">
 		<selectKey keyProperty="id" resultType="java.lang.Integer">
 			select
@@ -47,7 +47,7 @@
 	</insert>
 
 
-	<insert id="saveBatch" parameterType="com.bizwell.datasource.bean.MysqlTableConf"
+	<insert id="saveBatch" parameterType="com.bizwell.echarts.bean.MysqlTableConf"
 		useGeneratedKeys="true" keyProperty="id">
 		<selectKey keyProperty="id" resultType="java.lang.Integer">
 			select
@@ -76,7 +76,7 @@
 	</insert>
 
 
-	<select id="select" parameterType="com.bizwell.datasource.bean.MysqlTableConf"
+	<select id="select" parameterType="com.bizwell.echarts.bean.MysqlTableConf"
 		resultMap="BaseResultMap">
 		SELECT
 		t1.`id`,
@@ -110,7 +110,7 @@
 		</where>
 	</select>
 
-	<select id="selectDatabase" parameterType="com.bizwell.datasource.bean.MysqlTableConf"
+	<select id="selectDatabase" parameterType="com.bizwell.echarts.bean.MysqlTableConf"
 		resultMap="BaseResultMap">
 		SELECT 
 		distinct `database_name`,
