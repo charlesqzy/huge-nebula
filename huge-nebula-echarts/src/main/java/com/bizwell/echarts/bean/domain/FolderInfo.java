@@ -46,6 +46,8 @@ public class FolderInfo {
 
     private Boolean showMore;
     
+    private Integer isHeaderShow;
+    
     private List<ChildrenFolder> childrenFolder = new ArrayList<ChildrenFolder>();
 
     public Integer getId() {
@@ -150,6 +152,14 @@ public class FolderInfo {
 
 	public void setShowMore(Boolean showMore) {
 		this.showMore = showMore;
+	}
+	
+	public Integer getIsHeaderShow() {
+		return isHeaderShow;
+	}
+
+	public void setIsHeaderShow(Integer isHeaderShow) {
+		this.isHeaderShow = isHeaderShow;
 	}
 
 	@Override

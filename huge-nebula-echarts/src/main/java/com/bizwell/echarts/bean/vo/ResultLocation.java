@@ -11,7 +11,7 @@ import java.util.List;
 // 用于封装仪表盘展示页中各图表的位置信息与所需数据
 public class ResultLocation {
 	
-	
+	private Integer isHeaderShow;
 	
 	private String status;
 	
@@ -43,6 +43,14 @@ public class ResultLocation {
 		this.locations = locations;
 	}
 
+
+	public Integer getIsHeaderShow() {
+		return isHeaderShow;
+	}
+
+	public void setIsHeaderShow(Integer isHeaderShow) {
+		this.isHeaderShow = isHeaderShow;
+	}
 
 	@Override
 	public String toString() {

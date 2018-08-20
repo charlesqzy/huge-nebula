@@ -156,11 +156,12 @@ public class FolderController extends BaseController {
 	@ResponseBody
 	public JsonView updateStatus(@RequestParam(value = "id", required = true) Integer id,
 			@RequestParam(value = "status", required = true) String status,
-			@RequestParam(value = "shareRemarks", required = true) String shareRemarks) {
+			@RequestParam(value = "shareRemarks", required = true) String shareRemarks,
+			@RequestParam(value = "isHeaderShow", required = true) Integer isHeaderShow) {
 		
 		JsonView jsonView = new JsonView();
 		try {
-			folderService.updateStatus(id, status, shareRemarks);
+			folderService.updateStatus(id, status, shareRemarks,isHeaderShow);
 			jsonView = result(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
 		} catch (EchartsException e) {
 			jsonView = result(e.getCode(), e.getMessage(), null);

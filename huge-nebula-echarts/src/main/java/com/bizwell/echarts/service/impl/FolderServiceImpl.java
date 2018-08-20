@@ -94,12 +94,13 @@ public class FolderServiceImpl implements FolderService {
 	// 更新分享状态
 	@Transactional
 	@Override
-	public void updateStatus(Integer id, String status, String shareRemarks) {
+	public void updateStatus(Integer id, String status, String shareRemarks,Integer isHeaderShow) {
 
 		FolderInfo folderInfo = new FolderInfo();
 		folderInfo.setId(id);
 		folderInfo.setReserved1(status);
 		folderInfo.setReserved2(shareRemarks);
+		folderInfo.setIsHeaderShow(isHeaderShow);
 		folderInfoMapper.updateByPrimaryKeySelective(folderInfo);
 	}
 

@@ -23,7 +23,7 @@ public interface FolderService {
 	
 	public List<FolderInfo> selectByParam(FolderParam folderParam);
 	
-	public void updateStatus(Integer id, String status, String shareRemarks);
+	public void updateStatus(Integer id, String status, String shareRemarks,Integer isHeaderShow);
 	
 	public void updateShowMore(Integer id, Boolean showMore);
 	

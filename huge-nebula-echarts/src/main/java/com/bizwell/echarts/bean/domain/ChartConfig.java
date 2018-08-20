@@ -48,9 +48,18 @@ public class ChartConfig {
     
     private String tableName;
     
+    private Integer isHeaderShow;
     
 
-    public Integer getConnId() {
+    public Integer getIsHeaderShow() {
+		return isHeaderShow;
+	}
+
+	public void setIsHeaderShow(Integer isHeaderShow) {
+		this.isHeaderShow = isHeaderShow;
+	}
+
+	public Integer getConnId() {
 		return connId;
 	}
 

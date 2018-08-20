@@ -15,6 +15,8 @@
     <result column="reserved1" property="reserved1" jdbcType="VARCHAR" />
     <result column="reserved2" property="reserved2" jdbcType="VARCHAR" />
     <result column="showMore" property="showMore" jdbcType="BOOLEAN" />
+    <result column="is_header_show" property="isHeaderShow" jdbcType="INTEGER" />
+		
     <collection property="childrenFolder" ofType="com.bizwell.echarts.bean.domain.ChildrenFolder" autoMapping="true">
         <id column="child_id" property="childId" jdbcType="INTEGER" />
         <result column="child_panel_uuid" property="panelUuid" jdbcType="VARCHAR" />
@@ -24,7 +26,7 @@
   </resultMap>
   
   <sql id="Base_Column_List" >
-    id,panel_uuid, user_id, folder_name, folder_type, parent_id, level, is_del, create_time, update_time, reserved1, reserved2, showMore
+    id,panel_uuid, user_id, folder_name, folder_type, parent_id, level, is_del, create_time, update_time, reserved1, reserved2, showMore,is_header_show
   </sql>
   
   <select id="selectByParam" resultMap="BaseResultMap" parameterType="com.bizwell.echarts.bean.dto.FolderParam">
@@ -49,7 +51,8 @@
   		t2.panel_uuid as child_panel_uuid,
   		t2.folder_name as child_folder_name,
   		t1.showMore,
-        t2.showMore as showMore1
+        t2.showMore as showMore1,
+        t1.is_header_show
   	from gb_folder_info t1
   	left join (SELECT * FROM gb_folder_info t WHERE t.is_del = 0) t2 on t1.id = t2.parent_id
   	<where>
@@ -208,6 +211,10 @@
       <if test="showMore != null" >
         showMore = #{showMore,jdbcType=BOOLEAN},
       </if>
+      <if test="isHeaderShow != null" >
+        is_header_show = #{isHeaderShow,jdbcType=INTEGER},
+      </if>
+      
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -224,7 +231,8 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       reserved1 = #{reserved1,jdbcType=VARCHAR},
       reserved2 = #{reserved2,jdbcType=VARCHAR},
-      showMore = #{showMore,jdbcType=BOOLEAN}
+      showMore = #{showMore,jdbcType=BOOLEAN},
+       is_header_show = #{isHeaderShow,jdbcType=INTEGER},
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

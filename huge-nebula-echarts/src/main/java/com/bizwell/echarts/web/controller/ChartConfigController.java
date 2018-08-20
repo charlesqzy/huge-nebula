@@ -63,7 +63,7 @@ public class ChartConfigController extends BaseController {
 	public JsonView get(
 			@RequestParam(value = "panelId",required = false) Integer panelId,
 			@RequestParam(value = "panelUuid",required = false) String panelUuid,
-			@RequestParam(value = "userId",required = false) Integer userId) {
+			@RequestParam(value = "userId", defaultValue = "0",required = false) Integer userId) {
 		
 		
 		//记录查询日志

@@ -67,6 +67,7 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 		List<Object> resultList = new ArrayList<Object>();
 		String status = null;
 		String shareRemarks = null;
+		Integer isHeaderShow =null;
 		// 查询出改仪表盘下面所有配置信息
 		List<ChartConfig> list = chartConfigMapper.selectChartConfig(panelId,panelUuid);
 		for (ChartConfig chartConfig : list) {
@@ -76,6 +77,10 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 			if (StringUtils.isEmpty(shareRemarks)) {
 				shareRemarks = chartConfig.getReserved2();
 			}
+			if(null==isHeaderShow){
+				isHeaderShow=chartConfig.getIsHeaderShow();
+			}
+			
 			JSONObject jsonObject = JSONObject.parseObject(chartConfig.getLocation());
 			if (null != jsonObject) {
 				String sqlConfig = chartConfig.getSqlConfig();
@@ -99,6 +104,7 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 		resultLocation.setStatus(status);
 		resultLocation.setShareRemarks(shareRemarks);
 		resultLocation.setLocations(resultList);
+		resultLocation.setIsHeaderShow(isHeaderShow);
 		return resultLocation;
 	}
 

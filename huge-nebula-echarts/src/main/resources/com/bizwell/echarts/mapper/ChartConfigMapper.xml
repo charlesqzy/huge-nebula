@@ -22,6 +22,8 @@
 		<result column="conn_id" property="connId" jdbcType="INTEGER" />
 		<result column="database_name" property="databaseName" jdbcType="VARCHAR" />
 		<result column="table_name" property="tableName" jdbcType="VARCHAR" />
+		<result column="is_header_show" property="isHeaderShow" jdbcType="INTEGER" />
+		
 	</resultMap>
 
 	<sql id="Base_Column_List">
@@ -44,23 +46,22 @@
 		t.chart_remarks,
 		t.location,
 		t.sql_config,
-		t.reserved1,
-		t.reserved2,
+		t1.reserved1,
+		t1.reserved2,
+		t1.is_header_show,
 		t.conn_id,t.database_name,t.table_name
-		from ws_chart_config_info t right join gb_folder_info t1
-		on t.panel_id = t1.id
+		from ws_chart_config_info t 
+		INNER JOIN gb_folder_info t1 ON(t.panel_id = t1.id)
 		<where>
 			t1.is_del = 0
 			<if test="panelId != null and panelId != ''">
 				<trim prefixOverrides="and / or">
-					<!-- and t.panel_id = #{panelId, jdbcType=INTEGER} -->
 					and t1.id = #{panelId, jdbcType=INTEGER}
 				</trim>
 			</if>
 			<if test="panelUuid != null and panelUuid != ''">
 				<trim prefixOverrides="and / or">
-					<!-- and t.panel_id = #{panelId, jdbcType=INTEGER} -->
-					and t1.panel_uuid = #{panelUuid}
+					and t.panel_uuid = #{panelUuid}
 				</trim>
 			</if>
 		</where>
