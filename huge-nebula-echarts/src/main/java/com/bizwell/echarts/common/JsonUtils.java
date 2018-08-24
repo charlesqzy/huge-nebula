@@ -117,5 +117,54 @@ public class JsonUtils {
 			System.out.println(sb);
 		}
 	}*/
+
 	
+	
+	/**
+	 * 给配置信息中增加filter
+	 * @param json
+	 * @param storeIds
+	 * @return
+	 */
+	private static String appendStoreIdToFilter(String json, String[] storeIds) {
+		JSONObject parseObject = JSONObject.parseObject(json);
+		JSONArray filterArray = parseObject.getJSONArray("filter");
+		
+		
+		JSONObject filter;
+		
+		if(filterArray.size()>0){
+			for (int i = 0; i < filterArray.size(); i++) {
+				filter = filterArray.getJSONObject(i);
+				String fieldColumn = filter.getString("fieldColumn");
+				if("store_id".equals(fieldColumn)){
+					for(String storeId : storeIds){
+						filter.getJSONArray("condition").add(storeId);	
+					}
+				}
+			}			
+		}else{
+			filter = new JSONObject();
+			filter.put("type", "text");
+			filter.put("tableName", parseObject.getString("tableName"));
+			filter.put("subType", "精确筛选");
+			filter.put("name", "店铺id");
+			filter.put("isshow", true);
+			filter.put("invertSelection", false);
+			filter.put("fieldColumn", "store_id");
+			filter.put("condition", storeIds);
+			
+			filterArray.add(filter);
+		}
+		
+		return parseObject.toJSONString();
+	}
+	
+	public static void main(String[] args) {
+		String s1 ="{\"dataSourceType\":1,\"echartType\":\"00\",\"moduleType\":\"01\",\"dimension\":[{\"metadataId\":1055,\"name\":\"hotelid\",\"aggregate\":\"求和\",\"dateLevel\":\"按日\",\"fieldType\":1,\"tableName\":\"xls_3d6095f902ae548252ad407f9c2b9bbf_u16_s01\",\"fieldColumn\":\"A\",\"it\":1}],\"measure1\":[],\"measure2\":[],\"filter\":[],\"type\":\"\",\"stack\":\"\",\"inChartFilter\":[],\"axiosType\":[0,0]}";
+		String s2 = "{\"dataSourceType\":2,\"echartType\":\"05\",\"connId\":\"12\",\"databaseName\":\"matrix_schedule\",\"tableName\":\"v_card_record_info\",\"moduleType\":\"04\",\"dimension\":[{\"metadataId\":null,\"name\":\"打卡日期\",\"aggregate\":\"计数\",\"dateLevel\":\"按日\",\"fieldType\":3,\"connId\":\"12\",\"databaseName\":\"matrix_schedule\",\"tableName\":\"v_card_record_info\",\"fieldColumn\":\"card_date\",\"it\":1}],\"measure1\":[{\"metadataId\":null,\"name\":\"预排工时\",\"aggregate\":\"求和\",\"dateLevel\":\"按日\",\"fieldType\":1,\"connId\":\"12\",\"databaseName\":\"matrix_schedule\",\"tableName\":\"v_card_record_info\",\"fieldColumn\":\"预排工时\",\"it\":2},{\"metadataId\":null,\"name\":\"实际工时\",\"aggregate\":\"求和\",\"dateLevel\":\"按日\",\"fieldType\":1,\"connId\":12,\"databaseName\":\"matrix_schedule\",\"tableName\":\"v_card_record_info\",\"fieldColumn\":\"实际工时\",\"it\":3}],\"measure2\":[],\"filter\":[{\"metadataId\":null,\"type\":\"text\",\"name\":\"店铺id\",\"subType\":\"精确筛选\",\"tableName\":\"v_card_record_info\",\"fieldColumn\":\"store_id\",\"isshow\":true,\"invertSelection\":false,\"condition\":[\"a0fd377a99e511e8a92f00163f008369\"]}],\"type\":\"bar\",\"stack\":\"\",\"inChartFilter\":[],\"axiosType\":[0,0]}";
+		
+		String[] storeIds={"aaaaaa","aaa"};
+		System.out.println(appendStoreIdToFilter(s1, storeIds));
+	}
 }

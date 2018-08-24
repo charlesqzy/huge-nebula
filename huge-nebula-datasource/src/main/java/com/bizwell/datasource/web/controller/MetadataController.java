@@ -81,7 +81,7 @@ public class MetadataController {
     	List<Map> xlsData = sheetMetadataService.getXlsDataByFilter(tableName, fieldColumn);
     	
     	Map result = new HashMap<>();
-    	result.put("xlsData", xlsData);
+    	result.put("data", xlsData);
     	return new ResponseJson(200l,"success",result);
     }
 

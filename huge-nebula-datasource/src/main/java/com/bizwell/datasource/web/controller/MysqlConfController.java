@@ -313,21 +313,49 @@ public class MysqlConfController extends BaseController {
      */
     @RequestMapping(value = "/datasource/getMysqlTableDataByFilter")
     @ResponseBody
-    public ResponseJson getMysqlTableDataByFilter(
-			@RequestParam(required = true) Integer connId,
+    public ResponseJson getMysqlTableDataByFilter(			
+    		@RequestParam(required = true) Integer connId,
 			@RequestParam(required = true) String databaseName,
     		@RequestParam(required = true) String tableName,
     		@RequestParam(required = true) String fieldColumn) {
     	
-     	logger.info("getMysqlTableDataByFilter connId = " + connId + "  databaseName="+databaseName + "  tableName="+tableName +"  fieldColumn="+fieldColumn);
+     	logger.info("getMysqlTableDateByFilter connId = " + connId + "  databaseName="+databaseName + "  tableName="+tableName +"  fieldColumn="+fieldColumn);
        	
      	MysqlConnConf conn = getConnConfById(connId);
      	
-		List<Map> mysqlData = null;
-		mysqlData = jdbcService.getMysqlTableDataByFilter(conn,databaseName,tableName,fieldColumn);
+    	List<Map> mysqlData = jdbcService.getMysqlTableDataByFilter(conn,databaseName,tableName, fieldColumn);
     	
     	Map result = new HashMap<>();
-    	result.put("mysqlData", mysqlData);
+    	result.put("data", mysqlData);
+    	return new ResponseJson(200l,"success",result);
+    }
+	
+	
+	
+	
+    /**
+     * 根据fieldColumn获取mysql表中的数据
+     * @param tableName
+     * @param fieldColumn
+     * @return
+     */
+    @RequestMapping(value = "/datasource/getMysqlTableDateByFilter")
+    @ResponseBody
+    public ResponseJson getMysqlTableDateByFilter(
+			@RequestParam(required = true) Integer connId,
+			@RequestParam(required = true) String databaseName,
+    		@RequestParam(required = true) String tableName,
+    		@RequestParam(required = true) String fieldColumn,
+    		@RequestParam(required = true) String option) {
+    	
+     	logger.info("getMysqlTableDateByFilter connId = " + connId + "  databaseName="+databaseName + "  tableName="+tableName +"  fieldColumn="+fieldColumn +" option="+option);
+       	
+     	MysqlConnConf conn = getConnConfById(connId);
+     	
+		List<Map> mysqlData = jdbcService.getMysqlTableDateByFilter(conn,databaseName,tableName,fieldColumn,option);
+    	
+    	Map result = new HashMap<>();
+    	result.put("data", mysqlData);
     	return new ResponseJson(200l,"success",result);
     }
     
