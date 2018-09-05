@@ -41,7 +41,6 @@ public class GaugeServiceImpl extends AbstractReportService {
 			SheetMetaData sheetMetaData = measures.get(0);
 			Object value = new Object();
 			for (Map<String, Object> map : list) {
-				//value = map.get(sheetMetaData.getFieldColumn());
 				for(String key :map.keySet()){
 					String[] split = key.split("__");
 					if(key.startsWith("M") && sheetMetaData.getFieldColumn().equals(split[1])){

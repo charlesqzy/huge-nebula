@@ -57,12 +57,20 @@ public class SheetMetaDataServiceImpl implements SheetMetaDataService {
 			for (int i = 0; i < jsonArray.size(); i++) {
 				JSONObject object = jsonArray.getJSONObject(i);
 				Integer id = object.getIntValue(metadataId);
-				ids.add(id);
+				String fieldColumn= object.getString("fieldColumn");
+				String fieldNameNew= object.getString("name");
+				//ids.add(id);
+				
+				meteData = new SheetMetaData();
+				meteData.setId(id);
+				meteData.setFieldColumn(fieldColumn);
+				meteData.setFieldNameNew(fieldNameNew);
+				list.add(meteData);
 			}
 			
-			if(ids.size()>0){
+			/*if(ids.size()>0){
 				list = sheetMetaDataMapper.selectByIds(ids);
-			}
+			}*/
 		}else if(dataSourceType==2){
 			
 			JSONObject jsonObject = JSONObject.parseObject(data);

@@ -50,11 +50,6 @@ public class PieServiceImpl extends AbstractReportService {
 		// 一个维度, 一个数值
 		if (dimensions.size() == 1 && measures.size() == 1) {
 			for (Map<String, Object> map : list) {
-//				SheetMetaData sheetMetaData1 = dimensions.get(0);
-//				SheetMetaData sheetMetaData2 = measures.get(0);
-				
-//				String name = (String) map.get(sheetMetaData1.getFieldColumn());
-//				Object value = map.get(sheetMetaData2.getFieldColumn());
 				
 				String name="";
 				Object value=null;
@@ -78,19 +73,22 @@ public class PieServiceImpl extends AbstractReportService {
 		// 没有维度, 多个数值
 		} else if(dimensions.size() == 0 && measures.size() >= 1) {
 			
+			int n=0;
 			for (SheetMetaData sheetMetaData : measures) {
 				Object value = new Object();
+				String aggregate = "";
 				for (Map<String, Object> map : list) {
-					//value = map.get(sheetMetaData.getFieldColumn());
 					for(String key :map.keySet()){
 						String[] split = key.split("__");
-						if(key.startsWith("M") && sheetMetaData.getFieldColumn().equals(split[1])){
+						if(key.startsWith("M1"+String.format("%02d", n)) && sheetMetaData.getFieldColumn().equals(split[1])){
 							value = map.get(key);
+							aggregate = ReportManager.getAggregate(key);
 						}
 					}
 				}
+				n++;
 				
-				String name = sheetMetaData.getFieldNameNew();
+				String name = sheetMetaData.getFieldNameNew()+aggregate;
 				PieData pieData = getPieData(name, value);
 				names.add(name);
 				dataList.add(pieData);

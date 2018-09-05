@@ -57,20 +57,24 @@ public class BarOrLineServiceImpl extends AbstractReportService {
 		//List<SheetMetaData> measures = JsonUtils.getFields(data, "measure1", "metadataId", userId);
 		List<SheetMetaData> measures = sheetMetaDataService.getFields(data, "measure1", "metadataId");
 		
+		int n=0;		
 		for (SheetMetaData sheetMetaData : measures) {
+			
 			List<Object> values = new ArrayList<Object>();
 			
 			String aggregate = "";
-			for (Map<String, Object> map : list) {				
+			for (Map<String, Object> map : list) {		
+				
 				for(String key :map.keySet()){
 					String[] split = key.split("__");
-					if(key.startsWith("M") && sheetMetaData.getFieldColumn().equals(split[1])){
+					if(key.startsWith("M1"+String.format("%02d", n)) && sheetMetaData.getFieldColumn().equals(split[1])){
 						values.add(map.get(key));
 						aggregate = ReportManager.getAggregate(key);
-						
 					}
 				}
 			}
+			n++;
+			
 			String fieldName = sheetMetaData.getFieldNameNew();
 			legend.add(fieldName+aggregate);
 			// 封装series
@@ -91,6 +95,8 @@ public class BarOrLineServiceImpl extends AbstractReportService {
 				series.setAreaStyle("{normal: {}}");
 			}
 			seriesList.add(series);
+			
+			
 		}
 		
 		// 封装结果数据

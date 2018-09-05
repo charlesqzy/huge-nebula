@@ -13,6 +13,7 @@ import com.bizwell.echarts.bean.vo.ResultData;
 import com.bizwell.echarts.bean.vo.Series;
 import com.bizwell.echarts.bean.vo.YAxis;
 import com.bizwell.echarts.common.JsonUtils;
+import com.bizwell.echarts.common.ReportManager;
 import com.bizwell.echarts.service.AbstractReportService;
 import com.bizwell.echarts.service.SheetMetaDataService;
 
@@ -80,19 +81,21 @@ public class BiaxServiceImpl extends AbstractReportService {
 			yAxies.add(yAxis);
 		}
 		
+		int n=0;	
 		for (SheetMetaData sheetMetaData : measures) {			
 			List<Object> values = new ArrayList<Object>();
-			//String aggregate = "";
+			String aggregate = "";
 			for (Map<String, Object> map : list) {				
 				for(String key :map.keySet()){
 					String[] split = key.split("__");
-					if(key.startsWith("M1") && sheetMetaData.getFieldColumn().equals(split[1])){
-						values.add(map.get(key));break;
-						//aggregate = ReportManager.getAggregate(key);
+					if(key.startsWith("M1"+String.format("%02d", n)) && sheetMetaData.getFieldColumn().equals(split[1])){
+						values.add(map.get(key));
+						aggregate = ReportManager.getAggregate(key);
 					}
 				}
 			}
-			String fieldName = sheetMetaData.getFieldNameNew();
+			n++;
+			String fieldName = sheetMetaData.getFieldNameNew()+aggregate;
 			legend.add(fieldName);
 			// 封装series
 			series = new Series();
@@ -128,21 +131,24 @@ public class BiaxServiceImpl extends AbstractReportService {
 		
 		
 		
+		n=0;
 		// 获取数值字段2
 		List<SheetMetaData> measures2 = sheetMetaDataService.getFields(data, "measure2", "metadataId");
 		for (SheetMetaData sheetMetaData : measures2) {			
 			List<Object> values = new ArrayList<Object>();
-			//String aggregate = "";
+			String aggregate = "";
 			for (Map<String, Object> map : list) {				
 				for(String key :map.keySet()){
 					String[] split = key.split("__");
-					if(key.startsWith("M2") && sheetMetaData.getFieldColumn().equals(split[1])){
-						values.add(map.get(key));break;
-						//aggregate = ReportManager.getAggregate(key);
+					if(key.startsWith("M2"+String.format("%02d", n)) && sheetMetaData.getFieldColumn().equals(split[1])){
+						values.add(map.get(key));
+						aggregate = ReportManager.getAggregate(key);
 					}
 				}
 			}
-			String fieldName = sheetMetaData.getFieldNameNew();
+			n++;
+			
+			String fieldName = sheetMetaData.getFieldNameNew()+aggregate;
 			legend.add(fieldName);
 			// 封装series
 			series = new Series();
