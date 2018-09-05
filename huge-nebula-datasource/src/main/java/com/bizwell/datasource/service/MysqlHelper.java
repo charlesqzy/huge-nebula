@@ -42,13 +42,12 @@ public class MysqlHelper {
 		createSql.append("create table ").append(tableName).append("(");
 		for (XLSHaderType type : typeList) {
 			createSql.append(type.getProp());
-			if ("2".equals(type.getType())) {
-				createSql.append(" varchar(200) ,");
-			} else if ("3".equals(type.getType())) {
-				// createSql.append(" varchar(20) ,");
+			if  ("3".equals(type.getType())) {
 				createSql.append(" datetime ,");
 			} else if ("1".equals(type.getType())) {
 				createSql.append(" double ,");
+			}else{//("2".equals(type.getType())) {
+				createSql.append(" varchar(200) ,");
 			}
 		}
 

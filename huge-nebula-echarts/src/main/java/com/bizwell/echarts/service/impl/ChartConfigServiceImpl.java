@@ -107,6 +107,55 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 		resultLocation.setIsHeaderShow(isHeaderShow);
 		return resultLocation;
 	}
+	
+	
+	// 查询位置信息
+	@Override
+	public ResultLocation selectLocation(Integer panelId,String panelUuid,String[] storeIds) {
+
+		List<Object> resultList = new ArrayList<Object>();
+		String status = null;
+		String shareRemarks = null;
+		Integer isHeaderShow =null;
+		// 查询出改仪表盘下面所有配置信息
+		List<ChartConfig> list = chartConfigMapper.selectChartConfig(panelId,panelUuid);
+		for (ChartConfig chartConfig : list) {
+			if (StringUtils.isEmpty(status)) {
+				status = chartConfig.getReserved1();
+			}
+			if (StringUtils.isEmpty(shareRemarks)) {
+				shareRemarks = chartConfig.getReserved2();
+			}
+			if(null==isHeaderShow){
+				isHeaderShow=chartConfig.getIsHeaderShow();
+			}
+			
+			JSONObject jsonObject = JSONObject.parseObject(chartConfig.getLocation());
+			if (null != jsonObject) {
+				String sqlConfig = chartConfig.getSqlConfig();
+				String echartType = JsonUtils.getString(sqlConfig, "echartType");
+				//JSONArray inChartFilter = JsonUtils.getJSONArray(sqlConfig, "inChartFilter");
+				String chatData = getData(chartConfig.getSqlConfig(), chartConfig.getUserId(),storeIds);
+				jsonObject.put("panelUuid", chartConfig.getPanelUuid());
+				jsonObject.put("chartName", chartConfig.getChartName());
+				jsonObject.put("chartRemarks", chartConfig.getChartRemarks());
+				jsonObject.put("chatData", chatData);
+				jsonObject.put("echartType", echartType);
+				jsonObject.put("sqlConfig", JSONObject.parseObject(sqlConfig));
+				jsonObject.put("connId", chartConfig.getConnId());
+				jsonObject.put("databaseName", chartConfig.getDatabaseName());
+				jsonObject.put("tableName", chartConfig.getTableName());
+				resultList.add(jsonObject);				
+			}
+		}
+		
+		ResultLocation resultLocation = new ResultLocation();
+		resultLocation.setStatus(status);
+		resultLocation.setShareRemarks(shareRemarks);
+		resultLocation.setLocations(resultList);
+		resultLocation.setIsHeaderShow(isHeaderShow);
+		return resultLocation;
+	}
 
 	// 获取单条配置信息
 	@Override
@@ -160,6 +209,24 @@ public class ChartConfigServiceImpl implements ChartConfigService {
 			return null;
 		}
 		ReportService reportService = ReportManager.getService(code);
+		ResultData resultData = reportService.selectEcharts(json, userId);
+		String jsonString = JSON.toJSONString(resultData);
+		return jsonString;
+	}
+	
+	
+	// 获取数据
+	private String getData(String json, Integer userId , String[] storeIds) {
+		
+		String code = JsonUtils.getString(json, "moduleType");
+		if (StringUtils.isEmpty(code)) {
+			return null;
+		}
+		ReportService reportService = ReportManager.getService(code);
+		
+		//加入storeIds
+		json=JsonUtils.appendStoreIdToFilter(json, storeIds);
+		
 		ResultData resultData = reportService.selectEcharts(json, userId);
 		String jsonString = JSON.toJSONString(resultData);
 		return jsonString;

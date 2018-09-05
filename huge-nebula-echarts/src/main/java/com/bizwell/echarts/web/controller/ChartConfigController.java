@@ -1,12 +1,16 @@
 package com.bizwell.echarts.web.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.bizwell.echarts.bean.RemoteParam;
 import com.bizwell.echarts.bean.domain.ChartLog;
 import com.bizwell.echarts.bean.dto.ChartConfigParam;
 import com.bizwell.echarts.bean.vo.ChartConfigVo;
@@ -28,6 +32,8 @@ import com.bizwell.echarts.web.BaseController;
 @Controller
 @RequestMapping(value="/echarts/chart")
 public class ChartConfigController extends BaseController {
+	
+	private static Logger logger = LoggerFactory.getLogger(ChartConfigController.class);
 	
 	@Autowired
 	private ChartConfigService chartConfigService;
@@ -58,13 +64,17 @@ public class ChartConfigController extends BaseController {
 	}
 	
 	// 点击仪表盘下文件,获取所有图表的位置信息以及相关数据
-	@RequestMapping(value = "/get", method = RequestMethod.POST)
+	@RequestMapping(value = "/get", method = RequestMethod.POST)	
 	@ResponseBody
 	public JsonView get(
 			@RequestParam(value = "panelId",required = false) Integer panelId,
 			@RequestParam(value = "panelUuid",required = false) String panelUuid,
-			@RequestParam(value = "userId", defaultValue = "0",required = false) Integer userId) {
+			@RequestParam(value = "userId", defaultValue = "0",required = false) Integer userId,
+			@RequestParam(required = false) String[] storeIds,
+			@RequestParam(value = "type",required = false,defaultValue="1") Integer type,//如果是0就是有部分store的权限
+			@RequestParam(value = "channelId",required = false) String channelId) {
 		
+		logger.info("panelId="+panelId+"  panelUuid="+panelUuid+"  userId="+userId+"   type="+type+"  channelId="+channelId);
 		
 		//记录查询日志
 		ChartLog record = new ChartLog();
@@ -73,14 +83,16 @@ public class ChartConfigController extends BaseController {
 		record.setUserId(userId);
 		chartLogMapper.insert(record);
 		
-		
 		JsonView jsonView = new JsonView();
 		try {
 			ResultLocation resultLocation = new ResultLocation();
-			// 仪表盘id为空时,不查询
-			//if (null != panelId) {
-				resultLocation = chartConfigService.selectLocation(panelId,panelUuid);				
-			//}
+
+			if(0!=type){
+				resultLocation = chartConfigService.selectLocation(panelId,panelUuid);
+			}else{
+				resultLocation = chartConfigService.selectLocation(panelId,panelUuid,storeIds);
+			}
+			
 			jsonView = result(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), resultLocation);
 		} catch (EchartsException e) {
 			jsonView = result(e.getCode(), e.getMessage(), null);

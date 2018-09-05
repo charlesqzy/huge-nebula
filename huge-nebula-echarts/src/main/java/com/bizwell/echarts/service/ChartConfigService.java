@@ -15,7 +15,7 @@ public interface ChartConfigService {
 	
 	public void save(ChartConfigParam param);
 	
-	public ResultLocation selectLocation(Integer panelId,String panelUuid);
+	
 	
 	public ChartConfigVo getOne(Integer id);
 	
@@ -24,5 +24,9 @@ public interface ChartConfigService {
 	public void updateLocation(List<String> locations);
 	
 	public void delete(Integer id);
+	
+	public ResultLocation selectLocation(Integer panelId,String panelUuid);
+
+	public ResultLocation selectLocation(Integer panelId, String panelUuid, String[] storeIds);
 	
 }

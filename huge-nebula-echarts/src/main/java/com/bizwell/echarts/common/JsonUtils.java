@@ -126,7 +126,7 @@ public class JsonUtils {
 	 * @param storeIds
 	 * @return
 	 */
-	private static String appendStoreIdToFilter(String json, String[] storeIds) {
+	public static String appendStoreIdToFilter(String json, String[] storeIds) {
 		JSONObject parseObject = JSONObject.parseObject(json);
 		JSONArray filterArray = parseObject.getJSONArray("filter");
 		
